@@ -1,5 +1,5 @@
 [build]
-  publish = "dist/bdic"
+  publish = "dist/admin"
   command = "ng build "
   functions = "./functions"
 [[redirects]]
