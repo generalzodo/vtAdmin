@@ -5,24 +5,24 @@ import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  selector: 'app-bookings',
+  templateUrl: './bookings.component.html',
+  styleUrls: ['./bookings.component.scss'],
   providers: [MessageService, ConfirmationService]
 })
-export class UsersComponent implements OnInit {
-  users: any = []
+export class BookingsComponent implements OnInit {
+  bookings: any = []
   visible: boolean = false;
-  userForm: any;
+  bookingForm: any;
   states: any = states;
   submitted: any
   loading: any
   submitType: string = '';
-  displayUser: boolean = false;
+  displayBooking: boolean = false;
   currentID: any;
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.userForm = this.fb.group({
+    this.bookingForm = this.fb.group({
       firstName: [undefined, Validators.required],
       lastName: [undefined, Validators.required],
       phone: [undefined, Validators.required],
@@ -32,22 +32,22 @@ export class UsersComponent implements OnInit {
     })
   }
   ngOnInit(): void {
-    this.pullUsers()
+    this.pullBookings()
   }
-  get f() { return this.userForm.controls; }
+  get f() { return this.bookingForm.controls; }
 
   showDialog() {
 
-    this.displayUser = true;
+    this.displayBooking = true;
   }
 
-  pullUsers() {
+  pullBookings() {
     this.httpService
       .getAuthData(
-        'users'
+        'booking'
       )
       .subscribe((data: any) => {
-        this.users = data.data
+        this.bookings = data.data
       });
   }
   confirmDelete(id: any) {
@@ -56,7 +56,7 @@ export class UsersComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
-        this.deleteUsers(id)
+        this.deleteBookings(id)
       },
       reject: () => {
 
@@ -64,53 +64,53 @@ export class UsersComponent implements OnInit {
     });
   }
 
-deleteUsers(id: any) {
+deleteBookings(id: any) {
   this.httpService
     .deleteData(
-      'users/', id
+      'bookings/', id
     )
     .subscribe((data: any) => {
       this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
 
-      this.pullUsers()
+      this.pullBookings()
     });
 }
-populateUser(user: any) {
+populateBooking(booking: any) {
   this.submitType = 'Edit';
-  this.currentID = user._id
-  // this.userForm.setValue({ p, address: user.address, state: user.state })
+  this.currentID = booking._id
+  // this.bookingForm.setValue({ p, address: booking.address, state: booking.state })
 }
 
-submitUser() {
+submitBooking() {
 
   this.submitted = true
-  if (this.userForm.invalid) {
-    this.userForm.markAllAsTouched();
+  if (this.bookingForm.invalid) {
+    this.bookingForm.markAllAsTouched();
 
     return;
   }
   this.loading = true;
-  let data: any = { ...this.userForm.value }
-  if (this.submitType == 'Edit') this.updateUser(data)
-  if (this.submitType == 'Add') this.createUser(data)
+  let data: any = { ...this.bookingForm.value }
+  if (this.submitType == 'Edit') this.updateBooking(data)
+  if (this.submitType == 'Add') this.createBooking(data)
 }
 
-createUser(data: any) {
+createBooking(data: any) {
   console.log('====================================');
   console.log(data);
   console.log('====================================');
   this.httpService
     .postAuthData(
-      'users/', data
+      'bookings/', data
     )
     .subscribe((data: any) => {
       // this.listing = data.data
       this.loading = false
-      this.displayUser = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User created successfully' });
+      this.displayBooking = false
+      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking created successfully' });
 
-      this.pullUsers();
-      this.userForm.reset()
+      this.pullBookings();
+      this.bookingForm.reset()
     }, (err) => {
       this.loading = false
 
@@ -120,19 +120,19 @@ createUser(data: any) {
     });
 }
 
-updateUser(data: any) {
+updateBooking(data: any) {
 
   this.httpService
     .updateData(
-      'users/' + this.currentID, data
+      'bookings/' + this.currentID, data
     )
     .subscribe((data: any) => {
       // this.listing = data.data
       this.loading = false
-      this.displayUser = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User updated successfully' });
+      this.displayBooking = false
+      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking updated successfully' });
 
-      this.pullUsers()
+      this.pullBookings()
       this.currentID = ''
     }, (err) => {
       this.loading = false

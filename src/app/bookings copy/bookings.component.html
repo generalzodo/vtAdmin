@@ -25,8 +25,8 @@
             <div
                 class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
                 <h5>
-                    <span class="text-gray-500">All Users:</span>
-                    <span class="dark:text-white"> {{users.length}}</span>
+                    <span class="text-gray-500">All Bookings:</span>
+                    <span class="dark:text-white"> {{bookings.length}}</span>
                 </h5>
 
                 <button state="button" (click)="showDialog()"
@@ -45,37 +45,39 @@
                         <path clip-rule="evenodd" fill-rule="evenodd"
                             d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                     </svg>
-                    Add new user
+                    Add new booking
                 </button> -->
 
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table [value]="users"  [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+            <p-table [value]="bookings"  [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
+                        <th pSortableColumn="firstName" style="width:15%">BookingId <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:15%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <!-- <th pSortableColumn="address" style="width:15%">Address <p-sortIcon field="address"></p-sortIcon></th> -->
+                        <th pSortableColumn="address" style="width:15%">Email <p-sortIcon field="address"></p-sortIcon></th>
                         <th pSortableColumn="phone" style="width:15%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
-                        <th pSortableColumn="state" style="width:10%">State <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:10%">Travel Date <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:15%">Creadted on <p-sortIcon field="createdAt"></p-sortIcon></th>
                         <th style="width:15%">Actions</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-user>
+                <ng-template pTemplate="body" let-booking>
                     <tr  class="border-b border-gray-300">
 
-                        <td class="' py-2">{{user.firstName}}, {{user.lastName}}</td>
-                        <!-- <td class="' py-2">{{user.address}}</td> -->
-                        <td class="' py-2">{{user.phone}}</td>
-                        <td class="' py-2">{{user.state}}</td>
-                        <td class="' py-2">{{user.status}}</td>
-                        <td class="' py-2">{{user.createdAt | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{booking.bookingId}}</td>
+                        <td class="' py-2">{{booking.firstName}}, {{booking.lastName}}</td>
+                        <td class="' py-2">{{booking.email}}</td>
+                        <td class="' py-2">{{booking.phone}}</td>
+                        <td class="' py-2">{{booking.trip.tripDate | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{booking.status}}</td>
+                        <td class="' py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
                             
-                            <button (click)="displayUser = true; populateUser(user)" class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
-                            <button (click)="confirmDelete(user._id)" class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button>
+                            <button (click)="displayBooking = true; populateBooking(booking)" class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
+                            <button (click)="confirmDelete(booking._id)" class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button>
                         </td>
                      
                     </tr>
@@ -86,9 +88,9 @@
 </div>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{}"></p-confirmDialog>
-<p-dialog header="{{submitType}}  User" [(visible)]="displayUser" [modal]="true" showEffect="fade"
+<p-dialog header="{{submitType}}  Booking" [(visible)]="displayBooking" [modal]="true" showEffect="fade"
 [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
-<form [formGroup]="userForm">
+<form [formGroup]="bookingForm">
     <div class="">
         <span class=" w-full mb-1">
             <span class="block w-full mb-3"> First Name </span>
@@ -144,7 +146,7 @@
             id="state-help" class="p-error">Please enter state</small>
 
         <button [loading]="loading" pButton pRipple label="Submit" class="w-full mt-8 text-white p-3 rounded bg-primary-700"
-            (click)="submitUser()"></button>
+            (click)="submitBooking()"></button>
     </div>
 </form>
 <ng-template pTemplate="footer">

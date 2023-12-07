@@ -6,7 +6,9 @@ import { AuthService } from './auth.service';
 const baseUrl = {
   jwt_token: 'TP_TOKEN',
   refresh_token: 'TP_REFRESH',
-  server: 'https://plankton-app-3hk2y.ondigitalocean.app/api/',
+  server: 'http://localhost:4000/api/',
+
+  // server: 'https://plankton-app-3hk2y.ondigitalocean.app/api/',
 
   refresh: 'token/refresh/',
 

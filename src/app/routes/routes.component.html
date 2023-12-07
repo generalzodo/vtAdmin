@@ -1,4 +1,5 @@
 <div class="px-4 mx-auto  lg:px-12">
+
     <div class="relative overflow-hidden bg-white shadow-md border  dark:bg-gray-800 sm:rounded-lg p-1">
         <div
             class="flex flex-col px-4 py-3  lg:flex-row lg:items-center border-b border-gray-300  lg:justify-between lg:space-y-0 lg:space-x-4">
@@ -56,7 +57,7 @@
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="title" style="width:15%">Title <p-sortIcon field="title"></p-sortIcon></th>
+                        <th pSortableColumn="title" style="width:10%">Title <p-sortIcon field="title"></p-sortIcon></th>
                         <th pSortableColumn="origin" style="width:10%">Origin <p-sortIcon field="origin"></p-sortIcon>
                         </th>
                         <th pSortableColumn="destination" style="width:10%">Destination <p-sortIcon
@@ -67,7 +68,7 @@
                                 field="recurrentDays"></p-sortIcon></th>
                         <th pSortableColumn="totalTrips" style="width:10%">Trips per day <p-sortIcon
                                 field="totalTrips"></p-sortIcon></th>
-                        <th pSortableColumn="createdAt" style="width:10%">Creadted on <p-sortIcon
+                        <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
                         <th style="width:20%">Actions</th>
                     </tr>
