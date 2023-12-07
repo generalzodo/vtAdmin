@@ -1,0 +1,144 @@
+<div class="px-4 mx-auto  lg:px-12">
+    <div class="relative overflow-hidden bg-white shadow-md border  dark:bg-gray-800 sm:rounded-lg p-1">
+        <div
+            class="flex flex-col px-4 py-3  lg:flex-row lg:items-center border-b border-gray-300  lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div class="flex items-center flex-1 space-x-4">
+                <div class="w-full md:w-1/2">
+                    <form class="flex items-center">
+                        <label for="simple-search" class="sr-only">Search</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                    fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <input state="text" id="simple-search"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Search" required="">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div
+                class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+                <h5>
+                    <span class="text-gray-500">All Trips:</span>
+                    <span class="dark:text-white"> {{trips.length}}</span>
+                </h5>
+
+                <button state="button" (click)="showDialog()"
+                    class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Export
+                </button>
+                <button state="button" (click)="showDialog(); submitType ='Add'"
+                    class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                    <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path clip-rule="evenodd" fill-rule="evenodd"
+                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                    </svg>
+                    Add new trip
+                </button>
+
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <p-table [value]="trips" [paginator]="true" [rows]="10"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pSortableColumn="firstName" style="width:10%">Title <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Date <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Route <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Available Seats <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="createdAt" style="width:10%">Creadted on <p-sortIcon
+                                field="createdAt"></p-sortIcon></th>
+                        <th style="width:20%">Actions</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-trip>
+                    <tr class="border-b border-gray-300">
+
+                        <td class="' py-2">{{trip.title}}</td>
+                        <td class="' py-2">{{trip.tripDate | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{trip.route.title}}</td>
+                        <td class="' py-2">{{trip.driver.firstName}} {{trip.driver.lastName}}</td>
+                        <td class="' py-2">{{trip.availableSeats}}</td>
+                        <td class="' py-2">{{trip.status}}</td>
+                        <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
+                        <td>
+
+                            <button (click)="displayTrip = true; populateTrip(trip)"
+                                class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
+                            <button (click)="confirmDelete(trip._id)"
+                                class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button>
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{}"></p-confirmDialog>
+<p-dialog header="{{submitType}}  Trip" [(visible)]="displayTrip" [modal]="true" showEffect="fade"
+    [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
+    <form [formGroup]="tripForm">
+        <div class="">
+
+            <span class=" w-full mb-1">
+                <span class="block w-full mb-3"> Title </span>
+
+                <input id="title" state="text" pInputText formControlName="title"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.title.errors }" class="border w-full p-3 rounded"
+                    placeholder="Title">
+            </span>
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Route </span>
+
+                <p-dropdown [options]="routes" optionValue="_id" placeholder="Select a route" formControlName="route"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.route.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
+            </span>
+            <small class="w-ful inline-block " *ngIf="f.route.hasError('required') && f.route.touched" id="state-help"
+                class="p-error">Please select route </small>
+
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Driver </span>
+
+                <p-dropdown [options]="drivers" optionValue="_id" placeholder="Select a driver"
+                    formControlName="driver" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.driver.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="firstName"></p-dropdown>
+            </span>
+            <small class="w-ful inline-block " *ngIf="f.driver.hasError('required') && f.driver.touched" id="state-help"
+                class="p-error">Please select driver </small>
+
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Trip Date </span>
+                <p-calendar placeholder="Trip Date" class="rounded-lg"
+                    styleClass="w-full  !border-gray-300 border-round-md py-2" formControlName="tripDate"></p-calendar>
+            </span>
+            <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
+                class="p-error">Please select trip date</small>
+
+            <button [loading]="loading" pButton pRipple label="Submit"
+                class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitTrip()"></button>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <!-- <button pButton icon="pi pi-check" (click)="displayFaq=false" label="Ok" class="p-button-outlined"></button> -->
+    </ng-template>
+</p-dialog>
