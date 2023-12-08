@@ -2,7 +2,7 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 // import states from '.../locations/states.json';
 import { HttpService } from 'src/services/http.service';
-import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-routes',
@@ -115,7 +115,7 @@ export class RoutesComponent implements OnInit {
   populateRoute(route: any) {
     this.submitType = 'Edit';
     this.currentID = route._id
-    this.routeForm.setValue({ title: route.title,bus: route.bus, price: route.price, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
+    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
   }
 
   submitRoute() {

@@ -15,7 +15,9 @@ export class BusesComponent implements OnInit {
   buses: any = []
   types: any  = [
     {title: 'Toyota Hiace Bus'},
-    {title: 'Toyota Sienna'}
+    {title: 'Toyota Sienna'},
+    {title: 'JAC'},
+    {title: 'Cargo 1'}
   ]
   visible: boolean = false;
   busForm: any;
