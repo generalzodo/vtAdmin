@@ -104,7 +104,7 @@ createLocation(data: any) {
       // this.listing = data.data
       this.loading = false
       this.displayLocation = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Location created successfully' });
+      this.service.add({  severity: 'success', summary: 'Successful', detail: 'Location created successfully' });
 
       this.pullLocations();
       this.locationForm.reset()
@@ -127,7 +127,7 @@ updateLocation(data: any) {
       // this.listing = data.data
       this.loading = false
       this.displayLocation = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Location updated successfully' });
+      this.service.add({  severity: 'success', summary: 'Successful', detail: 'Location updated successfully' });
 
       this.pullLocations()
       this.currentID = ''

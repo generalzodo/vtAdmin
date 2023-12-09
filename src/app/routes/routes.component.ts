@@ -144,7 +144,7 @@ export class RoutesComponent implements OnInit {
         // this.listing = data.data
         this.loading = false
         this.displayRoute = false
-        this.messageService.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Route created successfully' });
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'Route created successfully' });
 
         this.pullRoutes();
         this.routeForm.reset()
@@ -167,7 +167,7 @@ export class RoutesComponent implements OnInit {
         // this.listing = data.data
         this.loading = false
         this.displayRoute = false
-        this.messageService.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Route updated successfully' });
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'Route updated successfully' });
 
         this.pullRoutes()
         this.currentID = ''

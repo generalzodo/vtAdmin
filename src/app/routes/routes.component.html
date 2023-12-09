@@ -58,24 +58,26 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="title" style="width:10%">Title <p-sortIcon field="title"></p-sortIcon></th>
+                        <th pSortableColumn="title" style="width:10%">Price <p-sortIcon field="title"></p-sortIcon></th>
                         <th pSortableColumn="origin" style="width:10%">Origin <p-sortIcon field="origin"></p-sortIcon>
                         </th>
                         <th pSortableColumn="destination" style="width:10%">Destination <p-sortIcon
                                 field="destination"></p-sortIcon></th>
                                 <th pSortableColumn="destination" style="width:10%">Bus <p-sortIcon
                                     field="destination"></p-sortIcon></th>
-                        <th pSortableColumn="recurrentDays" style="width:20%">Route's Days <p-sortIcon
+                        <th pSortableColumn="recurrentDays" style="width:15%">Route's Days <p-sortIcon
                                 field="recurrentDays"></p-sortIcon></th>
                         <th pSortableColumn="totalTrips" style="width:10%">Trips per day <p-sortIcon
                                 field="totalTrips"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
-                        <th style="width:20%">Actions</th>
+                        <th style="width:15%">Actions</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-route>
                     <tr class="border-b border-gray-300">
                         <td class="' py-2">{{route.title}}</td>
+                        <td class="' py-2">{{route.price}}</td>
                         <td class="' py-2">{{route.origin}}</td>
                         <td class="' py-2">{{route.destination}}</td>
                         <td class="' py-2">{{route.bus.title}}</td>

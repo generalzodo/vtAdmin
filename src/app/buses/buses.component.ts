@@ -113,7 +113,7 @@ createBus(data: any) {
       // this.listing = data.data
       this.loading = false
       this.displayBus = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Bus created successfully' });
+      this.service.add({  severity: 'success', summary: 'Successful', detail: 'Bus created successfully' });
 
       this.pullBuses();
       this.busForm.reset()
@@ -136,7 +136,7 @@ updateBus(data: any) {
       // this.listing = data.data
       this.loading = false
       this.displayBus = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Bus updated successfully' });
+      this.service.add({  severity: 'success', summary: 'Successful', detail: 'Bus updated successfully' });
 
       this.pullBuses()
       this.currentID = ''

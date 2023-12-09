@@ -132,7 +132,7 @@ export class TripsComponent implements OnInit {
         // this.listing = data.data
         this.loading = false
         this.displayTrip = false
-        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Trip created successfully' });
+        this.service.add({ severity: 'success', summary: 'Successful', detail: 'Trip created successfully' });
 
         this.pullTrips();
         this.tripForm.reset()
@@ -155,7 +155,7 @@ export class TripsComponent implements OnInit {
         // this.listing = data.data
         this.loading = false
         this.displayTrip = false
-        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Trip updated successfully' });
+        this.service.add({  severity: 'success', summary: 'Successful', detail: 'Trip updated successfully' });
 
         this.pullTrips()
         this.currentID = ''
