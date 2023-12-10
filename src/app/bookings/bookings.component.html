@@ -71,7 +71,7 @@
                         <td class="' py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="' py-2">{{booking.email}}</td>
                         <td class="' py-2">{{booking.phone}}</td>
-                        <td class="' py-2">{{booking.trip.tripDate | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{booking.trip?.tripDate | date: 'dd/MM/yyyy'}}</td>
                         <td class="' py-2">{{booking.status}}</td>
                         <td class="' py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
