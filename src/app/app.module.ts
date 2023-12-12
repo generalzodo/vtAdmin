@@ -29,6 +29,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BookingsComponent } from './bookings/bookings.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,6 +63,7 @@ import { BookingsComponent } from './bookings/bookings.component';
     MessagesModule,
     MultiSelectModule, 
     CalendarModule,
+    OverlayPanelModule,
     DropdownModule],
   providers: [],
   bootstrap: [AppComponent]

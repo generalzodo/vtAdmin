@@ -26,10 +26,11 @@ export class TripsComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.tripForm = this.fb.group({
-      title: [undefined, Validators.required],
-      route: [undefined, Validators.required],
-      driver: [undefined, Validators.required],
-      tripDate: [undefined, Validators.required],
+      // title: [undefined, Validators.required],
+      time: [undefined, ],
+      // route: [undefined, Validators.required],
+      driver: [undefined,],
+      tripDate: [undefined, ],
 
     })
   }
@@ -103,7 +104,7 @@ export class TripsComponent implements OnInit {
   populateTrip(trip: any) {
     this.submitType = 'Edit';
     this.currentID = trip._id
-    // this.tripForm.setValue({ p, address: trip.address, state: trip.state })
+    this.tripForm.patchValue({ time: trip.time, tripDate: trip.tripDate, driver: trip.driver?._id })
   }
 
   submitTrip() {

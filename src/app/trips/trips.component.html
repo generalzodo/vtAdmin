@@ -56,16 +56,17 @@
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="firstName" style="width:10%">Title <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:15%">Title <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Date <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:10%">Route <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:5%">Time <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:15%">Route <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Available Seats <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon>
                         </th>
                         <th pSortableColumn="createdAt" style="width:10%">Creadted on <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
-                        <th style="width:20%">Actions</th>
+                        <th style="width:10%">Actions</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-trip>
@@ -73,6 +74,7 @@
 
                         <td class="' py-2">{{trip.title}}</td>
                         <td class="' py-2">{{trip.tripDate | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{trip.time}}</td>
                         <td class="' py-2">{{trip.route.title}}</td>
                         <td class="' py-2">{{trip.driver?.firstName}} {{trip.driver?.lastName}}</td>
                         <td class="' py-2">{{trip.availableSeats}}</td>
@@ -80,10 +82,31 @@
                         <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
 
-                            <button (click)="displayTrip = true; populateTrip(trip)"
+                            <button (click)="op.toggle($event)" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
+                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                            </button>
+                            <p-overlayPanel #op styleClass="p-0">
+                            <div id="apple-imac-27-dropdown" class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+                                    <li>
+                                        <a href="javascript:void(0)" (click)="displayTrip = true; populateTrip(trip)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                    </li>
+                                    <!-- <li>
+                                        <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                    </li> -->
+                                </ul>
+                                <div class="py-1">
+                                    <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                </div>
+                            </div>
+                        </p-overlayPanel>
+
+                            <!-- <button (click)="displayTrip = true; populateTrip(trip)"
                                 class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
                             <button (click)="confirmDelete(trip._id)"
-                                class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button>
+                                class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button> -->
                         </td>
 
                     </tr>
@@ -99,7 +122,7 @@
     <form [formGroup]="tripForm">
         <div class="">
 
-            <span class=" w-full mb-1">
+            <!-- <span class=" w-full mb-1">
                 <span class="block w-full mb-3"> Title </span>
 
                 <input id="title" state="text" pInputText formControlName="title"
@@ -114,7 +137,7 @@
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
             </span>
             <small class="w-ful inline-block " *ngIf="f.route.hasError('required') && f.route.touched" id="state-help"
-                class="p-error">Please select route </small>
+                class="p-error">Please select route </small> -->
 
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Driver </span>
@@ -123,16 +146,27 @@
                     formControlName="driver" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.driver.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="firstName"></p-dropdown>
             </span>
-            <small class="w-ful inline-block " *ngIf="f.driver.hasError('required') && f.driver.touched" id="state-help"
-                class="p-error">Please select driver </small>
+            <!-- <small class="w-ful inline-block " *ngIf="f.driver.hasError('required') && f.driver.touched" id="state-help"
+                class="p-error">Please select driver </small> -->
 
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Trip Date </span>
                 <p-calendar placeholder="Trip Date" class="rounded-lg"
                     styleClass="w-full  !border-gray-300 border-round-md py-2" formControlName="tripDate"></p-calendar>
             </span>
-            <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
-                class="p-error">Please select trip date</small>
+            
+            <!-- <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
+                class="p-error">Please select trip date</small> -->
+
+                <span class=" w-full mb-1">
+                    <span class="block w-full mb-3"> Depature time </span>
+    
+                    <input id="title" state="text" pInputText formControlName="time"
+                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
+                        placeholder="Depature time">
+                </span>
+                <!-- <small class="w-ful inline-block " *ngIf="f.time.hasError('required') && f.time.touched" id="state-help"
+                class="p-error">Please enter depature time </small> -->
 
             <button [loading]="loading" pButton pRipple label="Submit"
                 class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitTrip()"></button>
