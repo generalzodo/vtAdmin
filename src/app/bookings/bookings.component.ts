@@ -20,6 +20,8 @@ export class BookingsComponent implements OnInit {
   submitType: string = '';
   displayBooking: boolean = false;
   currentID: any;
+  bookingInfoShow: boolean =  false;
+  bookingInfo: any;
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.bookingForm = this.fb.group({
@@ -39,6 +41,11 @@ export class BookingsComponent implements OnInit {
   showDialog() {
 
     this.displayBooking = true;
+  }
+
+  showBookingDialog(data:any) {
+    this.bookingInfoShow = true;
+    this.bookingInfo = data
   }
 
   pullBookings() {

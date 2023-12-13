@@ -146,6 +146,10 @@ export class TripsComponent implements OnInit {
       });
   }
 
+  markAsCompleted(){
+    this.updateTrip({status: 'completed'})
+  }
+
   updateTrip(data: any) {
 
     this.httpService
