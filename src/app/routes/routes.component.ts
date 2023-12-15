@@ -40,6 +40,8 @@ export class RoutesComponent implements OnInit {
       destination: [undefined, Validators.required],
       origin: [undefined, Validators.required],
       price: [undefined, Validators.required],
+      premiumPrice: [undefined, Validators.required],
+      discountedPrice: [undefined, Validators.required],
       bus: [undefined, Validators.required],
       recurrentDays: [undefined, Validators.required],
       totalTrips: [undefined, Validators.required],
@@ -115,7 +117,8 @@ export class RoutesComponent implements OnInit {
   populateRoute(route: any) {
     this.submitType = 'Edit';
     this.currentID = route._id
-    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
+    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, premiumPrice: route.premiumPrice,
+      discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
   }
 
   submitRoute() {
