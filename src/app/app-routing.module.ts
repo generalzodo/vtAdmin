@@ -11,7 +11,7 @@ import { BookingsComponent } from './bookings/bookings.component';
 
 const routes: Routes = [
   {
-    path: '', component: DashboardComponent,
+    path: '', component: BookingsComponent,
 
   },
   { path: 'users', component: UsersComponent },
