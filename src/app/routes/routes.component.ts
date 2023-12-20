@@ -33,8 +33,28 @@ export class RoutesComponent implements OnInit {
   currentID: any;
   locations: any;
   buses: any = [];
-  times: any = ["06:00 AM", "06:30 AM", "07:00 AM", "07:30 AM", "08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM"]
-
+  times: any = [
+    {"title": "06:00 AM"},
+    {"title": "06:30 AM"},
+    {"title": "07:00 AM"},
+    {"title": "07:30 AM"},
+    {"title": "08:00 AM"},
+    {"title": "08:30 AM"},
+    {"title": "09:00 AM"},
+    {"title": "09:30 AM"},
+    {"title": "10:00 AM"},
+    {"title": "10:30 AM"},
+    {"title": "11:00 AM"},
+    {"title": "11:30 AM"},
+    {"title": "12:00 PM"},
+    {"title": "12:30 PM"},
+    {"title": "01:00 PM"},
+    {"title": "01:30 PM"},
+    {"title": "02:00 PM"},
+    {"title": "02:30 PM"},
+    {"title": "03:00 PM"}
+  ]
+  
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.routeForm = this.fb.group({
       title: [undefined, Validators.required],
