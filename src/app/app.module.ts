@@ -30,6 +30,7 @@ import { MessagesModule } from 'primeng/messages';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BookingsComponent } from './bookings/bookings.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 @NgModule({
   declarations: [
     AppComponent,
@@ -64,6 +65,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     MultiSelectModule, 
     CalendarModule,
     OverlayPanelModule,
+    ConfirmPopupModule,
     DropdownModule],
   providers: [],
   bootstrap: [AppComponent]
