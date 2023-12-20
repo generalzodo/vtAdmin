@@ -179,8 +179,9 @@
                 <span class="block w-full mb-1"> Discounted Price </span>
                 <input formControlName="discountedPrice" class="border w-full p-3 rounded" placeholder="Route Price">
             </span>
-            <small class="w-ful mb-4 inline-block" *ngIf="f.discountedPrice.hasError('required') && f.discountedPrice.touched"
-                id="address-help" class="p-error">Please enter discounted price</small>
+            <small class="w-ful mb-4 inline-block"
+                *ngIf="f.discountedPrice.hasError('required') && f.discountedPrice.touched" id="address-help"
+                class="p-error">Please enter discounted price</small>
 
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Bus </span>
@@ -202,6 +203,17 @@
             </span>
             <small class="w-ful inline-block " *ngIf="f.recurrentDays.hasError('required') && f.recurrentDays.touched"
                 id="state-help" class="p-error">Please select recurrent days</small>
+            <span class="w-full mb-1 block mt-8">
+
+                <span class="block w-full mb-1">Routes trip times </span>
+
+                <p-multiSelect [options]="times" optionValue="day" placeholder="Select route's possible times"
+                    formControlName="times"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.times.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="day"></p-multiSelect>
+            </span>
+            <small class="w-ful inline-block " *ngIf="f.times.hasError('required') && f.times.touched"
+                id="state-help" class="p-error">Please select possible times</small>
 
             <span class=" w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Total Trips per day </span>

@@ -33,6 +33,7 @@ export class RoutesComponent implements OnInit {
   currentID: any;
   locations: any;
   buses: any = [];
+  times: any = ["06:00 AM", "06:30 AM", "07:00 AM", "07:30 AM", "08:00 AM", "08:30 AM", "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM"]
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.routeForm = this.fb.group({
@@ -41,6 +42,7 @@ export class RoutesComponent implements OnInit {
       origin: [undefined, Validators.required],
       price: [undefined, Validators.required],
       premiumPrice: [undefined, Validators.required],
+      times: [undefined, Validators.required],
       discountedPrice: [undefined, Validators.required],
       bus: [undefined, Validators.required],
       recurrentDays: [undefined, Validators.required],
@@ -117,7 +119,7 @@ export class RoutesComponent implements OnInit {
   populateRoute(route: any) {
     this.submitType = 'Edit';
     this.currentID = route._id
-    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, premiumPrice: route.premiumPrice,
+    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, premiumPrice: route.premiumPrice, times:route.times,
       discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
   }
 
