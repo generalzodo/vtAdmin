@@ -156,6 +156,7 @@ export class TripsComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Records deleted' });
 
         this.pullTrips()
+        this.selectedRecordIds = []
       });
   }
   populateTrip(trip: any) {
