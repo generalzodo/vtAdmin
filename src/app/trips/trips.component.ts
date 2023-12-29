@@ -150,7 +150,7 @@ export class TripsComponent implements OnInit {
 
     this.httpService
       .postAuthData(
-        '/trips/deleteTrips/', {ids: this.selectedRecordIds}
+        'trips/deleteTrips/', {ids: this.selectedRecordIds}
       )
       .subscribe((data: any) => {
         this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Records deleted' });
