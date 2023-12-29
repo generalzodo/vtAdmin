@@ -15,7 +15,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input state="text" id="simple-search"
+                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Search" required="">
                         </div>
@@ -51,7 +51,9 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table [value]="bookings"  [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+            <p-table [value]="bookings"  #dt1
+            [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status']"
+              [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
                         <th pSortableColumn="firstName" style="width:15%">BookingId <p-sortIcon field="firstName"></p-sortIcon></th>
@@ -71,7 +73,7 @@
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.email}}</td>
                         <td class="py-2">{{booking.phone}}</td>
-                        <td class="py-2">{{booking.trip?.tripDate | date: 'dd/MM/yyyy'}}</td>
+                        <td class="py-2">{{booking.trip?.tripDate }}</td>
                         <td class="py-2 capitalize">{{booking.status}}</td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
@@ -181,82 +183,130 @@
 </p-dialog>
 
 <p-dialog header="Booking Info" [(visible)]="bookingInfoShow" [modal]="true" [draggable]="false" [resizable]="false">
-    <div class="lg:w-full w-[40vh]">
-
-    <h1 class="text-xl mb-4 mt-3">#{{bookingInfo?.uniqueBookingId}}</h1>
-
-    <h4 class="text-base font-semibold mt-5 mb-3">Traveller Information</h4>
-    <div class="grid grid-cols-1 lg:grid-cols-4">
-        <div class="border border-gray-100 m-2 p-2">
-            <small>First Name</small>
-            <p>{{bookingInfo?.firstName}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Middle Name</small>
-            <p>{{bookingInfo?.middleName}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Last Name</small>
-            <p>{{bookingInfo?.lastName}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Email</small>
-            <p>{{bookingInfo?.email}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Phone</small>
-            <p>{{bookingInfo?.phone}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Date of Birth</small>
-            <p>{{bookingInfo?.dob | date: 'dd/MM/yyyy' }}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Gender</small>
-            <p>{{bookingInfo?.gender}}</p>
-        </div>
-
+    <div id="pdfContnent" class="lg:w-full w-[40vh]">
+        <p>
+            <img src="assets/img/logo.png" class="mr-3 h-6 sm:h-9" alt=" Logo" />
+    
+        </p>
+        <p class="font-bold text-2xl mt-12">
+            <svg class="" height="60" viewBox="0 0 60 60" width="60" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <style>
+                        .cls-1 {
+                            fill: #699f4c;
+                            fill-rule: evenodd;
+                        }
+                    </style>
+                </defs>
+                <path class="cls-1"
+                    d="M800,510a30,30,0,1,1,30-30A30,30,0,0,1,800,510Zm-16.986-23.235a3.484,3.484,0,0,1,0-4.9l1.766-1.756a3.185,3.185,0,0,1,4.574.051l3.12,3.237a1.592,1.592,0,0,0,2.311,0l15.9-16.39a3.187,3.187,0,0,1,4.6-.027L817,468.714a3.482,3.482,0,0,1,0,4.846l-21.109,21.451a3.185,3.185,0,0,1-4.552.03Z"
+                    id="check" transform="translate(-770 -450)" />
+            </svg>
+            TICKET CONFIRMED
+        </p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 mt-8">
+    
+        <h1 class="text-xl mb-5 mt-1">#{{bookingInfo?.uniqueBookingId}}</h1>
+        <h1 class="text-xl mb-5 mt-1 text-right">Total Amount Paid: <strong>₦{{bookingInfo?.tripAmount+ bookingInfo?.returnAmount}} </strong></h1>
+        
     </div>
-    <h4 class="text-base font-semibold mt-5 mb-3">Emergency Contact</h4>
-    <div class="grid grid-cols-1 lg:grid-cols-4">
-
-        <div class="border border-gray-100 m-2 p-2">
-            <small>First Name</small>
-            <p>{{bookingInfo?.emergencyFirstName}}</p>
+        <h4 class="text-base font-semibold mt-10 mb-3">Traveller Information</h4>
+        <div class="grid grid-cols-1 lg:grid-cols-4">
+            <div class="border border-gray-100 m-2 p-2">
+                <small>First Name</small>
+                <p class="font-semibold">{{bookingInfo?.firstName}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Middle Name</small>
+                <p class="font-semibold">{{bookingInfo?.middleName}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Last Name</small>
+                <p class="font-semibold">{{bookingInfo?.lastName}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Email</small>
+                <p class="font-semibold">{{bookingInfo?.email}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Phone</small>
+                <p class="font-semibold">{{bookingInfo?.phone}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Date of Birth</small>
+                <p class="font-semibold">{{bookingInfo?.dob | date: 'dd/MM/yyyy' }}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Gender</small>
+                <p class="font-semibold">{{bookingInfo?.gender}}</p>
+            </div>
+    
         </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Last Name</small>
-            <p>{{bookingInfo?.emergencyLastName}}</p>
+        <h4 class="text-base font-semibold mt-5 mb-3">Emergency Contact</h4>
+        <div class="grid grid-cols-1 lg:grid-cols-4">
+    
+            <div class="border border-gray-100 m-2 p-2">
+                <small>First Name</small>
+                <p class="font-semibold">{{bookingInfo?.emergencyFirstName}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Last Name</small>
+                <p class="font-semibold">{{bookingInfo?.emergencyLastName}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Phone </small>
+                <p class="font-semibold">{{bookingInfo?.emergencyPhone}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Emial </small>
+                <p class="font-semibold">{{bookingInfo?.emergencyEmail}}</p>
+            </div>
         </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Phone </small>
-            <p>{{bookingInfo?.emergencyPhone}}</p>
+    
+        <h4 class="text-base font-semibold mt-5 mb-3">Trip Information</h4>
+        <div class="grid grid-cols-1 lg:grid-cols-4 ">
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Trip Route</small>
+                <p class="font-semibold">{{bookingInfo?.trip.title}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Trip Date</small>
+                <p class="font-semibold">{{bookingInfo?.trip.tripDate | date: 'dd/MM/yyyy' }} {{bookingInfo?.trip.time}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Seat No. </small>
+                <p class="font-semibold">{{bookingInfo?.tripSeat}}</p>
+            </div>
+            <div class="border border-gray-100 m-2 p-2">
+                <small>Price </small>
+                <p class="font-semibold">₦{{bookingInfo?.tripAmount}}</p>
+            </div>
         </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Emial </small>
-            <p>{{bookingInfo?.emergencyEmail}}</p>
+        <div *ngIf="bookingInfo?.returnTrip" >
+    
+            <h4 class="text-base font-semibold mt-5 mb-3">Return Trip Information</h4>
+            <div class="grid grid-cols-1 lg:grid-cols-4">
+                <div class="border border-gray-100 m-2 p-2">
+                    <small>Trip Route</small>
+                    <p class="font-semibold">{{bookingInfo?.returnTrip.title}}</p>
+                </div>
+                <div class="border border-gray-100 m-2 p-2">
+                    <small>Trip Date</small>
+                    <p class="font-semibold">{{bookingInfo?.returnTrip.tripDate | date: 'dd/MM/yyyy' }} {{bookingInfo?.returnTrip.time}}
+                    </p>
+                </div>
+    
+                <div class="border border-gray-100 m-2 p-2">
+                    <small>Seat No. </small>
+                    <p class="font-semibold">{{bookingInfo?.returnSeat}}</p>
+                </div>
+                <div class="border border-gray-100 m-2 p-2">
+                    <small>Price </small>
+                    <p class="font-semibold">₦{{bookingInfo?.returnAmount}}</p>
+                </div>
+            </div>
         </div>
+    
     </div>
-
-    <h4 class="text-base font-semibold mt-5 mb-3">Trip Information</h4>
-    <div class="grid grid-cols-1 lg:grid-cols-4">
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Trip Route</small>
-            <p>{{bookingInfo?.trip?.title}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Trip Date</small>
-            <p>{{bookingInfo?.trip?.tripDate}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Time </small>
-            <p>{{bookingInfo?.trip?.time}}</p>
-        </div>
-        <div class="border border-gray-100 m-2 p-2">
-            <small>Seat No. </small>
-            <p>{{bookingInfo?.tripSeat}}</p>
-        </div>
-    </div>
-</div>
 
 </p-dialog>

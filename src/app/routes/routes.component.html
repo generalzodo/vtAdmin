@@ -52,7 +52,9 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table [value]="routes" [paginator]="true" [rows]="10"
+            <p-table  #dt1
+            [globalFilterFields]="['title', 'origin', 'destination','status', 'bus.title']"
+            [value]="routes" [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
