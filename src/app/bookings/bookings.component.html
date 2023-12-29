@@ -86,6 +86,14 @@
                                     <li>
                                         <a href="javascript:void(0)" (click)="showBookingDialog(booking)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View Booking</a>
                                     </li>
+                                    <li *ngIf="booking.status != 'Used'" >
+                                        <a href="javascript:void(0)" (click)="markAsUsed(booking, 'Used')"
+                                            class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Marked as used</a>
+                                    </li>
+                                    <li *ngIf="booking.status == 'Used'" >
+                                        <a href="javascript:void(0)" (click)="markAsUsed(booking, 'Pending')"
+                                            class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Marked as unused</a>
+                                    </li>
                                     <li>
                                         <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                     </li>
@@ -234,15 +242,15 @@
     <div class="grid grid-cols-1 lg:grid-cols-4">
         <div class="border border-gray-100 m-2 p-2">
             <small>Trip Route</small>
-            <p>{{bookingInfo?.trip.title}}</p>
+            <p>{{bookingInfo?.trip?.title}}</p>
         </div>
         <div class="border border-gray-100 m-2 p-2">
             <small>Trip Date</small>
-            <p>{{bookingInfo?.trip.tripDate}}</p>
+            <p>{{bookingInfo?.trip?.tripDate}}</p>
         </div>
         <div class="border border-gray-100 m-2 p-2">
             <small>Time </small>
-            <p>{{bookingInfo?.trip.time}}</p>
+            <p>{{bookingInfo?.trip?.time}}</p>
         </div>
         <div class="border border-gray-100 m-2 p-2">
             <small>Seat No. </small>

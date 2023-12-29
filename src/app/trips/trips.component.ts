@@ -23,6 +23,8 @@ export class TripsComponent implements OnInit {
   buses: any;
   routes: any;
   drivers: any;
+  selectedRecordIds: any = [];
+  checkAllStatus:boolean = false
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.tripForm = this.fb.group({
@@ -90,6 +92,49 @@ export class TripsComponent implements OnInit {
     });
   }
 
+  confirmMultipleDelete() {
+    if(this.selectedRecordIds.length == 0){
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Please select records to delete' });
+      return
+    }
+    this.confirmationService.confirm({
+      message: 'Do you want to delete '+this.selectedRecordIds.length +' records?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.deleteSelectedTrips()
+      },
+      reject: () => {
+
+      }
+    });
+  }
+
+  async checkAll(){
+    if(this.checkAllStatus == true){
+      for await (const it of this.trips) {
+        if(!this.selectedRecordIds.includes(it._id)){
+          this.selectedRecordIds.push(it._id)
+        }
+      }
+    }else{
+      this.selectedRecordIds = []
+    }
+  }
+  onRecordSelectionChange(record: any): void {
+    const index = this.selectedRecordIds.indexOf(record._id);
+
+    if (index < 0) {
+      // Add to the array if selected
+      this.selectedRecordIds.push(record._id);
+      
+    } else {
+      // Remove from the array if deselected
+        this.selectedRecordIds.splice(index, 1);
+    }
+    console.log(this.selectedRecordIds);
+    
+  }
   deleteTrips(id: any) {
     this.httpService
       .deleteData(
@@ -97,6 +142,18 @@ export class TripsComponent implements OnInit {
       )
       .subscribe((data: any) => {
         this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
+
+        this.pullTrips()
+      });
+  }
+  deleteSelectedTrips() {
+
+    this.httpService
+      .postAuthData(
+        '/trips/deleteTrips/', {ids: this.selectedRecordIds}
+      )
+      .subscribe((data: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Records deleted' });
 
         this.pullTrips()
       });

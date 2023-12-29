@@ -126,12 +126,16 @@ createBooking(data: any) {
       console.log('====================================');
     });
 }
+markAsUsed(booking:any, status: String){
+this.currentID = booking._id
+this.updateBooking({status: status})
+}
 
 updateBooking(data: any) {
 
   this.httpService
     .updateData(
-      'bookings/' + this.currentID, data
+      'booking/' + this.currentID, data
     )
     .subscribe((data: any) => {
       // this.listing = data.data
