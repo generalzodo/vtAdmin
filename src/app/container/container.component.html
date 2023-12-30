@@ -10,8 +10,8 @@
     <p><img src="assets/img/logo.png" alt="" class="w-3/4 mx-auto"></p>
    
        <ul class="pt-5 mt-5 space-y-2 border-t border-gray-200 dark:border-gray-700">
-           <li>
-               <a href="javascript:void(0)" [routerLink]="item.url" *ngFor="let item of menus"  class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white group">
+           <li  >
+               <a href="javascript:void(0)" [routerLink]="item.url" [ngClass]="{'bg-primary-200 text-primary-800 font-bold':item.url == this.currentRoute}" (click)="view()"  *ngFor="let item of menus"  class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg transition duration-75 hover:bg-primary-300 dark:hover:bg-gray-700 dark:text-white group">
                    <span class="ml-3">{{item.title}}</span>
                </a>
            </li>
