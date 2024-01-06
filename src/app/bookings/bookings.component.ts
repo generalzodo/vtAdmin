@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+import * as html2pdf from 'html2pdf.js';
 
 @Component({
   selector: 'app-bookings',
@@ -47,7 +48,18 @@ export class BookingsComponent implements OnInit {
     this.bookingInfoShow = true;
     this.bookingInfo = data
   }
+  convertToPDF() {
+    const element = document.getElementById('pdfContnent').innerHTML;
+    const options = {
+      margin: 10,
+      filename: 'vt_ticket.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
+    html2pdf(element, options);
+  }
   pullBookings() {
     this.httpService
       .getAuthData(

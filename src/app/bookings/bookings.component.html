@@ -15,7 +15,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search keyword" 
+                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" 
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Search" required="">
                         </div>
@@ -58,9 +58,10 @@
                     <tr>
                         <th pSortableColumn="firstName" style="width:15%">BookingId <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:15%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="address" style="width:15%">Email <p-sortIcon field="address"></p-sortIcon></th>
                         <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Travel Date <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:10%">Amount <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:10%">Payment ref <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon field="createdAt"></p-sortIcon></th>
                         <th style="width:15%">Actions</th>
@@ -71,9 +72,10 @@
 
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
-                        <td class="py-2">{{booking.email}}</td>
                         <td class="py-2">{{booking.phone}}</td>
                         <td class="py-2">{{booking.trip?.tripDate }}</td>
+                        <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
+                        <td class="py-2">{{booking.mode}}: {{booking.paystack_ref }}</td>
                         <td class="py-2 capitalize">{{booking.status}}</td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
@@ -183,7 +185,11 @@
 </p-dialog>
 
 <p-dialog header="Booking Info" [(visible)]="bookingInfoShow" [modal]="true" [draggable]="false" [resizable]="false">
-    <div id="pdfContnent" class="lg:w-full w-[40vh]">
+    <div class="text-right">
+        <button class="bg-primary-700 text-white px-3 py-2 mb-10" (click)="convertToPDF()">Download PDF</button>
+    </div>
+    
+    <div class="lg:w-full w-[40vh]">
         <p>
             <img src="assets/img/logo.png" class="mr-3 h-6 sm:h-9" alt=" Logo" />
     
@@ -206,10 +212,11 @@
         </p>
         <div class="grid grid-cols-1 lg:grid-cols-2 mt-8">
     
-        <h1 class="text-xl mb-5 mt-1">#{{bookingInfo?.uniqueBookingId}}</h1>
-        <h1 class="text-xl mb-5 mt-1 text-right">Total Amount Paid: <strong>₦{{bookingInfo?.tripAmount+ bookingInfo?.returnAmount}} </strong></h1>
-        
-    </div>
+            <h1 class="text-xl mb-5 mt-1">#{{bookingInfo?.uniqueBookingId}}</h1>
+            <h1 class="text-xl mb-5 mt-1 text-right">Total Amount Paid: <strong>₦{{bookingInfo?.tripAmount+
+                    bookingInfo?.returnAmount}} </strong></h1>
+    
+        </div>
         <h4 class="text-base font-semibold mt-10 mb-3">Traveller Information</h4>
         <div class="grid grid-cols-1 lg:grid-cols-4">
             <div class="border border-gray-100 m-2 p-2">
@@ -282,7 +289,7 @@
                 <p class="font-semibold">₦{{bookingInfo?.tripAmount}}</p>
             </div>
         </div>
-        <div *ngIf="bookingInfo?.returnTrip" >
+        <div *ngIf="bookingInfo?.returnTrip">
     
             <h4 class="text-base font-semibold mt-5 mb-3">Return Trip Information</h4>
             <div class="grid grid-cols-1 lg:grid-cols-4">
@@ -292,7 +299,8 @@
                 </div>
                 <div class="border border-gray-100 m-2 p-2">
                     <small>Trip Date</small>
-                    <p class="font-semibold">{{bookingInfo?.returnTrip.tripDate | date: 'dd/MM/yyyy' }} {{bookingInfo?.returnTrip.time}}
+                    <p class="font-semibold">{{bookingInfo?.returnTrip.tripDate | date: 'dd/MM/yyyy' }}
+                        {{bookingInfo?.returnTrip.time}}
                     </p>
                 </div>
     
@@ -308,5 +316,211 @@
         </div>
     
     </div>
-
+    
+    <div class="hidden" id="pdfContnent">
+        <div class="invoice-box ">
+            <table cellpadding="0" cellspacing="0">
+                <tr class="top">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td class="title">
+    
+                                    <img src="assets/img/logo.png" style="width: 100%; max-width: 300px" />
+                                </td>
+    
+                                <td>
+                                    #Ticket ID: {{bookingInfo?.uniqueBookingId}}<br />
+                                    Departure Date: {{bookingInfo?.trip?.tripDate}}<br />
+                                    <span *ngIf="bookingInfo?.returnTrip"> Return Date:
+                                        {{bookingInfo?.returnTrip.tripDate}}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+    
+                <tr class="information">
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    Victoria Travels<br />
+                                    Suite 15 Victoria Atorough<br />
+                                    Tyough Complex, Wurukum, Makurdi
+                                </td>
+    
+                                <td>
+                                    <p><strong>Terminal:
+                                        </strong>.<br />
+                                        Abuja-Makurdi-Jos-Gboko<br />
+                                        Mararaba-Keffi.</p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+    
+                <tr class="heading">
+                    <td width="44%">TRAVELLER'S INFORMATION</td>
+    
+                    <td width="56%">&nbsp;</td>
+                </tr>
+    
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">First name: <strong>{{bookingInfo?.firstName}}</strong></p>
+                            <!-- <p class="">Middle Name: <strong>{{bookingInfo?.middleName}}</strong></p> -->
+                            <p class="">Last Name: <strong>{{bookingInfo?.lastName}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">Phone: <strong>{{bookingInfo?.phone}}</strong></p>
+                            <p class="">Email: <strong>{{bookingInfo?.email}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-100 mb-4">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">Gender: <strong>{{bookingInfo?.gender}}</strong></p>
+                            <p class="">Date of Birth: <strong>{{bookingInfo?.dob | date: 'dd/MM/yyyy'}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="item">
+                    <td></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="heading mt-4">
+                    <td>EMERGENCY CONTACT</td>
+                    <td>&nbsp;</td>
+                </tr>
+    
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">First name: <strong>{{bookingInfo?.emergencyFirstName}}</strong></p>
+                            <!-- <p class="">Middle Name: <strong>{{bookingInfo?.middleName}}</strong></p> -->
+                            <p class="">Last Name: <strong>{{bookingInfo?.emergencyLastName}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">Phone: <strong>{{bookingInfo?.emergencyPhone}}</strong></p>
+                            <p class="">Email: <strong>{{bookingInfo?.emergencyEmail}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+    
+                <tr class="item">
+                    <td></td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="heading">
+                    <td>TRIP INFROMATION</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class=""> Trip Route: <strong>{{bookingInfo?.trip?.title}}</strong></p>
+                            <p class=""> Trip Date: <strong>{{bookingInfo?.trip?.tripDate}}
+                                    {{bookingInfo?.trip?.time}}</strong></p>
+    
+                            <!-- <td class="">Vehicle Type <strong>{{bookingInfo?.email}}</strong></td> -->
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+                            <p class="">Seat No: <strong>{{bookingInfo?.tripSeat}}</strong></p>
+    
+                            <p class="">Amount Paid: <strong>₦{{bookingInfo?.tripAmount}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+    
+                <tr *ngIf="bookingInfo?.returnTrip" class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+    
+                            <p class="">Return Trip Route: <strong>{{bookingInfo?.returnTrip.title}}</strong></p>
+                            <p class="">Return Trip Date: <strong>{{bookingInfo?.returnTrip.tripDate}}
+                                    {{bookingInfo?.returnTrip.time}}</strong>
+                            </p>
+    
+                            <!-- <td class="">Vehicle Type <strong>{{bookingInfo?.email}}</strong></td> -->
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="bookingInfo?.returnTrip" class="border-b border-gray-100">
+                    <td colspan="2">
+                        <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+                            <p class="">Seat No: <strong>{{bookingInfo?.returnSeat}}</strong></p>
+    
+                            <p class="">Amount Paid: <strong>₦{{bookingInfo?.returnAmount}}</strong></p>
+                        </div>
+                    </td>
+                </tr>
+    
+                <tr class="item">
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="heading">
+                    <td>FARE CONDITONS</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr class="">
+                    <td colspan="2">
+                        <p class="text-xs">1. The bus departs promptly as scheduled provided it is fully booked else the
+                            bus may be delayed
+                            to await more passengers to enable recovery of high fuel costs. Please endeavour to be at
+                            the
+                            bus station at least 15 mins before your bus departure time. Once the bus departs, it cannot
+                            be
+                            stopped for security reasons and to avoid causing inconveniences to passengers already
+                            onboard.
+                        </p>
+                        <p class="text-xs"><br>
+                            2. The bus stops at only the designated bus stations for security reasons.</p>
+                        <p class="text-xs"><br>
+                            3. You are entitled to a total luggage allowance of 10kg. Any luggage above 10kg will be
+                            charged
+                            at N100 per kg to a maximum of 25kg per bag subject to availability of boot space. If you
+                            choose
+                            to use our cargo service the luggage will be charged at N50 per kg. Oversized/irregular
+                            luggage
+                            can only be carried with the cargo service.</p>
+                        <p class="text-xs"><br>
+                            4. When you miss a bus (no show), we will issue you a new ticket at a discounted rate of
+                            ₦5,000.
+                            Fees to<br>
+                            reschedule your ticket before your bus departs: with more than 24 hrs to departure ₦3,000;
+                            with
+                            less than 24hrs to departure ₦4,000.</p>
+                        <p class="text-xs pb-[5px]"><br>
+                            5. There is no refund after your ticket is booked. See full <a href="#"> terms and
+                                conditions
+                            </a> of carriage on our website.<br>
+                            Safe Travels</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </p-dialog>

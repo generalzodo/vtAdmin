@@ -20,6 +20,7 @@
     "@angular/router": "^16.2.0",
     "@auth0/angular-jwt": "^5.2.0",
     "flowbite": "^2.2.0",
+    "html2pdf.js": "^0.10.1",
     "primeng": "^17.0.0-beta.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
