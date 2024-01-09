@@ -75,7 +75,7 @@
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.phone}}</td>
-                        <td class="py-2">{{booking.trip?.tripDate }}</td>
+                        <td class="py-2">{{booking.trip?.tripDate }} {{bookingInfo?.trip?.time}}</td>
                         <td class="py-2">{{booking.trip?.title }}</td>
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat" >| {{booking.returnSeat }} </span></td>
