@@ -25,6 +25,7 @@ export class TripsComponent implements OnInit {
   drivers: any;
   selectedRecordIds: any = [];
   checkAllStatus:boolean = false
+  currentTrip: any;
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.tripForm = this.fb.group({
@@ -57,7 +58,17 @@ export class TripsComponent implements OnInit {
         this.trips = data.data
       });
   }
-
+  
+  pullTripsManifest(id) {
+    this.httpService
+      .getAuthData(
+        'trips/manifest/'+id
+      )
+      .subscribe((data: any) => {
+        this.currentTrip = data.data
+      });
+  }
+  
   pullRoutes() {
     this.httpService
       .getAuthData(

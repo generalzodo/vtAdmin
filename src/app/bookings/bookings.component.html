@@ -60,6 +60,7 @@
                         <th pSortableColumn="firstName" style="width:15%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Travel Date <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:10%">Route <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Amount <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Seat No. <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Payment ref <p-sortIcon field="state"></p-sortIcon></th>
@@ -75,6 +76,7 @@
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.phone}}</td>
                         <td class="py-2">{{booking.trip?.tripDate }}</td>
+                        <td class="py-2">{{booking.trip?.title }}</td>
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat" >| {{booking.returnSeat }} </span></td>
                         <td class="py-2">{{booking.mode}}: {{booking.paystack_ref }}</td>
