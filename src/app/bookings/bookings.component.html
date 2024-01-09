@@ -56,8 +56,8 @@
               [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
-                        <th pSortableColumn="firstName" style="width:15%">BookingId <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:15%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">BookingId <p-sortIcon field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Travel Date <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Trip Route <p-sortIcon field="state"></p-sortIcon></th>
@@ -66,7 +66,7 @@
                         <th pSortableColumn="state" style="width:10%">Payment ref <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon field="createdAt"></p-sortIcon></th>
-                        <th style="width:15%">Actions</th>
+                        <th style="width:5%">Actions</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-booking>
