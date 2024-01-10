@@ -15,8 +15,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" 
-
+                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Search" required="">
                         </div>
@@ -40,14 +39,14 @@
                     Export
                 </button>
                 <button state="button" (click)="confirmMultipleDelete()"
-                class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
-                Delete Selected
-            </button>
+                    class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Delete Selected
+                </button>
                 <button state="button" (click)="showDialog(); submitType ='Add'"
                     class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
@@ -61,24 +60,32 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table  #dt1
-            [globalFilterFields]="['title', 'route.title', 'status', 'tripDate']"
-            [value]="trips" [paginator]="true" [rows]="10"
+            <p-table #dt1 [globalFilterFields]="['title', 'route.title', 'status', 'tripDate']" [value]="trips"
+                [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
-                    <tr>    <th scope="col" class="p-4">
-                        <div class="flex items-center">
-                            <input id="checkbox-all" [(ngModel)]="checkAllStatus" (change)="checkAll()" type="checkbox" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="checkbox-all" class="sr-only">checkbox</label>
-                        </div>
-                    </th>
-                        <th pSortableColumn="firstName" style="width:15%">Title <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:10%">Date <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:5%">Time <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:15%">Route <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:10%">Available Seats <p-sortIcon field="firstName"></p-sortIcon></th>
+                    <tr>
+                        <th scope="col" class="p-4">
+                            <div class="flex items-center">
+                                <input id="checkbox-all" [(ngModel)]="checkAllStatus" (change)="checkAll()"
+                                    type="checkbox"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="checkbox-all" class="sr-only">checkbox</label>
+                            </div>
+                        </th>
+                        <th pSortableColumn="firstName" style="width:15%">Title <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Date <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:5%">Time <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:15%">Route <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:10%">Available Seats <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon>
                         </th>
                         <th pSortableColumn="createdAt" style="width:10%">Creadted on <p-sortIcon
@@ -90,7 +97,10 @@
                     <tr class="border-b border-gray-300">
                         <td class="w-4 px-4 py-3">
                             <div class="flex items-center">
-                                <input id="checkbox-table-search-1" type="checkbox" [checked]="selectedRecordIds.includes(trip._id)" (change)="onRecordSelectionChange(trip)" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <input id="checkbox-table-search-1" type="checkbox"
+                                    [checked]="selectedRecordIds.includes(trip._id)"
+                                    (change)="onRecordSelectionChange(trip)"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                             </div>
                         </td>
@@ -104,32 +114,46 @@
                         <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
 
-                            <button (click)="op.toggle($event)" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
-                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <button (click)="op.toggle($event)"
+                                class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                                type="button">
+                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                 </svg>
                             </button>
                             <p-overlayPanel #op styleClass="p-0">
-                            <div id="apple-imac-27-dropdown" class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-                                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
-                                    <li>
-                                        <a href="javascript:void(0)" (click)="displayTrip = true; populateTrip(trip)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)" (click)="displayTripManifest = true; pullTripsManifest(trip._id)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View Manifest</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0)" (click)=" markAsCompleted()" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark trip as completed</a>
-                                    </li>
-                                    <!-- <li>
+                                <div id="apple-imac-27-dropdown"
+                                    class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                                        aria-labelledby="apple-imac-27-dropdown-button">
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                                (click)="displayTrip = true; populateTrip(trip)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)"
+                                                (click)="displayTripManifest = true; pullTripsManifest(trip)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View
+                                                Manifest</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" (click)=" markAsCompleted()"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark
+                                                trip as completed</a>
+                                        </li>
+                                        <!-- <li>
                                         <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                     </li> -->
-                                </ul>
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" (click)="confirmDelete(trip._id)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                    </ul>
+                                    <div class="py-1">
+                                        <a href="javascript:void(0)" (click)="confirmDelete(trip._id)"
+                                            class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </p-overlayPanel>
+                            </p-overlayPanel>
 
                             <!-- <button (click)="displayTrip = true; populateTrip(trip)"
                                 class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
@@ -145,6 +169,89 @@
 </div>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{}"></p-confirmDialog>
+<p-dialog header="Trip Manifest" [(visible)]="displayTripManifest" [modal]="true" showEffect="fade"
+    [style]="{width: '90vw'}" [breakpoints]="{'960px': '90vw'}">
+    <p class="my-2 "><strong> Trip: </strong> {{currentTrip?.title}}</p>
+    <p class="my-2 "><strong> Trip Date: </strong> {{currentTrip?.tripDate}}</p>
+    <p class="my-2 "><strong> Trip Time: </strong> {{currentTrip?.time}}</p>
+    <p class="my-2 "><strong> Trip Origin: </strong> {{currentTrip?.route.origin}}</p>
+    <p class="my-2 "><strong> Trip Destination: </strong> {{currentTrip?.route.destination}}</p>
+    <p class="my-2 "><strong> Total No. of Passegers: </strong> {{currentTrip?.bookings.length}}</p>
+
+    <h3 class="mt-10 mb-4 text-lg font-semibold">Passegers</h3>
+    <p-table [value]="currentTrip?.bookings" #dt1
+        [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate' ]"
+        [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+        <ng-template pTemplate="header">
+            <tr>
+                <th pSortableColumn="firstName" style="width:10%">BookingId <p-sortIcon field="firstName"></p-sortIcon>
+                </th>
+                <th pSortableColumn="firstName" style="width:10%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
+                <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
+                <th pSortableColumn="phone" style="width:10%">Email <p-sortIcon field="phone"></p-sortIcon></th>
+                <th pSortableColumn="phone" style="width:10%">DOB <p-sortIcon field="phone"></p-sortIcon></th>
+                <th pSortableColumn="phone" style="width:10%">Emergency Name <p-sortIcon field="phone"></p-sortIcon>
+                </th>
+                <th pSortableColumn="phone" style="width:10%">Emergency Phone <p-sortIcon field="phone"></p-sortIcon>
+                </th>
+                <th pSortableColumn="phone" style="width:10%">Emergency Email <p-sortIcon field="phone"></p-sortIcon>
+                </th>
+                <th pSortableColumn="state" style="width:10%">Seat No. <p-sortIcon field="state"></p-sortIcon></th>
+                <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-booking>
+            <tr class="border-b border-gray-300">
+
+                <td class="py-2">{{booking.bookingId}}</td>
+                <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
+                <td class="py-2">{{booking.phone}}</td>
+                <td class="py-2">{{booking.email}}</td>
+                <td class="py-2">{{booking.dob | date: 'dd/MM/yyyy'}}</td>
+                <td class="py-2">{{booking.emergencyFirstName}}, {{booking.emergencyLastName}}</td>
+                <td class="py-2">{{booking.emergencyPhone}}</td>
+                <td class="py-2">{{booking.emergencyEmail}}</td>
+                <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat">| {{booking.returnSeat }} </span>
+                </td>
+
+                <td class="py-2 capitalize">{{booking.status}}</td>
+                <!-- <td>
+                    <button (click)="op.toggle($event)" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
+                        <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                        </svg>
+                    </button>
+                    <p-overlayPanel #op styleClass="p-0">
+                    <div id="apple-imac-27-dropdown" class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                        <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+                            <li>
+                                <a href="javascript:void(0)" (click)="showBookingDialog(booking)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View Booking</a>
+                            </li>
+                            <li *ngIf="booking.status != 'Used'" >
+                                <a href="javascript:void(0)" (click)="markAsUsed(booking, 'Used')"
+                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Marked as used</a>
+                            </li>
+                            <li *ngIf="booking.status == 'Used'" >
+                                <a href="javascript:void(0)" (click)="markAsUsed(booking, 'Pending')"
+                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Marked as unused</a>
+                            </li>
+                            <li>
+                                <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                            </li>
+                        </ul>
+                        <div class="py-1">
+                            <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                        </div>
+                    </div>
+                </p-overlayPanel>
+
+                  </td> -->
+
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
 <p-dialog header="{{submitType}}  Trip" [(visible)]="displayTrip" [modal]="true" showEffect="fade"
     [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
     <form [formGroup]="tripForm">
@@ -170,9 +277,10 @@
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Driver </span>
 
-                <p-dropdown [options]="drivers" optionValue="_id" placeholder="Select a driver"
-                    formControlName="driver" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.driver.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="firstName"></p-dropdown>
+                <p-dropdown [options]="drivers" optionValue="_id" placeholder="Select a driver" formControlName="driver"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.driver.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
+                    optionLabel="firstName"></p-dropdown>
             </span>
             <!-- <small class="w-ful inline-block " *ngIf="f.driver.hasError('required') && f.driver.touched" id="state-help"
                 class="p-error">Please select driver </small> -->
@@ -182,18 +290,18 @@
                 <p-calendar placeholder="Trip Date" class="rounded-lg"
                     styleClass="w-full  !border-gray-300 border-round-md py-2" formControlName="tripDate"></p-calendar>
             </span>
-            
+
             <!-- <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
                 class="p-error">Please select trip date</small> -->
 
-                <span class=" w-full mb-1">
-                    <span class="block w-full mb-3"> Depature time </span>
-    
-                    <input id="title" state="text" pInputText formControlName="time"
-                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
-                        placeholder="Depature time">
-                </span>
-                <!-- <small class="w-ful inline-block " *ngIf="f.time.hasError('required') && f.time.touched" id="state-help"
+            <span class=" w-full mb-1">
+                <span class="block w-full mb-3"> Depature time </span>
+
+                <input id="title" state="text" pInputText formControlName="time"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
+                    placeholder="Depature time">
+            </span>
+            <!-- <small class="w-ful inline-block " *ngIf="f.time.hasError('required') && f.time.touched" id="state-help"
                 class="p-error">Please enter depature time </small> -->
 
             <button [loading]="loading" pButton pRipple label="Submit"

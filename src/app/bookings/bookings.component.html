@@ -52,7 +52,7 @@
         </div>
         <div class="overflow-x-auto">
             <p-table [value]="bookings"  #dt1
-            [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status']"
+            [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate' ]"
               [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
                     <tr>
@@ -61,7 +61,7 @@
                         <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Travel Date <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Trip Route <p-sortIcon field="state"></p-sortIcon></th>
-                        <th pSortableColumn="state" style="width:10%">Amount <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:6%">Amount <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Seat No. <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:10%">Payment ref <p-sortIcon field="state"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
@@ -75,7 +75,7 @@
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.phone}}</td>
-                        <td class="py-2">{{booking.trip?.tripDate }}</td>
+                        <td class="py-2">{{booking.trip?.tripDate }} {{booking.trip?.time }}</td>
                         <td class="py-2">{{booking.trip?.title }}</td>
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat" >| {{booking.returnSeat }} </span></td>

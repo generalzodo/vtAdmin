@@ -26,7 +26,7 @@ export class TripsComponent implements OnInit {
   selectedRecordIds: any = [];
   checkAllStatus:boolean = false
   currentTrip: any;
-
+  displayTripManifest:any;
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.tripForm = this.fb.group({
       // title: [undefined, Validators.required],
@@ -59,13 +59,16 @@ export class TripsComponent implements OnInit {
       });
   }
   
-  pullTripsManifest(id) {
+  pullTripsManifest(trip) {
     this.httpService
       .getAuthData(
-        'trips/manifest/'+id
+        'trips/manifest/'+trip._id
       )
       .subscribe((data: any) => {
-        this.currentTrip = data.data
+        this.currentTrip = trip
+        this.currentTrip.bookings = data.data
+        console.log(this.currentTrip);
+        
       });
   }
   
