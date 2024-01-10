@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-trips',
@@ -243,5 +244,37 @@ export class TripsComponent implements OnInit {
         console.log(err);
         console.log('====================================');
       });
+  }
+
+  flattenObject(obj: any): any {
+    const result = {};
+
+    function recurse(current: any, property: string): void {
+      if (typeof current === 'object' && !Array.isArray(current)) {
+        for (const key in current) {
+          if (current.hasOwnProperty(key)) {
+            if (property === '') {
+              recurse(current[key], key);
+            } else {
+              recurse(current[key], property + '.' + key);
+            }
+          }
+        }
+      } else {
+        result[property] = current;
+      }
+    }
+
+    recurse(obj, '');
+    return result;
+  }
+
+  exportToExcel(jsonData: any[], fileName: string): void {
+    const flattenedData = jsonData.map(item => this.flattenObject(item));
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(flattenedData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+
   }
 }
