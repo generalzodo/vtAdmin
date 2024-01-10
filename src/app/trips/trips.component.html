@@ -84,6 +84,8 @@
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
+                                <th pSortableColumn="firstName" style="width:10%">Assigned Bus <p-sortIcon
+                                    field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Available Seats <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon>
@@ -109,6 +111,7 @@
                         <td class="' py-2">{{trip.time}}</td>
                         <td class="' py-2">{{trip.route?.title}}</td>
                         <td class="' py-2">{{trip.driver?.firstName}} {{trip.driver?.lastName}}</td>
+                        <td class="' py-2">{{trip.busNo}}</td>
                         <td class="' py-2">{{trip.availableSeats}}</td>
                         <td class="' py-2 capitalize">{{trip.status}}</td>
                         <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
@@ -294,12 +297,19 @@
             <!-- <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
                 class="p-error">Please select trip date</small> -->
 
-            <span class=" w-full mb-1">
+            <span class=" w-full block mb-1 mt-8">
                 <span class="block w-full mb-3"> Depature time </span>
 
                 <input id="title" state="text" pInputText formControlName="time"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
                     placeholder="Depature time">
+            </span>
+            <span class=" w-full block mb-1 mt-8">
+                <span class="block w-full mb-3"> Bus No. </span>
+
+                <input id="title" state="text" pInputText formControlName="busNo"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.busNo.errors }" class="border w-full p-3 rounded"
+                    placeholder="Bus Number">
             </span>
             <!-- <small class="w-ful inline-block " *ngIf="f.time.hasError('required') && f.time.touched" id="state-help"
                 class="p-error">Please enter depature time </small> -->

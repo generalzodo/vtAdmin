@@ -32,6 +32,7 @@ export class TripsComponent implements OnInit {
     this.tripForm = this.fb.group({
       // title: [undefined, Validators.required],
       time: [undefined, ],
+      busNo: [undefined],
       // route: [undefined, Validators.required],
       driver: [undefined,],
       tripDate: [undefined, ],
@@ -177,7 +178,7 @@ export class TripsComponent implements OnInit {
   populateTrip(trip: any) {
     this.submitType = 'Edit';
     this.currentID = trip._id
-    this.tripForm.patchValue({ time: trip.time, tripDate: trip.tripDate, driver: trip.driver?._id })
+    this.tripForm.patchValue({ time: trip.time, tripDate: trip.tripDate, driver: trip.driver?._id, busNo: trip.busNo })
   }
 
   submitTrip() {
