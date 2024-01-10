@@ -4,6 +4,7 @@ import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import * as html2pdf from 'html2pdf.js';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-bookings',
@@ -21,7 +22,7 @@ export class BookingsComponent implements OnInit {
   submitType: string = '';
   displayBooking: boolean = false;
   currentID: any;
-  bookingInfoShow: boolean =  false;
+  bookingInfoShow: boolean = false;
   bookingInfo: any;
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
@@ -31,7 +32,7 @@ export class BookingsComponent implements OnInit {
       phone: [undefined, Validators.required],
       address: [undefined, Validators.required],
       state: [undefined, Validators.required],
-     
+
     })
   }
   ngOnInit(): void {
@@ -44,7 +45,7 @@ export class BookingsComponent implements OnInit {
     this.displayBooking = true;
   }
 
-  showBookingDialog(data:any) {
+  showBookingDialog(data: any) {
     this.bookingInfoShow = true;
     this.bookingInfo = data
   }
@@ -83,86 +84,118 @@ export class BookingsComponent implements OnInit {
     });
   }
 
-deleteBookings(id: any) {
-  this.httpService
-    .deleteData(
-      'bookings/', id
-    )
-    .subscribe((data: any) => {
-      this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
+  deleteBookings(id: any) {
+    this.httpService
+      .deleteData(
+        'bookings/', id
+      )
+      .subscribe((data: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
 
-      this.pullBookings()
-    });
-}
-populateBooking(booking: any) {
-  this.submitType = 'Edit';
-  this.currentID = booking._id
-  // this.bookingForm.setValue({ p, address: booking.address, state: booking.state })
-}
-
-submitBooking() {
-
-  this.submitted = true
-  if (this.bookingForm.invalid) {
-    this.bookingForm.markAllAsTouched();
-
-    return;
+        this.pullBookings()
+      });
   }
-  this.loading = true;
-  let data: any = { ...this.bookingForm.value }
-  if (this.submitType == 'Edit') this.updateBooking(data)
-  if (this.submitType == 'Add') this.createBooking(data)
+  populateBooking(booking: any) {
+    this.submitType = 'Edit';
+    this.currentID = booking._id
+    // this.bookingForm.setValue({ p, address: booking.address, state: booking.state })
+  }
+
+  submitBooking() {
+
+    this.submitted = true
+    if (this.bookingForm.invalid) {
+      this.bookingForm.markAllAsTouched();
+
+      return;
+    }
+    this.loading = true;
+    let data: any = { ...this.bookingForm.value }
+    if (this.submitType == 'Edit') this.updateBooking(data)
+    if (this.submitType == 'Add') this.createBooking(data)
+  }
+
+  createBooking(data: any) {
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
+    this.httpService
+      .postAuthData(
+        'bookings/', data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayBooking = false
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking created successfully' });
+
+        this.pullBookings();
+        this.bookingForm.reset()
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
+  markAsUsed(booking: any, status: String) {
+    this.currentID = booking._id
+    this.updateBooking({ status: status })
+  }
+
+  updateBooking(data: any) {
+
+    this.httpService
+      .updateData(
+        'booking/' + this.currentID, data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayBooking = false
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking updated successfully' });
+
+        this.pullBookings()
+        this.currentID = ''
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
+  flattenObject(obj: any): any {
+    const result = {};
+
+    function recurse(current: any, property: string): void {
+      if (typeof current === 'object' && !Array.isArray(current)) {
+        for (const key in current) {
+          if (current.hasOwnProperty(key)) {
+            if (property === '') {
+              recurse(current[key], key);
+            } else {
+              recurse(current[key], property + '.' + key);
+            }
+          }
+        }
+      } else {
+        result[property] = current;
+      }
+    }
+
+    recurse(obj, '');
+    return result;
+  }
+
+  exportToExcel(jsonData: any[], fileName: string): void {
+    const flattenedData = jsonData.map(item => this.flattenObject(item));
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(flattenedData);
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
+    XLSX.writeFile(wb, `${fileName}.xlsx`);
+
+  }
 }
 
-createBooking(data: any) {
-  console.log('====================================');
-  console.log(data);
-  console.log('====================================');
-  this.httpService
-    .postAuthData(
-      'bookings/', data
-    )
-    .subscribe((data: any) => {
-      // this.listing = data.data
-      this.loading = false
-      this.displayBooking = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking created successfully' });
-
-      this.pullBookings();
-      this.bookingForm.reset()
-    }, (err) => {
-      this.loading = false
-
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    });
-}
-markAsUsed(booking:any, status: String){
-this.currentID = booking._id
-this.updateBooking({status: status})
-}
-
-updateBooking(data: any) {
-
-  this.httpService
-    .updateData(
-      'booking/' + this.currentID, data
-    )
-    .subscribe((data: any) => {
-      // this.listing = data.data
-      this.loading = false
-      this.displayBooking = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Booking updated successfully' });
-
-      this.pullBookings()
-      this.currentID = ''
-    }, (err) => {
-      this.loading = false
-
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    });
-}
-}
