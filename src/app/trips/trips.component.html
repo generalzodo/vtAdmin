@@ -143,9 +143,14 @@
                                                 Manifest</a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0)" (click)=" markAsCompleted(trip)"
+                                            <a href="javascript:void(0)" *ngIf="trip.status == 'pending'" (click)=" markAsCompleted(trip)"
                                                 class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark
                                                 trip as completed</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" *ngIf="trip.status != 'pending'"  (click)=" markAsCompleted(trip)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Mark
+                                                trip as pending</a>
                                         </li>
                                         <!-- <li>
                                         <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
