@@ -82,7 +82,7 @@
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:15%">Route <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
-                        <th pSortableColumn="firstName" style="width:10%">Driver <p-sortIcon
+                        <th pSortableColumn="firstName" style="width:10%">TO <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
                                 <th pSortableColumn="firstName" style="width:10%">Assigned Bus <p-sortIcon
                                     field="firstName"></p-sortIcon></th>
@@ -283,9 +283,9 @@
                 class="p-error">Please select route </small> -->
 
             <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Driver </span>
+                <span class="block w-full mb-1"> TO </span>
 
-                <p-dropdown [options]="drivers" optionValue="_id" placeholder="Select a driver" formControlName="driver"
+                <p-dropdown [options]="drivers" optionValue="_id" placeholder="Select a TO" formControlName="driver"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.driver.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
                     optionLabel="firstName"></p-dropdown>
