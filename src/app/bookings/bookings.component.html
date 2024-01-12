@@ -93,7 +93,7 @@
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat">| {{booking.returnSeat }}
                             </span></td>
                         <td class="py-2">{{booking.mode}}: {{booking.paystack_ref }}</td>
-                        <td class="py-2 capitalize">{{booking.status}}</td>
+                        <td class="py-2 capitalize">{{booking.trip.status}}</td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
                             <button (click)="op.toggle($event)"

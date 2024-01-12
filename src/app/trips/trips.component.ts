@@ -220,7 +220,8 @@ export class TripsComponent implements OnInit {
       });
   }
 
-  markAsCompleted(){
+  markAsCompleted(trip){
+    this.currentID = trip._id
     this.updateTrip({status: 'completed'})
   }
 
