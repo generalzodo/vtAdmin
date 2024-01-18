@@ -225,6 +225,11 @@ export class TripsComponent implements OnInit {
     this.updateTrip({status: 'completed'})
   }
 
+  markAsPending(trip){
+    this.currentID = trip._id
+    this.updateTrip({status: 'pending'})
+  }
+
   updateTrip(data: any) {
 
     this.httpService

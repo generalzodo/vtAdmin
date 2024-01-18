@@ -38,7 +38,7 @@
                     </svg>
                     Export
                 </button>
-                <!-- <button state="button" (click)="showDialog(); submitType ='Add'"
+                <button state="button" (click)="showDialog(); submitType ='Add'"
                     class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -46,7 +46,7 @@
                             d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                     </svg>
                     Add new booking
-                </button> -->
+                </button>
 
             </div>
         </div>
@@ -149,62 +149,245 @@
 <p-confirmDialog [style]="{}"></p-confirmDialog>
 <p-dialog header="{{submitType}}  Booking" [(visible)]="displayBooking" [modal]="true" showEffect="fade"
     [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
-    <form [formGroup]="bookingForm">
-        <div class="">
-            <span class=" w-full mb-1">
-                <span class="block w-full mb-3"> First Name </span>
-
-                <input id="title" state="text" pInputText formControlName="firstName"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.firstName.errors }"
-                    class="border w-full p-3 rounded" placeholder="First Name">
-            </span>
-
-            <small class="w-ful mb-4 inline-block" *ngIf="f.firstName.hasError('required') && f.firstName.touched"
-                id="title-help" class="p-error">Please enter your first name</small>
-
-            <span class=" w-full mb-1">
-                <span class="block w-full mb-3 mt-8"> Last Name </span>
-
-                <input id="title" state="text" pInputText formControlName="lastName"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.lastName.errors }"
-                    class="border w-full p-3 rounded" placeholder="Last Name">
-            </span>
-
-            <small class="w-ful mb-4 inline-block" *ngIf="f.lastName.hasError('required') && f.lastName.touched"
-                id="title-help" class="p-error">Please enter your last name</small>
-
-            <span class=" w-full mb-1 ">
-                <span class="block w-full mb-3 mt-8"> Phone number </span>
-
-                <input id="phone" state="text" pInputText formControlName="phone"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.phone.errors }" class="border w-full p-3 rounded"
-                    placeholder="Phone number">
-            </span>
-
-            <small class="w-ful mb-4 inline-block" *ngIf="f.phone.hasError('required') && f.phone.touched"
-                id="title-help" class="p-error">Please enter your phone</small>
-
-            <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Address </span>
-                <input formControlName="address" class="border w-full p-3 rounded" placeholder="Address">
-            </span>
-            <small class="w-ful mb-4 inline-block" *ngIf="f.address.hasError('required') && f.address.touched"
-                id="address-help" class="p-error">Please enter address</small>
-
-            <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> State </span>
-
-                <p-dropdown [options]="states" optionValue="state.name" placeholder="Select a state"
-                    formControlName="state" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.state.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
-                    optionLabel="state.name"></p-dropdown>
-            </span>
-            <small class="w-ful inline-block " *ngIf="f.state.hasError('required') && f.state.touched" id="state-help"
-                class="p-error">Please enter state</small>
-
-            <button [loading]="loading" pButton pRipple label="Submit"
-                class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitBooking()"></button>
+    <div class="bg-[#E9ECEF] w-full px-4 mt-8 mb-4 mx-auto rounded-lg py-2 ">
+        <div class="grid grid-cols-2 px-3 gap-4 ">
+            <div (click)="selectPage('one')"
+                class="py-1 text-sm  cursor-pointer text-center font-semibold text-[#212529]"
+                [ngClass]="{'selected': currentPage == 'one'}">One Way</div>
+            <div (click)="selectPage('round')"
+                class="py-1 text-sm cursor-pointer  text-center font-semibold text-[#212529]"
+                [ngClass]="{'selected': currentPage == 'round'}">Round Trip</div>
         </div>
+    </div>
+    <form [formGroup]="passengerForm">
+        <div class="w-full mx-auto grid grid-cols-1 gap-3">
+            <div class="mt-7">
+                <p-dropdown styleClass="w-full border !border-gray-300 rounded-lg "
+                    formControlName="from" [options]="locations" optionLabel="title" optionValue="title"
+                    placeholder="Departure Location"></p-dropdown>
+                    <small class="w-ful inline-block " *ngIf="f.from.hasError('required') && f.from.touched" id="state-help"
+                    class="p-error">Please select depature location</small>
+            </div>
+
+            <div class="mt-7">
+                <p-dropdown styleClass="w-full border !border-gray-300 rounded-lg "
+                    formControlName="to" [options]="filterLocationsfromOrigin()" optionLabel="title" optionValue="title"
+                    placeholder="Arrival Location"></p-dropdown>
+                    <small class="w-ful inline-block " *ngIf="f.to.hasError('required') && f.to.touched" id="state-help"
+                    class="p-error">Please select arrival location</small>
+            </div>
+                <div class="mt-7">
+                    <p-calendar (ngModelChange)="findTripResults()" placeholder="Depature Date" class="rounded-lg" [minDate]="minDate" [maxDate]="maxDate" 
+                        styleClass="w-full  !border-gray-300 border-round-md py-2"
+                        formControlName="date"></p-calendar>
+                        <small class="w-ful inline-block " *ngIf="f.date.hasError('required') && f.date.touched" id="state-help"
+                        class="p-error">Please select depature date</small>
+
+                </div>
+                <div class="mt-7" (ngModelChange)="findReturnResults()" *ngIf="currentPage == 'round'" >
+                    <p-calendar placeholder="Return Date" [minDate]="minDate"  [maxDate]="maxDate" 
+                        styleClass="w-full !border-gray-300 border-round-md py-2 "
+                        formControlName="return"></p-calendar>
+                        <small class="w-full inline-block " *ngIf="f.return.hasError('required') && f.return.touched" id="state-help"
+                        class="p-error">Please select return date</small>    
+
+                </div>
+        </div>
+        <div formArrayName="passengers">
+            <div *ngFor="let passenger of passengerControls; let i = index">
+                <div [formGroupName]="i" class="mt-16">
+
+                    <h4 class="font-bold  text-gray-600 my-4">Passenger {{i+1}}</h4>
+                    <div class="grid lg:grid-cols-3 grid-cols-1 gap-4">
+
+                        <div>
+                            <input class="px-3 py-2 w-full rounded-md !border !border-gray-300" required=""
+                                type="text" pInputText required name="firstName" formControlName="firstName"
+                                placeholder="First Name*" />
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('firstName').hasError('required') && passenger.get('firstName').touched">
+                                First Name is required.
+                            </div>
+                        </div>
+                        <div>
+
+                            <input class="px-3 py-2 w-full rounded-md !border !border-gray-300" type="text"
+                                pInputText name="middleName" formControlName="middleName"
+                                placeholder="Middle Name" />
+                        </div>
+                        <div>
+
+                            <input class="px-3 py-2 w-full rounded-md !border !border-gray-300" type="text"
+                                pInputText required required name="lastName" formControlName="lastName"
+                                placeholder="Last Name*" />
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('lastName').hasError('required') && passenger.get('lastName').touched">
+                                Last Name is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
+                        <div>
+
+                            <input class="px-3 py-2 w-full rounded-md !border !border-gray-300" type="text"
+                                pInputText required name="email" pattern="^\w+[\w-\.]*\@\w+((-\w+)|(\w*))\.[a-z]{2,3}$" title="Enter a valid email format or address" formControlName="email"
+                                placeholder="Email Address*" />
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('email').hasError('required') && passenger.get('email').touched">
+                                Email is required.
+                              
+                            </div>
+
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('email').hasError('email') && passenger.get('email').touched">
+                                Email is invalid.
+                            </div>
+                          
+                        </div>
+
+                        <div>
+
+                            <input class="px-3 py-2 w-full rounded-md !border !border-gray-300" type="text"
+                                pInputText required name="phone" formControlName="phone"
+                                placeholder="Phone Number*" />
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('phone').hasError('required') && passenger.get('phone').touched">
+                                Phone is required.
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3 mt-4">
+                        <div>
+                            <p-dropdown styleClass="w-full border border-gray-300  rounded-md "
+                                [required]="true" name="gender" formControlName="gender" [options]="gender"
+                                optionLabel="title" placeholder="Select Gender*"></p-dropdown>
+                            <!-- <small class="w-ful inline-block " *ngIf="f.from.hasError('required') && f.from.touched" id="state-help"
+                                    class="p-error">Please select depature location</small> -->
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('gender').hasError('required') && passenger.get('gender').touched">
+                                Gender is required.
+                            </div>
+                        </div>
+                        <div>
+                            <p-calendar placeholder="Date of Birth*"  name="dob"
+                                [maxDate]="tenYearsAgo" formControlName="dob"
+                                styleClass="w-full border !border-gray-300 !w-full rounded-md"></p-calendar>
+                            <!-- <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('dob').hasError('required') && passenger.get('dob').touched">
+                                Date of birth is required.
+                            </div> -->
+                        </div>
+
+                        <div>
+                            <p-dropdown styleClass="w-full border !border-gray-300 rounded-lg " (onChange)="checkTicketType(i)"
+                                formControlName="category" [options]="ticketTypes" optionLabel="title"
+                                optionValue="title" placeholder="Ticket Category*"></p-dropdown>
+                               <!-- ticket {{passenger.get('tripAmount').value}}
+                               return {{passenger.get('returnAmount').value}} -->
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('category').hasError('required') && passenger.get('category').touched">
+                                Ticket category is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <small class="w-ful inline-block " *ngIf="f.date.hasError('required') && f.date.touched" id="state-help"
+                            class="p-error">Please select depature date</small> -->
+
+                    <div class="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-3 ">
+
+                        <div class="mt-4">
+                            <div
+                                class="border lg:w-full w-full  border-gray-300 flex items-center justify-between  rounded-md p-3">
+                                <p>Select your seat*</p>
+                                <p *ngIf="passenger.get('tripSeat').value" class="text-right">Seat
+                                    {{passenger.get('tripSeat').value}} <a class="text-primary-700 underline"
+                                        href="javascript:void(0)" (click)="showDialog('trip', i)">change</a>
+                                </p>
+                                <button *ngIf="!passenger.get('tripSeat').value" (click)="showDialog('trip', i)"
+                                    type="button"
+                                    class="bg-primary-700 hover:bg-primary-900 text-white p-2 py-1 text-sm rounded ">Select
+                                    seat</button>
+
+                            </div>
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('tripSeat').hasError('required') && passenger.get('tripSeat').touched">
+                                Seat No. is required.
+                            </div>
+                        </div>
+
+                        <!-- <div class="mt-4" *ngIf="params.type == 'round'">
+                            <div
+                                class="border lg:w-full w-full  border-gray-300 flex items-center justify-between  rounded-md p-3">
+                                <p>Select your return seat</p>
+                                <p *ngIf="passenger.get('returnSeat').value" class="text-right">Seat
+                                    {{passenger.get('returnSeat').value}} <a class="text-primary-700 underline"
+                                        href="javascript:void(0)" (click)="showDialog('trip', i)">change</a>
+                                </p>
+                                <button *ngIf="!passenger.get('returnSeat').value"
+                                    (click)="showDialog('return', i)" type="button"
+                                    class="bg-primary-700 hover:bg-primary-900 text-white p-2 py-1 text-sm rounded ">Select
+                                    seat</button>
+
+                            </div>
+                            <div class="text-red-500  mt-1.5 text-sm"
+                                *ngIf="passenger.get('returnSeat').hasError('required') && passenger.get('returnSeat').touched">
+                                Return Seat No. is required.
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="mt-10" formGroupName="emergencyContact">
+
+                        <h4 class="font-semibold  text-gray-600 my-4">Emergency Contact Info</h4>
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-4">
+                            <div>
+                                <input class="px-3 py-2 rounded-md  w-full !border !border-gray-300" type="text"
+                                    required formControlName="firstName" name="firstName" pInputText
+                                    placeholder="First Name*" />
+                                <div class="text-red-500  mt-1.5 text-sm"
+                                    *ngIf="passenger.get('emergencyContact.firstName').hasError('required') && passenger.get('emergencyContact.firstName').touched">
+                                    Emergency contact first name is required.
+                                </div>
+                            </div>
+                            <div>
+                                <input class="px-3 py-2 rounded-md  w-full !border !border-gray-300" type="text"
+                                    required formControlName="lastName" name="lastName" pInputText
+                                    placeholder="Last Name*" />
+                                <div class="text-red-500  mt-1.5 text-sm"
+                                    *ngIf="passenger.get('emergencyContact.lastName').hasError('required') && passenger.get('emergencyContact.lastName').touched">
+                                    Emergency contact last name is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-4 mt-4">
+                            <div>
+                                <input class="px-3 py-2 rounded-md  w-full !border !border-gray-300" type="text"
+                                    formControlName="email" name="email" pInputText
+                                    placeholder="Email address" />
+                                    <div class="text-red-500  mt-1.5 text-sm"
+                                    *ngIf="passenger.get('emergencyContact.email').hasError('email') && passenger.get('emergencyContact.email').touched">
+                                    Email is invalid.
+                                </div>
+                            </div>
+                            <div>
+
+                                <input class="px-3 py-2 rounded-md  w-full !border !border-gray-300" type="text"
+                                    required formControlName="phone" name="phone" pInputText
+                                    placeholder="Phone number*" />
+                                <div class="text-red-500  mt-1.5 text-sm"
+                                    *ngIf="passenger.get('emergencyContact.phone').hasError('required') && passenger.get('emergencyContact.phone').touched">
+                                    Emergency contact phone is required.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>  
     </form>
     <ng-template pTemplate="footer">
         <!-- <button pButton icon="pi pi-check" (click)="displayFaq=false" label="Ok" class="p-button-outlined"></button> -->

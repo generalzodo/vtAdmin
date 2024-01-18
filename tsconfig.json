@@ -8,7 +8,7 @@
     "strict": false,
     "noImplicitOverride": true,
     "resolveJsonModule": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "allowSyntheticDefaultImports":true,
     "noFallthroughCasesInSwitch": true,

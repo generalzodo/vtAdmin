@@ -1,10 +1,11 @@
-import { Validators, FormBuilder } from '@angular/forms';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import * as html2pdf from 'html2pdf.js';
 import * as XLSX from 'xlsx';
+import { __values } from 'tslib';
 
 @Component({
   selector: 'app-bookings',
@@ -22,9 +23,14 @@ export class BookingsComponent implements OnInit {
   submitType: string = '';
   displayBooking: boolean = false;
   currentID: any;
-  bookingInfoShow: boolean = false;
+  bookingInfoShow: boolean = false;1
   bookingInfo: any;
-
+  passengerForm: FormGroup;
+  locations: any;
+  minDate: Date;
+  maxDate: Date;
+  currentPage = 'one';
+  results: any;
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.bookingForm = this.fb.group({
       firstName: [undefined, Validators.required],
@@ -37,9 +43,141 @@ export class BookingsComponent implements OnInit {
   }
   ngOnInit(): void {
     this.pullBookings()
-  }
-  get f() { return this.bookingForm.controls; }
+    this.pullLocations()
+    this.minDate = new Date();
+    const daysUntilSaturday = 6 - this.minDate.getDay(); // 6 corresponds to Saturday
 
+    // Create a new date for the next Saturday
+    this.maxDate = new Date();
+    this.maxDate.setDate(this.minDate.getDate() + 6);
+    console.log(this.minDate);
+    console.log(this.maxDate);
+    this.passengerForm = this.fb.group({
+      agreedTerms: [''],
+      from: ['', Validators.required],
+      to: ['', Validators.required],
+      date: ['', Validators.required],
+      return: [''],
+      trip: ['', Validators.required],
+      returnTrip: ['', Validators.required],
+      
+      passengers: this.fb.array([]), // Use FormArray for dynamic passenger inputs
+
+    });
+    this.addPassenger()
+  }
+  get f() { return this.passengerForm.controls; }
+  // get b() { return this.passengerForm.controls; }
+
+  fetchTrips(){
+    this.findTripResults()
+    if (this.currentPage == 'round') {
+      this.findReturnResults()
+    }
+  }
+  findTripResults() {
+    let datas: any = {}
+    datas.to = this.passengerForm.value.to
+    datas.from = this.passengerForm.value.from
+    let date = new Date(this.passengerForm.value.to)
+    datas.date = this.formatDate(date)
+    this.httpService
+      .postAuthData(
+        'routes/findRoutes', datas
+      )
+      .subscribe((data: any) => {
+        this.results = data.data
+
+      });
+  }
+  findReturnResults() {
+    let datas: any = {}
+    datas.to = this.passengerForm.value.from
+    datas.from = this.passengerForm.value.to
+    let date = new Date(this.passengerForm.value.return)
+    datas.date = this.formatDate(date)
+
+    this.httpService
+      .postAuthData(
+        'routes/findRoutes', datas
+      )
+      .subscribe((data: any) => {
+        this.findReturnResults = data.data
+
+      });
+  }
+  formatDate(date) {
+    // Function to add leading zeros to single-digit numbers
+    function addLeadingZero(number) {
+      return number < 10 ? "0" + number : number;
+    }
+
+    // Format the date as dd-mm-yyyy
+    var formattedDate =
+      addLeadingZero(date.getDate()) + "-" +
+      addLeadingZero(date.getMonth() + 1) + "-" +
+      date.getFullYear();
+
+    return formattedDate;
+  }
+  
+  addPassenger(): void {
+    const passengerFormGroup = this.fb.group({
+      firstName: ['', Validators.required],
+      middleName: [''],
+      lastName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required]],
+      dob: [''],
+      gender: ['', [Validators.required]],
+      category: ['', [Validators.required]],
+      tripSeat: ['', [Validators.required]],
+      // returnSeat: ['', this.params.type == 'round' ? Validators.required : null],
+      // tripAmount: [this.params.tripPrice, []],
+      // returnAmount: [this.params.returnPrice],
+      emergencyContact: this.fb.group({
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        email: ['', Validators.email],
+        phone: ['', Validators.required]
+        // Add more emergency contact fields and validations as needed
+      })
+
+      // Add more fields and validations as needed
+    });
+
+    (this.passengerForm.get('passengers') as any).push(passengerFormGroup);
+  }
+
+  // Getter for easier access to form controls
+  get passengerControls() {
+    return (this.passengerForm.get('passengers') as any).controls;
+  }
+
+  selectPage(page: any) {
+    this.currentPage = page;
+  }
+
+  pullLocations() {
+    this.httpService
+      .getAuthData(
+        'locations'
+      )
+      .subscribe((data: any) => {
+        this.locations = data.data
+      });
+  }
+
+  filterLocationsfromOrigin() {
+    let val = this.passengerForm.value.from
+    if (val) {
+
+      return this.locations.filter((res: any) => {
+        return res.title != val
+      })
+    }
+    return []
+  }
   showDialog() {
 
     this.displayBooking = true;
