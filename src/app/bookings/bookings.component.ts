@@ -79,7 +79,7 @@ export class BookingsComponent implements OnInit {
     let datas: any = {}
     datas.to = this.passengerForm.value.to
     datas.from = this.passengerForm.value.from
-    let date = new Date(this.passengerForm.value.to)
+    let date = new Date(this.passengerForm.value.date)
     datas.date = this.formatDate(date)
     this.httpService
       .postAuthData(

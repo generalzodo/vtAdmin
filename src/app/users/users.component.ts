@@ -20,15 +20,24 @@ export class UsersComponent implements OnInit {
   submitType: string = '';
   displayUser: boolean = false;
   currentID: any;
-
+userType:any = [
+  {title: 'User' , value: 'user'},
+  {title: 'Agent', value: 'agent'},
+  {title: 'Admin', value: 'admin'}
+]
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.userForm = this.fb.group({
+      userType: [undefined, Validators.required],
       firstName: [undefined, Validators.required],
       lastName: [undefined, Validators.required],
       phone: [undefined, Validators.required],
       address: [undefined, Validators.required],
       state: [undefined, Validators.required],
-     
+      dob: [undefined, Validators.required],
+      email: [undefined, Validators.required],
+      password: [undefined, Validators.required],
+      confirmPassword: [undefined, Validators.required],
+
     })
   }
   ngOnInit(): void {
@@ -64,82 +73,82 @@ export class UsersComponent implements OnInit {
     });
   }
 
-deleteUsers(id: any) {
-  this.httpService
-    .deleteData(
-      'users/', id
-    )
-    .subscribe((data: any) => {
-      this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
+  deleteUsers(id: any) {
+    this.httpService
+      .deleteData(
+        'users/', id
+      )
+      .subscribe((data: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
 
-      this.pullUsers()
-    });
-}
-populateUser(user: any) {
-  this.submitType = 'Edit';
-  this.currentID = user._id
-  // this.userForm.setValue({ p, address: user.address, state: user.state })
-}
-
-submitUser() {
-
-  this.submitted = true
-  if (this.userForm.invalid) {
-    this.userForm.markAllAsTouched();
-
-    return;
+        this.pullUsers()
+      });
   }
-  this.loading = true;
-  let data: any = { ...this.userForm.value }
-  if (this.submitType == 'Edit') this.updateUser(data)
-  if (this.submitType == 'Add') this.createUser(data)
-}
+  populateUser(user: any) {
+    this.submitType = 'Edit';
+    this.currentID = user._id
+    // this.userForm.setValue({ p, address: user.address, state: user.state })
+  }
 
-createUser(data: any) {
-  console.log('====================================');
-  console.log(data);
-  console.log('====================================');
-  this.httpService
-    .postAuthData(
-      'users/', data
-    )
-    .subscribe((data: any) => {
-      // this.listing = data.data
-      this.loading = false
-      this.displayUser = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User created successfully' });
+  submitUser() {
 
-      this.pullUsers();
-      this.userForm.reset()
-    }, (err) => {
-      this.loading = false
+    this.submitted = true
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
 
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    });
-}
+      return;
+    }
+    this.loading = true;
+    let data: any = { ...this.userForm.value }
+    if (this.submitType == 'Edit') this.updateUser(data)
+    if (this.submitType == 'Add') this.createUser(data)
+  }
 
-updateUser(data: any) {
+  createUser(data: any) {
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
+    this.httpService
+      .postAuthData(
+        'users/', data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayUser = false
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User created successfully' });
 
-  this.httpService
-    .updateData(
-      'users/' + this.currentID, data
-    )
-    .subscribe((data: any) => {
-      // this.listing = data.data
-      this.loading = false
-      this.displayUser = false
-      this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User updated successfully' });
+        this.pullUsers();
+        this.userForm.reset()
+      }, (err) => {
+        this.loading = false
 
-      this.pullUsers()
-      this.currentID = ''
-    }, (err) => {
-      this.loading = false
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
 
-      console.log('====================================');
-      console.log(err);
-      console.log('====================================');
-    });
-}
+  updateUser(data: any) {
+
+    this.httpService
+      .updateData(
+        'users/' + this.currentID, data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayUser = false
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'User updated successfully' });
+
+        this.pullUsers()
+        this.currentID = ''
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
 }

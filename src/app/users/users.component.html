@@ -38,7 +38,7 @@
                     </svg>
                     Export
                 </button>
-                <!-- <button state="button" (click)="showDialog(); submitType ='Add'"
+                <button state="button" (click)="showDialog(); submitType ='Add'"
                     class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -46,7 +46,7 @@
                             d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                     </svg>
                     Add new user
-                </button> -->
+                </button>
 
             </div>
         </div>
@@ -92,59 +92,116 @@
 <p-dialog header="{{submitType}}  User" [(visible)]="displayUser" [modal]="true" showEffect="fade"
 [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
 <form [formGroup]="userForm">
+    <h4 class="text-primary-700 font-semibold text-2xl my-5">Create a user</h4>
+
     <div class="">
+
         <span class=" w-full mb-1">
+            <span class="block w-full mb-3"> User type </span>
+
+            <p-dropdown [options]="userType" optionValue="value" placeholder="Select user type" formControlName="userType"
+            [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.userType.errors }"
+            styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
+            optionLabel="title"></p-dropdown>
+        </span>
+
+        <small class="w-ful mb-4 inline-block" *ngIf="f.userType.hasError('required') && f.userType.touched"
+            id="title-help" class="p-error">Please select user type</small>
+ 
+        <span class=" w-full mb-1 mt-8 inline-block">
             <span class="block w-full mb-3"> First Name </span>
 
             <input id="title" state="text" pInputText formControlName="firstName"
-                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.firstName.errors }" class="border w-full p-3 rounded"
-                placeholder="First Name">
+                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.firstName.errors }"
+                class="border w-full p-3 rounded" placeholder="First Name">
         </span>
-      
-        <small class="w-ful mb-4 inline-block"
-            *ngIf="f.firstName.hasError('required') && f.firstName.touched" id="title-help"
-            class="p-error">Please enter your first name</small>
 
-            <span class=" w-full mb-1">
-                <span class="block w-full mb-3 mt-8"> Last Name </span>
-    
-                <input id="title" state="text" pInputText formControlName="lastName"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.lastName.errors }" class="border w-full p-3 rounded"
-                    placeholder="Last Name">
-            </span>
-          
-            <small class="w-ful mb-4 inline-block"
-                *ngIf="f.lastName.hasError('required') && f.lastName.touched" id="title-help"
-                class="p-error">Please enter your last name</small>
+        <small class="w-ful mb-4 inline-block" *ngIf="f.firstName.hasError('required') && f.firstName.touched"
+            id="title-help" class="p-error">Please enter your first name</small>
 
-                <span class=" w-full mb-1 ">
-                    <span class="block w-full mb-3 mt-8"> Phone number </span>
-        
-                    <input id="phone" state="text" pInputText formControlName="phone"
-                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.phone.errors }" class="border w-full p-3 rounded"
-                        placeholder="Phone number">
-                </span>
-              
-                <small class="w-ful mb-4 inline-block"
-                    *ngIf="f.phone.hasError('required') && f.phone.touched" id="title-help"
-                    class="p-error">Please enter your phone</small>
+        <span class=" w-full mb-1">
+            <span class="block w-full mb-3 mt-8"> Last Name </span>
 
-            <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Address </span>
-                <input formControlName="address" class="border w-full p-3 rounded" placeholder="Address"> 
-            </span>
+            <input id="title" state="text" pInputText formControlName="lastName"
+                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.lastName.errors }"
+                class="border w-full p-3 rounded" placeholder="Last Name">
+        </span>
+
+        <small class="w-ful mb-4 inline-block" *ngIf="f.lastName.hasError('required') && f.lastName.touched"
+            id="title-help" class="p-error">Please enter your last name</small>
+
+        <span class=" w-full mb-1 ">
+            <span class="block w-full mb-3 mt-8"> Email Address </span>
+
+            <input id="email" state="text" pInputText formControlName="email"
+                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.email.errors }" class="border w-full p-3 rounded"
+                placeholder="Email Address">
+        </span>
+
+        <small class="w-ful mb-4 inline-block" *ngIf="f.email.hasError('required') && f.email.touched"
+            id="title-help" class="p-error">Please enter your email</small>
+
+        <span class=" w-full mb-1 ">
+            <span class="block w-full mb-3 mt-8">Date of Birth </span>
+
+            <p-calendar placeholder="Date of Birth" [required]="true" name="dob" [maxDate]=""
+                formControlName="dob" styleClass="w-full border !border-gray-300 !w-full rounded-md"></p-calendar>
+        </span>
+        <small class="w-ful inline-block " *ngIf="f.dob.hasError('required') && f.dob.touched" id="state-help"
+            class="p-error">Please select date of birth</small>
+
+        <span class=" w-full mb-1 ">
+            <span class="block w-full mb-3 mt-8"> Phone number </span>
+
+            <input id="phone" state="text" pInputText formControlName="phone"
+                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.phone.errors }" class="border w-full p-3 rounded"
+                placeholder="Phone number">
+        </span>
+
+        <small class="w-ful mb-4 inline-block" *ngIf="f.phone.hasError('required') && f.phone.touched"
+            id="title-help" class="p-error">Please enter your phone</small>
+
+        <span class=" w-full mb-1 block mt-8">
+            <span class="block w-full mb-1"> Address </span>
+            <input formControlName="address" class="border w-full p-3 rounded" placeholder="Address">
+        </span>
         <small class="w-ful mb-4 inline-block" *ngIf="f.address.hasError('required') && f.address.touched"
             id="address-help" class="p-error">Please enter address</small>
 
         <span class="w-full mb-1 block mt-8">
             <span class="block w-full mb-1"> State </span>
 
-            <p-dropdown [options]="states" optionValue ="state.name" placeholder="Select a state" formControlName="state"
-                [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.state.errors }" styleClass="border w-full p-2 rounded"
-                [style]="{width: '100%'}" optionLabel="state.name"></p-dropdown>
+            <p-dropdown [options]="states" optionValue="state.name" placeholder="Select a state"
+                formControlName="state" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.state.errors }"
+                styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
+                optionLabel="state.name"></p-dropdown>
         </span>
-        <small class="w-ful inline-block " *ngIf="f.state.hasError('required') && f.state.touched"
-            id="state-help" class="p-error">Please enter state</small>
+        <small class="w-ful inline-block " *ngIf="f.state.hasError('required') && f.state.touched" id="state-help"
+            class="p-error">Please enter state</small>
+
+        <span class=" w-full mb-1 ">
+            <span class="block w-full mb-3 mt-8"> Password </span>
+
+            <input id="password" type="password" formControlName="password"
+                [ngClass]="{ 'border-red-700 ng-dirty': submitted && f.password.errors }"
+                class="border w-full p-3 rounded" placeholder="Password">
+        </span>
+        <small class="w-ful mb-4 inline-block" *ngIf="f.password.hasError('required') && f.password.touched"
+            id="title-help" class="p-error">Please enter your password</small>
+
+        <span class=" w-full mb-1 ">
+            <span class="block w-full mb-3 mt-8"> Confirm Password </span>
+
+            <input id="password" type="password" formControlName="confirmPassword"
+                [ngClass]="{ 'border-red-700 ng-dirty': submitted && f.confirmPassword.errors }"
+                class="border w-full p-3 rounded" placeholder="Confirm Password">
+        </span>
+        <small class="w-ful mb-4 inline-block"
+            *ngIf="f.confirmPassword.hasError('required') && f.confirmPassword.touched" id="title-help"
+            class="p-error">Please confirm your password</small>
+        <small class="w-ful mb-4 inline-block"
+            *ngIf="f.confirmPassword.hasError('mustMatch') && f.confirmPassword.touched" id="title-help"
+            class="p-error">Confirm Password must match Password </small>
 
         <button [loading]="loading" pButton pRipple label="Submit" class="w-full mt-8 text-white p-3 rounded bg-primary-700"
             (click)="submitUser()"></button>
