@@ -92,7 +92,7 @@
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat">| {{booking.returnSeat }}
                             </span></td>
-                        <td class="py-2">{{booking.mode}}: {{booking.paystack_ref }}</td>
+                        <td class="py-2">{{booking.mode}}: {{booking.paymentStatus}} {{booking.paystack_ref }}</td>
                         <td class="py-2 capitalize">{{booking.status}}</td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>

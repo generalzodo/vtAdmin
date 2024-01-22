@@ -58,6 +58,7 @@ export class RoutesComponent implements OnInit {
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.routeForm = this.fb.group({
       title: [undefined, Validators.required],
+      stops: [undefined, ],
       destination: [undefined, Validators.required],
       origin: [undefined, Validators.required],
       price: [undefined, Validators.required],
@@ -139,7 +140,7 @@ export class RoutesComponent implements OnInit {
   populateRoute(route: any) {
     this.submitType = 'Edit';
     this.currentID = route._id
-    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, premiumPrice: route.premiumPrice, times:route.times,
+    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, stops: route.stops, premiumPrice: route.premiumPrice, times:route.times,
       discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
   }
 
