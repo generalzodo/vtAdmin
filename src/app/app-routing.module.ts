@@ -8,6 +8,7 @@ import { RoutesComponent } from './routes/routes.component';
 import { SettingsComponent } from './settings/settings.component';
 import { DriversComponent } from './drivers/drivers.component';
 import { BookingsComponent } from './bookings/bookings.component';
+import { SubRoutesComponent } from './subroutes/subroutes.component';
 
 const routes: Routes = [
   {
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'bookings', component: BookingsComponent },
   { path: 'trips', component: TripsComponent },
   { path: 'routes', component: RoutesComponent },
+  { path: 'subroutes', component: SubRoutesComponent },
   { path: 'settings', component: SettingsComponent },
 ];
 

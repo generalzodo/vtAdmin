@@ -31,6 +31,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { BookingsComponent } from './bookings/bookings.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { SubRoutesComponent } from './subroutes/subroutes.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,7 +47,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
     TicketsComponent,
     RoutesComponent,
     LocationsComponent,
-    BookingsComponent
+    BookingsComponent, SubRoutesComponent
   ],
   imports: [
     BrowserModule,

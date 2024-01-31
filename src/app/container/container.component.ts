@@ -15,6 +15,7 @@ export class ContainerComponent implements OnInit {
     { title: 'Buses', url: 'buses' },
     { title: 'Drivers', url: 'drivers' },
     { title: 'Routes', url: 'routes' },
+    { title: 'Sub Routes', url: 'subroutes' },
     { title: 'Settings', url: 'settings' },
   ]
   currentRoute: string;

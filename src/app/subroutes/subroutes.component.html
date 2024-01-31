@@ -26,8 +26,8 @@
             <div
                 class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
                 <h5>
-                    <span class="text-gray-500">All Routes:</span>
-                    <span class="dark:text-white"> {{routes.length}}</span>
+                    <span class="text-gray-500">All SubRoutes:</span>
+                    <span class="dark:text-white"> {{subroutes.length}}</span>
                 </h5>
 
                 <button state="button" (click)="showDialog()"
@@ -55,15 +55,15 @@
                         <path clip-rule="evenodd" fill-rule="evenodd"
                             d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                     </svg>
-                    Add new route
+                    Add new subroute
                 </button>
 
             </div>
         </div>
         <div class="overflow-x-auto">
             <p-table  #dt1
-            [globalFilterFields]="['title', 'origin', 'destination','status', 'bus.title']"
-            [value]="routes" [paginator]="true" [rows]="10"
+            [globalFilterFields]="['title', 'origin', 'destination','status']"
+            [value]="subroutes" [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
@@ -82,40 +82,31 @@
                         </th>
                         <th pSortableColumn="destination" style="width:10%">Destination <p-sortIcon
                                 field="destination"></p-sortIcon></th>
-                        <th pSortableColumn="destination" style="width:5%">Bus <p-sortIcon
-                                field="destination"></p-sortIcon></th>
-                        <th pSortableColumn="recurrentDays" style="width:15%">Route's Days <p-sortIcon
-                                field="recurrentDays"></p-sortIcon></th>
-                                <th pSortableColumn="recurrentDays" style="width:15%">Route's Times <p-sortIcon
+                                <th pSortableColumn="recurrentDays" style="width:15%">SubRoute's Times <p-sortIcon
                                     field="recurrentDays"></p-sortIcon></th>
-                        <th pSortableColumn="totalTrips" style="width:10%">Trips per day <p-sortIcon
-                                field="totalTrips"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
                         <th style="width:5%">Actions</th>
                     </tr>
                 </ng-template>
-                <ng-template pTemplate="body" let-route>
+                <ng-template pTemplate="body" let-subroute>
                     <tr class="border-b border-gray-300">
                         <td class="w-4 px-4 py-3">
                             <div class="flex items-center">
                                 <input id="checkbox-table-search-1" type="checkbox"
-                                    [checked]="selectedRecordIds.includes(route._id)"
-                                    (change)="onRecordSelectionChange(route)"
+                                    [checked]="selectedRecordIds.includes(subroute._id)"
+                                    (change)="onRecordSelectionChange(subroute)"
                                     class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
                             </div>
                         </td>
-                        <td class="' py-2">{{route.title}}</td>
-                        <td class="' py-2">N:{{route.price}}, P: {{route.premiumPrice}},D
-                            {{route.discountedPrice}}</td>
-                        <td class="' py-2">{{route.origin}}</td>
-                        <td class="' py-2">{{route.destination}}</td>
-                        <td class="' py-2">{{route.bus.title}}</td>
-                        <td class="' py-2">{{route.recurrentDays}}</td>
-                        <td class="' py-2">{{route.times}}</td>
-                        <td class="' py-2">{{route.totalTrips}}</td>
-                        <td class="' py-2">{{route.createdAt | date: 'dd/MM/yyyy'}}</td>
+                        <td class="' py-2">{{subroute.title}}</td>
+                        <td class="' py-2">N:{{subroute.price}}, P: {{subroute.premiumPrice}},D
+                            {{subroute.discountedPrice}}</td>
+                        <td class="' py-2">{{subroute.origin}}</td>
+                        <td class="' py-2">{{subroute.destination}}</td>
+                        <td class="' py-2">{{subroute.times}}</td>
+                        <td class="' py-2">{{subroute.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
 
                             <button (click)="op.toggle($event)"
@@ -134,14 +125,14 @@
                                         aria-labelledby="apple-imac-27-dropdown-button">
 
                                         <li>
-                                            <a (click)="displayRoute = true; populateRoute(route)"
+                                            <a (click)="displaySubRoute = true; populateSubRoute(subroute)"
                                                 href="javascript:void(0)"
                                                 class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                         </li>
 
                                     </ul>
                                     <div class="py-1">
-                                        <a (click)="confirmDelete(route._id)" href="javascript:void(0)"
+                                        <a (click)="confirmDelete(subroute._id)" href="javascript:void(0)"
                                             class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
 
                                     </div>
@@ -158,9 +149,9 @@
 </div>
 <p-toast></p-toast>
 <p-confirmDialog [style]="{width: '20vw'}"></p-confirmDialog>
-<p-dialog header="{{submitType}}  Route" [(visible)]="displayRoute" [modal]="true" showEffect="fade"
+<p-dialog header="{{submitType}}  SubRoute" [(visible)]="displaySubRoute" [modal]="true" showEffect="fade"
     [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
-    <form [formGroup]="routeForm">
+    <form [formGroup]="subrouteForm">
         <div class="">
             <span class=" w-full mb-1">
                 <span class="block w-full mb-3"> Title </span>
@@ -171,29 +162,29 @@
             </span>
 
             <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Route's origin </span>
+                <span class="block w-full mb-1"> SubRoute's origin </span>
 
-                <p-dropdown [options]="locations" optionValue="title" placeholder="Select route's origin"
+                <p-dropdown [options]="locations" optionValue="title" placeholder="Select subroute's origin"
                     formControlName="origin" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.origin.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
             </span>
             <small class="w-ful inline-block " *ngIf="f.origin.hasError('required') && f.origin.touched" id="state-help"
-                class="p-error">Please select route's origin</small>
+                class="p-error">Please select subroute's origin</small>
 
             <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Route's Destination </span>
+                <span class="block w-full mb-1"> SubRoute's Destination </span>
 
                 <p-dropdown [options]="filterLocationsfromOrigin()" optionValue="title"
-                    placeholder="Select route's destination" formControlName="destination"
+                    placeholder="Select subroute's destination" formControlName="destination"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.destination.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
             </span>
             <small class="w-ful inline-block " *ngIf="f.destination.hasError('required') && f.destination.touched"
-                id="state-help" class="p-error">Please select route's destination</small>
+                id="state-help" class="p-error">Please select subroute's destination</small>
 
             <span class=" w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Basic Price </span>
-                <input formControlName="price" class="border w-full p-3 rounded" placeholder="Route Basic Price">
+                <input formControlName="price" class="border w-full p-3 rounded" placeholder="SubRoute Basic Price">
             </span>
             <small class="w-ful mb-4 inline-block" *ngIf="f.price.hasError('required') && f.price.touched"
                 id="address-help" class="p-error">Please enter price</small>
@@ -201,55 +192,34 @@
             <span class=" w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Premium Price </span>
                 <input formControlName="premiumPrice" class="border w-full p-3 rounded"
-                    placeholder="Route Premium Price">
+                    placeholder="SubRoute Premium Price">
             </span>
             <small class="w-ful mb-4 inline-block" *ngIf="f.premiumPrice.hasError('required') && f.premiumPrice.touched"
                 id="address-help" class="p-error">Please enter premium price</small>
 
             <span class=" w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Discounted Price </span>
-                <input formControlName="discountedPrice" class="border w-full p-3 rounded" placeholder="Route Price">
+                <input formControlName="discountedPrice" class="border w-full p-3 rounded" placeholder="SubRoute Price">
             </span>
             <small class="w-ful mb-4 inline-block"
                 *ngIf="f.discountedPrice.hasError('required') && f.discountedPrice.touched" id="address-help"
                 class="p-error">Please enter discounted price</small>
 
             <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Bus </span>
+                <span class="block w-full mb-1"> Main Route </span>
 
-                <p-dropdown [options]="buses" optionValue="_id" placeholder="Select a bus" formControlName="bus"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.bus.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
+                <p-multiSelect [options]="routes" optionValue="_id" placeholder="Select Route" formControlName="route"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.route.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
             </span>
-            <small class="w-ful inline-block " *ngIf="f.bus.hasError('required') && f.bus.touched" id="state-help"
-                class="p-error">Please select bus </small>
-
-            <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1">Route's recurrent days of the week </span>
-
-                <p-multiSelect [options]="daysWithTitles" optionValue="day" placeholder="Select route's recurrent day"
-                    formControlName="recurrentDays"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.recurrentDays.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="day"></p-multiSelect>
-            </span>
-            <small class="w-ful inline-block " *ngIf="f.recurrentDays.hasError('required') && f.recurrentDays.touched"
-                id="state-help" class="p-error">Please select recurrent days</small>
-
-                <span class="w-full mb-1 block mt-8">
-
-                    <span class="block w-full mb-1">Routes stops </span>
-    
-                    <p-multiSelect [options]="times" optionValue="title" placeholder="Select route's stops"
-                        formControlName="stops" [options]="locations"
-                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.stops.errors }"
-                        styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
-                </span>
+            <small class="w-ful inline-block " *ngIf="f.route.hasError('required') && f.route.touched" id="state-help"
+                class="p-error">Please select route </small>
 
             <span class="w-full mb-1 block mt-8">
 
-                <span class="block w-full mb-1">Routes trip times </span>
+                <span class="block w-full mb-1">SubRoutes trip times </span>
 
-                <p-multiSelect [options]="times" optionValue="title" placeholder="Select route's possible times"
+                <p-multiSelect [options]="times" optionValue="title" placeholder="Select subroute's possible times"
                     formControlName="times" 
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.times.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
@@ -257,16 +227,8 @@
             <small class="w-ful inline-block " *ngIf="f.times.hasError('required') && f.times.touched"
                 id="state-help" class="p-error">Please select possible times</small>
 
-            <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Total Trips per day </span>
-                <input formControlName="totalTrips" class="border w-full p-3 rounded"
-                    placeholder=" Total Trips per day">
-            </span>
-            <small class="w-ful mb-4 inline-block" *ngIf="f.totalTrips.hasError('required') && f.totalTrips.touched"
-                id="address-help" class="p-error">Please enter total trips</small>
-
             <button [loading]="loading" pButton pRipple label="Submit"
-                class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitRoute()"></button>
+                class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitSubRoute()"></button>
         </div>
     </form>
     <ng-template pTemplate="footer">

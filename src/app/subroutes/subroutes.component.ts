@@ -5,22 +5,22 @@ import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
-  selector: 'app-routes',
-  templateUrl: './routes.component.html',
-  styleUrls: ['./routes.component.scss'],
+  selector: 'app-subroutes',
+  templateUrl: './subroutes.component.html',
+  styleUrls: ['./subroutes.component.scss'],
   providers: [MessageService, ConfirmationService]
 
 })
-export class RoutesComponent implements OnInit {
+export class SubRoutesComponent implements OnInit {
 
-  routes: any = []
+  subroutes: any = []
   visible: boolean = false;
-  routeForm: any;
+  subrouteForm: any;
   // states: any = states;
   submitted: any
   loading: any
   submitType: string = '';
-  displayRoute: boolean = false;
+  displaySubRoute: boolean = false;
   daysWithTitles = [
     { title: 'Day', day: 'Sunday' },
     { title: 'Day', day: 'Monday' },
@@ -56,36 +56,43 @@ export class RoutesComponent implements OnInit {
   ]
   selectedRecordIds: any = [];
   checkAllStatus: boolean;
+  routes: any;
   
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
-    this.routeForm = this.fb.group({
+    this.subrouteForm = this.fb.group({
       title: [undefined, Validators.required],
-      stops: [undefined, ],
       destination: [undefined, Validators.required],
       origin: [undefined, Validators.required],
       price: [undefined, Validators.required],
       premiumPrice: [undefined, Validators.required],
       times: [undefined, Validators.required],
+      route: [undefined, Validators.required],
       discountedPrice: [undefined, Validators.required],
-      bus: [undefined, Validators.required],
-      recurrentDays: [undefined, Validators.required],
-      totalTrips: [undefined, Validators.required],
-      
     })
   }
   ngOnInit(): void {
+    this.pullSubRoutes()
     this.pullRoutes()
+
     this.pullLocations()
-    this.pullBuses()
 
   }
-  get f() { return this.routeForm.controls; }
+  get f() { return this.subrouteForm.controls; }
 
   showDialog() {
 
-    this.displayRoute = true;
+    this.displaySubRoute = true;
   }
 
+  pullSubRoutes() {
+    this.httpService
+      .getAuthData(
+        'subroutes'
+      )
+      .subscribe((data: any) => {
+        this.subroutes = data.data
+      });
+  }
   pullRoutes() {
     this.httpService
       .getAuthData(
@@ -93,15 +100,6 @@ export class RoutesComponent implements OnInit {
       )
       .subscribe((data: any) => {
         this.routes = data.data
-      });
-  }
-  pullBuses() {
-    this.httpService
-      .getAuthData(
-        'buses'
-      )
-      .subscribe((data: any) => {
-        this.buses = data.data
       });
   }
 
@@ -120,7 +118,7 @@ export class RoutesComponent implements OnInit {
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
-        this.deleteRoutes(id)
+        this.deleteSubRoutes(id)
       },
       reject: () => {
 
@@ -128,15 +126,15 @@ export class RoutesComponent implements OnInit {
     });
   }
 
-  deleteRoutes(id: any) {
+  deleteSubRoutes(id: any) {
     this.httpService
       .deleteData(
-        'routes/', id
+        'subroutes/', id
       )
       .subscribe((data: any) => {
         this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
 
-        this.pullRoutes()
+        this.pullSubRoutes()
       });
   }
 
@@ -160,7 +158,7 @@ export class RoutesComponent implements OnInit {
 
   async checkAll(){
     if(this.checkAllStatus == true){
-      for await (const it of this.routes) {
+      for await (const it of this.subroutes) {
         if(!this.selectedRecordIds.includes(it._id)){
           this.selectedRecordIds.push(it._id)
         }
@@ -188,53 +186,53 @@ export class RoutesComponent implements OnInit {
 
     this.httpService
       .postAuthData(
-        'routes/deleteRoutes/', {ids: this.selectedRecordIds}
+        'subroutes/deleteSubRoutes/', {ids: this.selectedRecordIds}
       )
       .subscribe((data: any) => {
         this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Records deleted' });
 
-        this.pullRoutes()
+        this.pullSubRoutes()
         this.selectedRecordIds = []
       });
   }
 
-  populateRoute(route: any) {
+  populateSubRoute(subroute: any) {
     this.submitType = 'Edit';
-    this.currentID = route._id
-    this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, stops: route.stops, premiumPrice: route.premiumPrice, times:route.times,
-      discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
+    this.currentID = subroute._id
+    this.subrouteForm.patchValue({ title: subroute.title,bus: subroute.bus, price: subroute.price, stops: subroute.stops, premiumPrice: subroute.premiumPrice, times:subroute.times,
+      discountedPrice: subroute.discountedPrice, origin: subroute.origin, destination: subroute.destination, recurrentDays: subroute.recurrentDays, totalTrips: subroute.totalTrips })
   }
 
-  submitRoute() {
+  submitSubRoute() {
 
     this.submitted = true
-    if (this.routeForm.invalid) {
-      this.routeForm.markAllAsTouched();
+    if (this.subrouteForm.invalid) {
+      this.subrouteForm.markAllAsTouched();
 
       return;
     }
     this.loading = true;
-    let data: any = { ...this.routeForm.value }
-    if (this.submitType == 'Edit') this.updateRoute(data)
-    if (this.submitType == 'Add') this.createRoute(data)
+    let data: any = { ...this.subrouteForm.value }
+    if (this.submitType == 'Edit') this.updateSubRoute(data)
+    if (this.submitType == 'Add') this.createSubRoute(data)
   }
 
-  createRoute(data: any) {
+  createSubRoute(data: any) {
     console.log('====================================');
     console.log(data);
     console.log('====================================');
     this.httpService
       .postAuthData(
-        'routes/', data
+        'subroutes/', data
       )
       .subscribe((data: any) => {
         // this.listing = data.data
         this.loading = false
-        this.displayRoute = false
-        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'Route created successfully' });
+        this.displaySubRoute = false
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'SubRoute created successfully' });
 
-        this.pullRoutes();
-        this.routeForm.reset()
+        this.pullSubRoutes();
+        this.subrouteForm.reset()
       }, (err) => {
         this.loading = false
 
@@ -244,19 +242,19 @@ export class RoutesComponent implements OnInit {
       });
   }
 
-  updateRoute(data: any) {
+  updateSubRoute(data: any) {
 
     this.httpService
       .updateData(
-        'routes/' + this.currentID, data
+        'subroutes/' + this.currentID, data
       )
       .subscribe((data: any) => {
         // this.listing = data.data
         this.loading = false
-        this.displayRoute = false
-        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'Route updated successfully' });
+        this.displaySubRoute = false
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'SubRoute updated successfully' });
 
-        this.pullRoutes()
+        this.pullSubRoutes()
         this.currentID = ''
       }, (err) => {
         this.loading = false
@@ -268,7 +266,7 @@ export class RoutesComponent implements OnInit {
   }
 
   filterLocationsfromOrigin(){
-    let val = this.routeForm.value.origin
+    let val = this.subrouteForm.value.origin
     if(val){
 
       return this.locations.filter((res:any) =>{
