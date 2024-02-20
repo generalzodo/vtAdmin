@@ -112,7 +112,7 @@
                         <td class="' py-2">{{trip.route?.title}}</td>
                         <td class="' py-2">{{trip.driver?.firstName}} {{trip.driver?.lastName}}</td>
                         <td class="' py-2">{{trip.busNo}}</td>
-                        <td class="' py-2">{{trip.availableSeats}}</td>
+                        <td class="' py-2">{{trip.availableSeats - trip.seats.length}}</td>
                         <td class="' py-2 capitalize">{{trip.status}}</td>
                         <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
