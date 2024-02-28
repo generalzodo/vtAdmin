@@ -144,7 +144,7 @@ export class UsersComponent implements OnInit {
   }
 
   updateUser(data: any) {
-
+    this.userForm.value.type = this.userForm.value.userType
     this.httpService
       .updateData(
         'users/' + this.currentID, data
