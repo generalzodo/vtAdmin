@@ -99,13 +99,13 @@
         <span class=" w-full mb-1">
             <span class="block w-full mb-3"> User type </span>
 
-            <p-dropdown [options]="userType" optionValue="value" placeholder="Select user type" formControlName="type"
-            [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.type.errors }"
+            <p-dropdown [options]="userTypes" optionValue="value" placeholder="Select user type" formControlName="userType"
+            [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.userType.errors }"
             styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
             optionLabel="title"></p-dropdown>
         </span>
 
-        <small class="w-ful mb-4 inline-block" *ngIf="f.type.hasError('required') && f.type .touched"
+        <small class="w-ful mb-4 inline-block" *ngIf="f.userType.hasError('required') && f.userType.touched"
             id="title-help" class="p-error">Please select user type</small>
  
         <span class=" w-full mb-1 mt-8 inline-block">
