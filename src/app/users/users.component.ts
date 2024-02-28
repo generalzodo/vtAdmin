@@ -20,14 +20,14 @@ export class UsersComponent implements OnInit {
   submitType: string = '';
   displayUser: boolean = false;
   currentID: any;
-userType:any = [
-  {title: 'User' , value: 'user'},
-  {title: 'Agent', value: 'agent'},
-  {title: 'Admin', value: 'admin'}
-]
+  userType: any = [
+    { title: 'User', value: 'user' },
+    { title: 'Agent', value: 'agent' },
+    { title: 'Admin', value: 'admin' }
+  ]
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.userForm = this.fb.group({
-      userType: [undefined, Validators.required],
+      type: [undefined, Validators.required],
       firstName: [undefined, Validators.required],
       lastName: [undefined, Validators.required],
       phone: [undefined, Validators.required],
@@ -85,9 +85,23 @@ userType:any = [
       });
   }
   populateUser(user: any) {
+    console.log(user);
+    
     this.submitType = 'Edit';
     this.currentID = user._id
-    // this.userForm.setValue({ p, address: user.address, state: user.state })
+    this.userForm.patchValue({
+      userType: user.type,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+      address: user.address,
+      state: user.state,
+      dob: user.dob,
+      email: user.email,
+      password: user.password,
+      confirmPassword: user.password
+    })
+
   }
 
   submitUser() {
