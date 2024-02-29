@@ -114,8 +114,8 @@ export class UsersComponent implements OnInit {
     }
     
     this.loading = true;
-    let data: any = { ...this.userForm.value }
     this.userForm.value.type = this.userForm.value.userType
+    let data: any = { ...this.userForm.value }
 
     if (this.submitType == 'Edit') this.updateUser(data)
     if (this.submitType == 'Add') this.createUser(data)
