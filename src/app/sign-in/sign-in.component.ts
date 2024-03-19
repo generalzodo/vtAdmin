@@ -33,25 +33,21 @@ export class SignInComponent {
 		this.loading = true;
 		this.auth.login(this.loginForm.value).subscribe(
 		  (res: any)=>{
-				if(res){
-
+			console.log(res);
+			
 					this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Logging in....' });
 					this.router.navigateByUrl("/")
 					this.loading = false;
 					this.submitted =  false;
 
-				}else{
-					console.log('====================================');
-					console.log(res);
-					console.log('====================================');
-					this.loading = false;
-					this.service.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: 'Your email/password is incorrect' });
-				}
-			
 		  },
 		  (err: any)=>{
 			this.loading = false;
-	
+			console.log('====================================');
+			console.log(err);
+			console.log('====================================');
+			this.loading = false;
+			this.service.add({ key: 'tst', severity: 'error', summary: 'Error Message', detail: 'Your email/password is incorrect' });
 		  }
 		)
 	  }
