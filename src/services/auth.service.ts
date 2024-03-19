@@ -8,7 +8,8 @@ import { catchError, mapTo, tap } from 'rxjs/operators';
 const baseUrl = {
   jwt_token: 'TP_TOKEN',
   refresh_token: 'TP_REFRESH',
-  server: 'http://localhost:3000/',
+  // server: 'http://localhost:4000/',
+  server: 'https://plankton-app-3hk2y.ondigitalocean.app/api/',
 
   refresh: 'token/refresh/',
 
@@ -31,7 +32,7 @@ export class AuthService {
   ) {}
 
   login(user: any): Observable<boolean> {
-    return this.http.post<any>(this.base_url + 'api/auth/login', user).pipe(
+    return this.http.post<any>(this.base_url + 'api/users/alogin', user).pipe(
       tap((res: any) => {
         this.storeTokens({ token: res?.token });
         localStorage.setItem('user', JSON.stringify(res.data))

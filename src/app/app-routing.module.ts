@@ -9,21 +9,33 @@ import { SettingsComponent } from './settings/settings.component';
 import { DriversComponent } from './drivers/drivers.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { SubRoutesComponent } from './subroutes/subroutes.component';
+import { SignInComponent } from './sign-in/sign-in.component';
+import { AuthGuard } from './auth.guard';
+import { ContainerComponent } from './container/container.component';
 
 const routes: Routes = [
   {
-    path: '', component: BookingsComponent,
-
+    path: 'auth/login',  component: SignInComponent,
   },
-  { path: 'users', component: UsersComponent },
-  { path: 'buses', component: BusesComponent },
-  { path: 'drivers', component: DriversComponent },
-  { path: 'bookings', component: BookingsComponent },
-  { path: 'trips', component: TripsComponent },
-  { path: 'routes', component: RoutesComponent },
-  { path: 'subroutes', component: SubRoutesComponent },
-  { path: 'settings', component: SettingsComponent },
-];
+  {
+    path: '', component: ContainerComponent,
+    canActivate: [AuthGuard],
+    children: [
+  {
+    path: '', component: BookingsComponent,
+  },
+
+  { path: 'users',  component: UsersComponent },
+  { path: 'buses',  component: BusesComponent },
+  { path: 'drivers',  component: DriversComponent },
+  { path: 'bookings',  component: BookingsComponent },
+  { path: 'trips',  component: TripsComponent },
+  { path: 'routes',  component: RoutesComponent },
+  { path: 'subroutes',  component: SubRoutesComponent },
+  { path: 'settings',  component: SettingsComponent },
+]
+  }
+]
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
