@@ -33,6 +33,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { SubRoutesComponent } from './subroutes/subroutes.component';
 import { SignInComponent } from './sign-in/sign-in.component';
+import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
+import { AbookingsComponent } from './abookings/abookings.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,7 +51,9 @@ import { SignInComponent } from './sign-in/sign-in.component';
     RoutesComponent,
     LocationsComponent,
     BookingsComponent, SubRoutesComponent,
-    SignInComponent
+    SignInComponent,
+    WithdrawalsComponent,
+    AbookingsComponent
   ],
   imports: [
     BrowserModule,

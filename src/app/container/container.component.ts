@@ -10,7 +10,9 @@ export class ContainerComponent implements OnInit {
   menus: any = [
     { title: 'Dashboard', url: '' },
     { title: 'Users', url: 'users' },
+    { title: 'Withdrawals', url: 'withdrawals' },
     { title: 'Bookings', url: 'bookings' },
+    { title: 'Altered Bookings', url: 'altered' },
     { title: 'Trips', url: 'trips' },
     { title: 'Buses', url: 'buses' },
     { title: 'Drivers', url: 'drivers' },
