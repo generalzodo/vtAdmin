@@ -17,7 +17,7 @@ import { BusesComponent } from './buses/buses.component';
 import { ContainerComponent } from './container/container.component';
 import { TicketsComponent } from './tickets/tickets.component';
 import { RoutesComponent } from './routes/routes.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LocationsComponent } from './locations/locations.component';
 import { DialogModule } from 'primeng/dialog';
@@ -35,6 +35,7 @@ import { SubRoutesComponent } from './subroutes/subroutes.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
+import { AuthInterceptor } from './auth-interceptor.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,7 +75,13 @@ import { AbookingsComponent } from './abookings/abookings.component';
     OverlayPanelModule,
     ConfirmPopupModule,
     DropdownModule],
-  providers: [],
+  providers: [
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthInterceptor,
+        multi: true
+      }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
