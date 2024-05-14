@@ -88,22 +88,23 @@ export class WithdrawalsComponent implements OnInit {
         this.pullWithdrawals()
       });
   }
-  markAsUsed(booking: any, status: String) {
-    this.currentID = booking._id
-    this.updateWithdrawal({ status: status })
-  }
-
-  updateWithdrawal(data: any) {
-
+ 
+  approvalWithdrawal(data: any) {
+    this.confirmationService.confirm({
+      message: 'Do you want to approve this transaction?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+     
     this.httpService
-      .updateData(
-        'booking/' + this.currentID, data
+      .getAuthData(
+        'users/approveTransaction' + data._id
       )
       .subscribe((data: any) => {
         // this.listing = data.data
         this.loading = false
         this.displayWithdrawal = false
-        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Withdrawal updated successfully' });
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Withdrawal approved successfully' });
 
         this.pullWithdrawals()
         this.currentID = ''
@@ -114,7 +115,42 @@ export class WithdrawalsComponent implements OnInit {
         console.log(err);
         console.log('====================================');
       });
-  }
+    },
+    reject: () => {
 
+    }
+  });
+  }
+  rejectWithdrawal(data: any) {
+    this.confirmationService.confirm({
+      message: 'Do you want to reject this transaction?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+    this.httpService
+      .getAuthData(
+        'users/rejectTransaction' + data._id
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayWithdrawal = false
+        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Withdrawal rejected successfully' });
+
+        this.pullWithdrawals()
+        this.currentID = ''
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+    },
+    reject: () => {
+
+    }
+  });
+  }
 }
 
