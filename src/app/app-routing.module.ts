@@ -12,6 +12,8 @@ import { SubRoutesComponent } from './subroutes/subroutes.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { AuthGuard } from './auth.guard';
 import { ContainerComponent } from './container/container.component';
+import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
+import { AbookingsComponent } from './abookings/abookings.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/container/bookings', pathMatch: 'full' },
@@ -27,11 +29,15 @@ const routes: Routes = [
       {
         path: 'bookings', component: BookingsComponent,
       },
+      {
+        path: 'altered', component: AbookingsComponent,
+      },
 
       { path: 'users', component: UsersComponent },
       { path: 'buses', component: BusesComponent },
       { path: 'drivers', component: DriversComponent },
       { path: 'bookings', component: BookingsComponent },
+      { path: 'withdrawals', component: WithdrawalsComponent },
       { path: 'trips', component: TripsComponent },
       { path: 'routes', component: RoutesComponent },
       { path: 'subroutes', component: SubRoutesComponent },

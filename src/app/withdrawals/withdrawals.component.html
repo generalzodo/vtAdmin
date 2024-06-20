@@ -1,0 +1,129 @@
+<div class="px-4 mx-auto  lg:px-12">
+    <div class="relative overflow-hidden bg-white shadow-md border  dark:bg-gray-800 sm:rounded-lg p-1">
+        <div
+            class="flex flex-col px-4 py-3  lg:flex-row lg:items-center border-b border-gray-300  lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div class="flex items-center flex-1 space-x-4">
+                <div class="w-full md:w-1/2">
+                    <form class="flex items-center">
+                        <label for="simple-search" class="sr-only">Search</label>
+                        <div class="relative w-full">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                    fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Search" required="">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div
+                class="flex flex-col flex-shrink-0 space-y-3 md:flex-row md:items-center lg:justify-end md:space-y-0 md:space-x-3">
+                <h5>
+                    <span class="text-gray-500">All Withdrawals:</span>
+                    <span class="dark:text-white"> {{withdrawals.length}}</span>
+                </h5>
+
+                <!-- <button (click)="exportToExcel(withdrawals, 'withdrawals')"
+                    class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Export
+                </button> -->
+                <!-- <button state="button" (click)="showDialog(); submitType ='Add'"
+                    class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+                    <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path clip-rule="evenodd" fill-rule="evenodd"
+                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+                    </svg>
+                    Add new withdrawal
+                </button> -->
+
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <p-table [value]="withdrawals" #dt1
+                [globalFilterFields]="['withdrawalId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate' ]"
+                [paginator]="true" [rows]="10"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+                <ng-template pTemplate="header">
+                    <tr>
+   
+                        <th pSortableColumn="firstName" style="width:10%">Name <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="phone" style="width:8%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
+                 
+                        <th pSortableColumn="state" style="width:5%">Amount <p-sortIcon field="state"></p-sortIcon></th>
+                        <th pSortableColumn="state" style="width:7%">Bank Name <p-sortIcon field="state"></p-sortIcon> </th>
+                        <th pSortableColumn="state" style="width:7%">Account Number <p-sortIcon field="state"></p-sortIcon> </th>
+    
+                        <th pSortableColumn="status" style="width:5%">Status <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="status" style="width:5%">Date <p-sortIcon field="status"></p-sortIcon>
+                        </th>
+                        <th style="width:3%">Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-withdrawal>
+                    <tr class="border-b border-gray-300">
+
+                        <td class="py-2">{{withdrawal.userId.firstName}}, {{withdrawal.userId.lastName}}</td>
+                        <td class="py-2">{{withdrawal.userId.phone}}</td>
+                        <td class="py-2">{{withdrawal.amount}}</td>
+                        <td class="py-2">{{withdrawal.userId.bankName}}</td>
+                        <td class="py-2">{{withdrawal.userId.accountNumber}}</td>
+                        <td class="py-2 capitalize">{{withdrawal.status}}</td>
+                        <td class="py-2">{{withdrawal.createdAt | date: 'dd/MM/yyyy'}}</td>
+                        <td>
+                            <button *ngIf="withdrawal.status == 'pending'"  (click)="op.toggle($event)"
+                                class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                                type="button">
+                                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                            </button>
+                            <p-overlayPanel #op styleClass="p-0">
+                                <div id="apple-imac-27-dropdown"
+                                    class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                                        aria-labelledby="apple-imac-27-dropdown-button">
+                                        <li>
+                                            <a href="javascript:void(0)" (click)="approvalWithdrawal(withdrawal)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Approve Withdrawal</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" (click)="rejectWithdrawal(withdrawal)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reject Withdrawal</a>
+                                        </li>
+                                    
+                                    </ul>
+                                    <!-- <div class="py-1">
+                                        <a href="#"
+                                            class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                    </div> -->
+                                </div>
+                            </p-overlayPanel>
+
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+<p-toast></p-toast>
+<p-confirmDialog [style]="{}"></p-confirmDialog>
+
