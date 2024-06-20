@@ -6,6 +6,7 @@ import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/a
 import * as html2pdf from 'html2pdf.js';
 import * as XLSX from 'xlsx';
 import { __values } from 'tslib';
+import { HelperService } from 'src/services/helper.service';
 
 @Component({
   selector: 'app-bookings',
@@ -31,7 +32,17 @@ export class BookingsComponent implements OnInit {
   maxDate: Date;
   currentPage = 'one';
   results: any;
-  constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  selectedFilter:any = {title: 'Last 7 Days', value: 7 }
+  dateFilter = [
+    {title: 'Last 7 days', value: 7},
+    {title: 'Last 30 days', value: 30},
+    {title: 'Last 60 days', value: 60},
+    {title: 'Last 3 months', value: 90},
+    {title: 'Last 6 months', value: 180},
+    {title: 'Last Year', value: 365},
+    // {title: 'All Time', value: ''}
+  ]
+  constructor(private fb: FormBuilder, private httpService: HttpService, private helper: HelperService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.bookingForm = this.fb.group({
       firstName: [undefined, Validators.required],
       lastName: [undefined, Validators.required],
@@ -200,9 +211,17 @@ export class BookingsComponent implements OnInit {
     html2pdf(element, options);
   }
   pullBookings() {
+    let filter = ''
+    if(this.selectedFilter.value != ''){
+      console.log(this.selectedFilter.value );
+      
+      let dateRange = this.helper.getDateRange(this.selectedFilter.value)
+      filter = `?from=${dateRange.from}&to=${dateRange.to}`
+
+    }
     this.httpService
       .getAuthData(
-        'booking'
+        'booking'+filter
       )
       .subscribe((data: any) => {
         this.bookings = data.data

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/services/auth.service';
 
 @Component({
   selector: 'app-container',
@@ -15,14 +16,14 @@ export class ContainerComponent implements OnInit {
     { title: 'Altered Bookings', url: 'altered' },
     { title: 'Trips', url: 'trips' },
     { title: 'Buses', url: 'buses' },
-    { title: 'Drivers', url: 'drivers' },
+    { title: 'Transport Officers', url: 'drivers' },
     { title: 'Routes', url: 'routes' },
     { title: 'Sub Routes', url: 'subroutes' },
     { title: 'Settings', url: 'settings' },
   ]
   currentRoute: string;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public auth: AuthService) {
 
   }
 

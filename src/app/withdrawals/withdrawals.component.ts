@@ -98,7 +98,7 @@ export class WithdrawalsComponent implements OnInit {
      
     this.httpService
       .getAuthData(
-        'users/approveTransaction' + data._id
+        'users/approveTransaction/' + data._id
       )
       .subscribe((data: any) => {
         // this.listing = data.data
@@ -129,7 +129,7 @@ export class WithdrawalsComponent implements OnInit {
       accept: () => {
     this.httpService
       .getAuthData(
-        'users/rejectTransaction' + data._id
+        'users/rejectTransaction/' + data._id
       )
       .subscribe((data: any) => {
         // this.listing = data.data
