@@ -56,7 +56,11 @@ export class RoutesComponent implements OnInit {
   ]
   selectedRecordIds: any = [];
   checkAllStatus: boolean;
-  
+  subrouteForm: any;
+  displaySubRoute:any
+  subroutes: any;
+  displayAESubRoute:any
+  currentSubID: any;
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.routeForm = this.fb.group({
       title: [undefined, Validators.required],
@@ -72,6 +76,16 @@ export class RoutesComponent implements OnInit {
       totalTrips: [undefined, Validators.required],
       
     })
+
+    this.subrouteForm = this.fb.group({
+      // title: [undefined, Validators.required],
+      stop: [undefined, Validators.required],
+      price: [undefined, Validators.required],
+      premiumPrice: [undefined, Validators.required],
+      times: [undefined, Validators.required],
+      route: [this.currentID],
+      discountedPrice: [undefined, Validators.required],
+    })
   }
   ngOnInit(): void {
     this.pullRoutes()
@@ -80,6 +94,7 @@ export class RoutesComponent implements OnInit {
 
   }
   get f() { return this.routeForm.controls; }
+  get l() { return this.subrouteForm.controls; }
 
   showDialog() {
 
@@ -276,6 +291,112 @@ export class RoutesComponent implements OnInit {
       })
     }
     return[]
+  }
+
+  populateSubRoute(subroute: any) {
+    this.submitType = 'Edit';
+    this.currentSubID = subroute._id
+    this.subrouteForm.patchValue({ stop: subroute.stop, price: subroute.price, stops: subroute.stops, premiumPrice: subroute.premiumPrice, times:subroute.times,
+      discountedPrice: subroute.discountedPrice })
+  }
+
+  submitSubRoute() {
+
+    this.submitted = true
+    if (this.subrouteForm.invalid) {
+      this.subrouteForm.markAllAsTouched();
+
+      return;
+    }
+    this.loading = true;
+    let data: any = { ...this.subrouteForm.value }
+    if (this.submitType == 'Edit') this.updateSubRoute(data)
+    if (this.submitType == 'Add') this.createSubRoute(data)
+  }
+
+  pullSubRoutes() {
+    this.httpService
+      .getAuthData(
+        'subroutes/routes/'+ this.currentID
+      )
+      .subscribe((data: any) => {
+        this.subroutes = data.data
+      });
+  }
+
+  createSubRoute(data: any) {
+    console.log('====================================');
+    console.log(data);
+    console.log('====================================');
+    data.route = this.currentID;
+    
+    this.httpService
+      .postAuthData(
+        'subroutes/', data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayAESubRoute = false
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'SubRoute created successfully' });
+
+        this.pullSubRoutes();
+        this.subrouteForm.reset()
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
+
+  updateSubRoute(data: any) {
+
+    this.httpService
+      .updateData(
+        'subroutes/' + this.currentSubID, data
+      )
+      .subscribe((data: any) => {
+        // this.listing = data.data
+        this.loading = false
+        this.displayAESubRoute = false
+        this.messageService.add({  severity: 'success', summary: 'Successful', detail: 'SubRoute updated successfully' });
+
+        this.pullSubRoutes()
+        this.currentSubID = ''
+      }, (err) => {
+        this.loading = false
+
+        console.log('====================================');
+        console.log(err);
+        console.log('====================================');
+      });
+  }
+  confirmSubDelete(id: any) {
+    this.confirmationService.confirm({
+      message: 'Do you want to delete this record?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        this.deleteSubRoutes(id)
+      },
+      reject: () => {
+
+      }
+    });
+  }
+
+  deleteSubRoutes(id: any) {
+    this.httpService
+      .deleteData(
+        'subroutes/', id
+      )
+      .subscribe((data: any) => {
+        this.messageService.add({ severity: 'success', summary: 'Confirmed', detail: 'Record deleted' });
+
+        this.pullSubRoutes()
+      });
   }
 }
 
