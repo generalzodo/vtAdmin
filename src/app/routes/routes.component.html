@@ -17,8 +17,8 @@
                                 </svg>
                             </div>
                             <input pInputText type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                            placeholder="Search" required="">
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Search" required="">
                         </div>
                     </form>
                 </div>
@@ -40,14 +40,14 @@
                     Export
                 </button>
                 <button state="button" (click)="confirmMultipleDelete()"
-                class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
-                    stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
-                Delete Selected
-            </button>
+                    class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
+                        stroke-width="2" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                    </svg>
+                    Delete Selected
+                </button>
                 <button state="button" (click)="showDialog(); submitType ='Add'"
                     class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
@@ -61,9 +61,8 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table  #dt1
-            [globalFilterFields]="['title', 'origin', 'destination','status', 'bus.title']"
-            [value]="routes" [paginator]="true" [rows]="10"
+            <p-table #dt1 [globalFilterFields]="['title', 'origin', 'destination','status', 'bus.title']"
+                [value]="routes" [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
                 <ng-template pTemplate="header">
@@ -86,8 +85,8 @@
                                 field="destination"></p-sortIcon></th>
                         <th pSortableColumn="recurrentDays" style="width:15%">Route's Days <p-sortIcon
                                 field="recurrentDays"></p-sortIcon></th>
-                                <th pSortableColumn="recurrentDays" style="width:15%">Route's Times <p-sortIcon
-                                    field="recurrentDays"></p-sortIcon></th>
+                        <th pSortableColumn="recurrentDays" style="width:15%">Route's Times <p-sortIcon
+                                field="recurrentDays"></p-sortIcon></th>
                         <th pSortableColumn="totalTrips" style="width:10%">Trips per day <p-sortIcon
                                 field="totalTrips"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon
@@ -138,8 +137,20 @@
                                                 href="javascript:void(0)"
                                                 class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
                                         </li>
+                                        <li>
+                                            <a (click)="displaySubRoute = true; currentID = route._id; pullSubRoutes(route)"
+                                                href="javascript:void(0)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View
+                                                stops</a>
+                                        </li>
+                                        <!-- <li>
+                                            <a (click)="displaySubRoute = true; currentID = route._id; pullSubRoutes(route)"
+                                                href="javascript:void(0)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Add new stops</a>
+                                        </li> -->
 
                                     </ul>
+
                                     <div class="py-1">
                                         <a (click)="confirmDelete(route._id)" href="javascript:void(0)"
                                             class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
@@ -235,27 +246,28 @@
             <small class="w-ful inline-block " *ngIf="f.recurrentDays.hasError('required') && f.recurrentDays.touched"
                 id="state-help" class="p-error">Please select recurrent days</small>
 
-                <span class="w-full mb-1 block mt-8">
+            <span class="w-full mb-1 block mt-8">
 
-                    <span class="block w-full mb-1">Routes stops </span>
-    
-                    <p-multiSelect [options]="times" optionValue="title" placeholder="Select route's stops"
-                        formControlName="stops" [options]="locations"
-                        [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.stops.errors }"
-                        styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
-                </span>
+                <span class="block w-full mb-1">Routes stops </span>
+
+                <p-multiSelect [options]="times" optionValue="title" placeholder="Select route's stops"
+                    formControlName="stops" [options]="locations"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.stops.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
+                    optionLabel="title"></p-multiSelect>
+            </span>
 
             <span class="w-full mb-1 block mt-8">
 
                 <span class="block w-full mb-1">Routes trip times </span>
 
                 <p-multiSelect [options]="times" optionValue="title" placeholder="Select route's possible times"
-                    formControlName="times" 
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.times.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
+                    formControlName="times" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.times.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}"
+                    optionLabel="title"></p-multiSelect>
             </span>
-            <small class="w-ful inline-block " *ngIf="f.times.hasError('required') && f.times.touched"
-                id="state-help" class="p-error">Please select possible times</small>
+            <small class="w-ful inline-block " *ngIf="f.times.hasError('required') && f.times.touched" id="state-help"
+                class="p-error">Please select possible times</small>
 
             <span class=" w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Total Trips per day </span>
@@ -267,6 +279,166 @@
 
             <button [loading]="loading" pButton pRipple label="Submit"
                 class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitRoute()"></button>
+        </div>
+    </form>
+    <ng-template pTemplate="footer">
+        <!-- <button pButton icon="pi pi-check" (click)="displayFaq=false" label="Ok" class="p-button-outlined"></button> -->
+    </ng-template>
+</p-dialog>
+<p-dialog header="Stops" [(visible)]="displaySubRoute" [modal]="true" showEffect="fade"
+[style]="{width: '80rem'}" [breakpoints]="{'960px': '75vw'}">
+
+    <div class="flex justify-between my-3">
+        <div></div>
+        <button state="button" (click)="displayAESubRoute = true; submitType ='Add'"
+            class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
+            <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+                <path clip-rule="evenodd" fill-rule="evenodd"
+                    d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+            </svg>
+            Add new stop
+        </button>
+    </div>
+    <div class="overflow-x-auto">
+        <p-table #dt1 [globalFilterFields]="['title', 'origin', 'destination','status']" [value]="subroutes"
+            [paginator]="true" [rows]="10"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+            <ng-template pTemplate="header">
+                <tr>
+
+                    <th pSortableColumn="title" style="width:10%">Stop <p-sortIcon field="title"></p-sortIcon></th>
+                    <th pSortableColumn="title" style="width:25%">Prices <p-sortIcon field="title"></p-sortIcon></th>
+
+                    <th pSortableColumn="recurrentDays" style="width:15%">Stop time difference <p-sortIcon
+                            field="recurrentDays"></p-sortIcon></th>
+                    <th pSortableColumn="createdAt" style="width:10%">Created on <p-sortIcon
+                            field="createdAt"></p-sortIcon></th>
+                    <th style="width:5%">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-subroute>
+                <tr class="border-b border-gray-300">
+
+                    <!-- <td class="' py-2">{{subroute.title}}</td> -->
+                    <td class="' py-2">{{subroute.stop}}</td>
+                    <td class="' py-2">N:{{subroute.price}}, P: {{subroute.premiumPrice}},D
+                        {{subroute.discountedPrice}}</td>
+                    <td class="' py-2">{{subroute.times}}</td>
+                    <td class="' py-2">{{subroute.createdAt | date: 'dd/MM/yyyy'}}</td>
+                    <td>
+
+                        <button (click)="op.toggle($event)"
+                            class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                            type="button">
+                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                            </svg>
+                        </button>
+                        <p-overlayPanel #op styleClass="p-0">
+                            <div id="apple-imac-27-dropdown"
+                                class=" z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                                <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                                    aria-labelledby="apple-imac-27-dropdown-button">
+
+                                    <li>
+                                        <a (click)="displayAESubRoute = true; populateSubRoute(subroute)"
+                                            href="javascript:void(0)"
+                                            class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                    </li>
+
+                                </ul>
+                                <div class="py-1">
+                                    <a (click)="confirmSubDelete(subroute._id)" href="javascript:void(0)"
+                                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
+
+                                </div>
+                            </div>
+                        </p-overlayPanel>
+
+                    </td>
+
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</p-dialog>
+
+<p-dialog header="{{submitType}}  stop" [(visible)]="displayAESubRoute" [modal]="true" showEffect="fade"
+    [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
+
+    <form [formGroup]="subrouteForm">
+        <div class="">
+            <!-- <span class=" w-full mb-1">
+                <span class="block w-full mb-3"> Title </span>
+
+                <input id="title" state="text" pInputText formControlName="title"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.title.errors }" class="border w-full p-3 rounded"
+                    placeholder="Title">
+            </span> -->
+
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Stop </span>
+
+                <p-dropdown [options]="locations" optionValue="title" placeholder="Select subroute's stop"
+                    formControlName="stop" [ngClass]="{ 'ng-invalid ng-dirty': submitted && l.stop.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
+            </span>
+            <small class="w-ful inline-block " *ngIf="l.stop.hasError('required') && l.stop.touched" id="state-help"
+                class="p-error">Please select subroute's stop</small>
+
+            <span class=" w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Basic Price </span>
+                <input formControlName="price" class="border w-full p-3 rounded" placeholder="SubRoute Basic Price">
+            </span>
+            <small class="w-ful mb-4 inline-block" *ngIf="l.price.hasError('required') && l.price.touched"
+                id="address-help" class="p-error">Please enter price</small>
+
+            <span class=" w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Premium Price </span>
+                <input formControlName="premiumPrice" class="border w-full p-3 rounded"
+                    placeholder="SubRoute Premium Price">
+            </span>
+            <small class="w-ful mb-4 inline-block" *ngIf="l.premiumPrice.hasError('required') && l.premiumPrice.touched"
+                id="address-help" class="p-error">Please enter premium price</small>
+
+            <span class=" w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Discounted Price </span>
+                <input formControlName="discountedPrice" class="border w-full p-3 rounded" placeholder="SubRoute Price">
+            </span>
+            <small class="w-ful mb-4 inline-block"
+                *ngIf="l.discountedPrice.hasError('required') && l.discountedPrice.touched" id="address-help"
+                class="p-error">Please enter discounted price</small>
+
+            <!-- <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-1"> Main Route </span>
+
+                <p-multiSelect [options]="routes" optionValue="_id" placeholder="Select Route" formControlName="route"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && l.route.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
+            </span>
+            <small class="w-ful inline-block " *ngIf="l.route.hasError('required') && l.route.touched" id="state-help"
+                class="p-error">Please select route </small> -->
+
+            <span class="w-full mb-1 block mt-8">
+
+                <span class="block w-full mb-1">Time difference from origin (in minutes) </span>
+                <input formControlName="times" type="number" class="border w-full p-3 rounded"
+                    placeholder="SubRoute time difference from origin">
+
+                <!-- <p-multiSelect [options]="times" optionValue="title" placeholder="Select subroute's possible times"
+                    formControlName="times" 
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && l.times.errors }"
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect> -->
+            </span>
+            <small class="w-ful inline-block " *ngIf="l.times.hasError('required') && l.times.touched" id="state-help"
+                class="p-error">Please enter time difference in minutes</small>
+
+            <button [loading]="loading" pButton pRipple label="Submit"
+                class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitSubRoute()"></button>
         </div>
     </form>
     <ng-template pTemplate="footer">

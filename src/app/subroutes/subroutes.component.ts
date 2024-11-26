@@ -60,9 +60,8 @@ export class SubRoutesComponent implements OnInit {
   
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.subrouteForm = this.fb.group({
-      title: [undefined, Validators.required],
-      destination: [undefined, Validators.required],
-      origin: [undefined, Validators.required],
+      // title: [undefined, Validators.required],
+      stop: [undefined, Validators.required],
       price: [undefined, Validators.required],
       premiumPrice: [undefined, Validators.required],
       times: [undefined, Validators.required],

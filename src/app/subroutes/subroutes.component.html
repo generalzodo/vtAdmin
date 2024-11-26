@@ -153,44 +153,34 @@
     [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
     <form [formGroup]="subrouteForm">
         <div class="">
-            <span class=" w-full mb-1">
+            <!-- <span class=" w-full mb-1">
                 <span class="block w-full mb-3"> Title </span>
 
                 <input id="title" state="text" pInputText formControlName="title"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.title.errors }" class="border w-full p-3 rounded"
                     placeholder="Title">
-            </span>
+            </span> -->
 
             <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> SubRoute's origin </span>
+                <span class="block w-full mb-1"> Stop </span>
 
-                <p-dropdown [options]="locations" optionValue="title" placeholder="Select subroute's origin"
-                    formControlName="origin" [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.origin.errors }"
+                <p-dropdown [options]="locations" optionValue="title"
+                    placeholder="Select subroute's stop" formControlName="stop"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.stop.errors }"
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
             </span>
-            <small class="w-ful inline-block " *ngIf="f.origin.hasError('required') && f.origin.touched" id="state-help"
-                class="p-error">Please select subroute's origin</small>
-
-            <span class="w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> SubRoute's Destination </span>
-
-                <p-dropdown [options]="filterLocationsfromOrigin()" optionValue="title"
-                    placeholder="Select subroute's destination" formControlName="destination"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.destination.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
-            </span>
-            <small class="w-ful inline-block " *ngIf="f.destination.hasError('required') && f.destination.touched"
-                id="state-help" class="p-error">Please select subroute's destination</small>
+            <small class="w-ful inline-block " *ngIf="f.stop.hasError('required') && f.stop.touched"
+                id="state-help" class="p-error">Please select subroute's stop</small>
 
             <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Basic Price </span>
+                <span class="block w-full mb-1"> Basic Price  </span>
                 <input formControlName="price" class="border w-full p-3 rounded" placeholder="SubRoute Basic Price">
             </span>
             <small class="w-ful mb-4 inline-block" *ngIf="f.price.hasError('required') && f.price.touched"
                 id="address-help" class="p-error">Please enter price</small>
 
             <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Premium Price </span>
+                <span class="block w-full mb-1"> Premium Price   </span>
                 <input formControlName="premiumPrice" class="border w-full p-3 rounded"
                     placeholder="SubRoute Premium Price">
             </span>
@@ -198,7 +188,7 @@
                 id="address-help" class="p-error">Please enter premium price</small>
 
             <span class=" w-full mb-1 block mt-8">
-                <span class="block w-full mb-1"> Discounted Price </span>
+                <span class="block w-full mb-1"> Discounted Price  </span>
                 <input formControlName="discountedPrice" class="border w-full p-3 rounded" placeholder="SubRoute Price">
             </span>
             <small class="w-ful mb-4 inline-block"
@@ -217,15 +207,16 @@
 
             <span class="w-full mb-1 block mt-8">
 
-                <span class="block w-full mb-1">SubRoutes trip times </span>
+                <span class="block w-full mb-1">Time difference from origin </span>
+                <input formControlName="times" type="number" class="border w-full p-3 rounded" placeholder="SubRoute time difference from origin">
 
-                <p-multiSelect [options]="times" optionValue="title" placeholder="Select subroute's possible times"
+                <!-- <p-multiSelect [options]="times" optionValue="title" placeholder="Select subroute's possible times"
                     formControlName="times" 
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.times.errors }"
-                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect>
+                    styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-multiSelect> -->
             </span>
             <small class="w-ful inline-block " *ngIf="f.times.hasError('required') && f.times.touched"
-                id="state-help" class="p-error">Please select possible times</small>
+                id="state-help" class="p-error">Please enter time difference</small>
 
             <button [loading]="loading" pButton pRipple label="Submit"
                 class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitSubRoute()"></button>
