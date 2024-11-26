@@ -8,8 +8,8 @@ import { catchError, mapTo, tap } from 'rxjs/operators';
 const baseUrl = {
   jwt_token: 'TP_TOKEN',
   refresh_token: 'TP_REFRESH',
-  server: 'http://localhost:4000/',
-  // server: 'https://plankton-app-3hk2y.ondigitalocean.app/',
+  // server: 'http://localhost:4000/',
+  server: 'https://plankton-app-3hk2y.ondigitalocean.app/',
 
   refresh: 'token/refresh/',
 
