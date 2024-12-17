@@ -104,7 +104,7 @@
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.phone}}</td>
-                        <td class="py-2">{{booking.trip?.title }}</td>
+                        <td class="py-2">{{booking.trip?.route?.title }}</td>
                         <td class="py-2">{{booking.trip?.bus }}</td>
                         <td class="py-2">{{booking.trip?.tripDate }} {{booking.trip?.time }}</td>
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
@@ -520,7 +520,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-4">
                 <div class="border border-gray-100 m-2 p-2">
                     <small>Trip Route</small>
-                    <p class="font-semibold">{{bookingInfo?.returnTrip.title}}</p>
+                    <p class="font-semibold">{{bookingInfo?.returnTrip?.route?.title}}</p>
                 </div>
                 <div class="border border-gray-100 m-2 p-2">
                     <small>Trip Date</small>
@@ -661,7 +661,7 @@
                     <td colspan="2">
                         <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
 
-                            <p class=""> Trip Route: <strong>{{bookingInfo?.trip?.title}}</strong></p>
+                            <p class=""> Trip Route: <strong>{{bookingInfo?.trip?.route?.title}}</strong></p>
                             <p class=""> Trip Date: <strong>{{bookingInfo?.trip?.tripDate}}
                                     {{bookingInfo?.trip?.time}}</strong></p>
 
@@ -683,7 +683,7 @@
                     <td colspan="2">
                         <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
 
-                            <p class="">Return Trip Route: <strong>{{bookingInfo?.returnTrip.title}}</strong></p>
+                            <p class="">Return Trip Route: <strong>{{bookingInfo?.returnTrip?.route?.title}}</strong></p>
                             <p class="">Return Trip Date: <strong>{{bookingInfo?.returnTrip.tripDate}}
                                     {{bookingInfo?.returnTrip.time}}</strong>
                             </p>
