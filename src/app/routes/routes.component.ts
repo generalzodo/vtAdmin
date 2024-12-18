@@ -355,7 +355,9 @@ export class RoutesComponent implements OnInit {
   }
 
   updateSubRoute(data: any) {
-    delete data.route
+    data.route = this.currentID;
+    console.log();
+    
     this.httpService
       .updateData(
         'subroutes/' + this.currentSubID, data
