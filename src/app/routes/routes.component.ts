@@ -310,7 +310,10 @@ export class RoutesComponent implements OnInit {
     }
     this.loading = true;
     let data: any = { ...this.subrouteForm.value }
-    if (this.submitType == 'Edit') this.updateSubRoute(data)
+    if (this.submitType == 'Edit'){
+      this.updateSubRoute(data)
+      delete data.route
+    } 
     if (this.submitType == 'Add') this.createSubRoute(data)
   }
 
@@ -352,7 +355,7 @@ export class RoutesComponent implements OnInit {
   }
 
   updateSubRoute(data: any) {
-
+    delete data.route
     this.httpService
       .updateData(
         'subroutes/' + this.currentSubID, data
