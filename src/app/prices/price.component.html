@@ -15,7 +15,7 @@
                                         clip-rule="evenodd" />
                                 </svg>
                             </div>
-                            <input state="text" id="simple-search"
+                            <input state="text" id="simple-search" (input)="dt1.filterGlobal($event.target.value, 'contains')"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                                 placeholder="Search" required="">
                         </div>
@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table [value]="prices" [paginator]="true" [rows]="10"
+            <p-table [value]="prices" [paginator]="true" [rows]="10" #dt1 [globalFilterFields]="['origin', 'destination', 'bus.title', 'price']"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '40rem'}">
                 <ng-template pTemplate="header">
@@ -61,7 +61,7 @@
                         <th pSortableColumn="price" style="width:20%">Price  <p-sortIcon field="price"></p-sortIcon></th>
                         <th pSortableColumn="price" style="width:20%">Premium Price  <p-sortIcon field="price"></p-sortIcon></th>
                         <th pSortableColumn="price" style="width:20%">Discounted Value  <p-sortIcon field="price"></p-sortIcon></th>
-                        <th pSortableColumn="price" style="width:20%">Bus  <p-sortIcon field="price"></p-sortIcon></th>
+                        <th pSortableColumn="bus.title" style="width:20%">Bus  <p-sortIcon field="bus.title"></p-sortIcon></th>
                         <th style="width:40%">Actions</th>
                     </tr>
                 </ng-template>
