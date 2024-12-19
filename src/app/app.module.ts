@@ -36,6 +36,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
 import { AuthInterceptor } from './auth-interceptor.service';
+import { PricesComponent } from './prices/price.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +55,8 @@ import { AuthInterceptor } from './auth-interceptor.service';
     BookingsComponent, SubRoutesComponent,
     SignInComponent,
     WithdrawalsComponent,
-    AbookingsComponent
+    AbookingsComponent,
+    PricesComponent
   ],
   imports: [
     BrowserModule,
