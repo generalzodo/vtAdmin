@@ -59,6 +59,8 @@
                         <th pSortableColumn="origin" style="width:20%">Origin  <p-sortIcon field="origin"></p-sortIcon></th>
                         <th pSortableColumn="destination" style="width:20%">Destination  <p-sortIcon field="destination"></p-sortIcon></th>
                         <th pSortableColumn="price" style="width:20%">Price  <p-sortIcon field="price"></p-sortIcon></th>
+                        <th pSortableColumn="price" style="width:20%">Premium Price  <p-sortIcon field="price"></p-sortIcon></th>
+                        <th pSortableColumn="price" style="width:20%">Discounted Value  <p-sortIcon field="price"></p-sortIcon></th>
                    
                         <th style="width:40%">Actions</th>
                     </tr>
@@ -68,6 +70,8 @@
                         <td class="' py-2">{{price.origin }}</td>
                         <td class="' py-2">{{price.destination}}</td>
                         <td class="' py-2">{{price.price}}</td>
+                        <td class="' py-2">{{price.premiumPrice}}</td>
+                        <td class="' py-2">{{price.discountedPrice}}</td>
                         <!-- <td class="' py-2">{{price.createdAt | date: 'dd/MM/yyyy'}}</td> -->
                         <td>
 
@@ -95,6 +99,20 @@
                 <input id="title" state="number" pInputText formControlName="price"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.price.errors }" class="border w-full p-3 rounded"
                     placeholder="Price">
+            </span>
+            <span class=" w-full mb-1 mt-3">
+                <span class="block w-full my-3"> Premium </span>
+
+                <input id="title" state="number" pInputText formControlName="premiumPrice"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.premiumPrice.errors }" class="border w-full p-3 rounded"
+                    placeholder=" Premium Price">
+            </span>
+            <span class=" w-full mb-1 mt-3">
+                <span class="block w-full my-3"> Discounted </span>
+
+                <input id="title" state="number" pInputText formControlName="discountedPrice"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.discountedPrice.errors }" class="border w-full p-3 rounded"
+                    placeholder="Discounted Price">
             </span>
           
             <button [loading]="loading" pButton pRipple label="Submit"

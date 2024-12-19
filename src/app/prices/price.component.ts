@@ -24,6 +24,8 @@ export class PricesComponent implements OnInit {
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.priceForm = this.fb.group({
       price: [undefined, Validators.required],
+      discountedPrice: [undefined, Validators.required],
+      premiumPrice: [undefined, Validators.required],
 
     })
   }
@@ -74,7 +76,7 @@ deletePrices(id: any) {
 populatePrice(price: any) {
   this.submitType = 'Edit';
   this.currentID = price._id
-  this.priceForm.setValue({ title: price.title, address: price.address, state: price.state })
+  this.priceForm.setValue({ price: price.price, premiumPrice: price.premiumPrice, discountedPrice: price.discountedPrice })
 }
 
 submitPrice() {
