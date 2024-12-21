@@ -104,7 +104,8 @@
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
                         <td class="py-2">{{booking.phone}}</td>
-                        <td class="py-2">{{booking.trip?.title }}</td>
+                        <td class="py-2">{{booking.from}}-{{booking.to}}({{booking?.trip?.title }})</td>
+
                         <td class="py-2">{{booking.trip?.bus }}</td>
                         <td class="py-2">{{booking.trip?.tripDate }} {{booking.trip?.time }}</td>
                         <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
@@ -660,8 +661,8 @@
                 <tr class="border-b border-gray-100">
                     <td colspan="2">
                         <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
+                            <p class=""> Trip Route: <strong>{{bookingInfo?.from}}-{{bookingInfo?.to}}({{bookingInfo?.trip?.title}})</strong></p>
 
-                            <p class=""> Trip Route: <strong>{{bookingInfo?.trip?.title}}</strong></p>
                             <p class=""> Trip Date: <strong>{{bookingInfo?.trip?.tripDate}}
                                     {{bookingInfo?.trip?.time}}</strong></p>
 
