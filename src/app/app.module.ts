@@ -37,6 +37,8 @@ import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
 import { AuthInterceptor } from './auth-interceptor.service';
 import { PricesComponent } from './prices/price.component';
+
+import { CheckboxModule } from 'primeng/checkbox';
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,6 +78,7 @@ import { PricesComponent } from './prices/price.component';
     CalendarModule,
     OverlayPanelModule,
     ConfirmPopupModule,
+    CheckboxModule,
     DropdownModule],
   providers: [
       {

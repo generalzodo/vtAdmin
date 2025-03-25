@@ -74,7 +74,7 @@ export class RoutesComponent implements OnInit {
       bus: [undefined, Validators.required],
       recurrentDays: [undefined, Validators.required],
       totalTrips: [undefined, Validators.required],
-      
+      markForFullPrice: [undefined, Validators.required],
     })
 
     this.subrouteForm = this.fb.group({
@@ -217,7 +217,7 @@ export class RoutesComponent implements OnInit {
     this.submitType = 'Edit';
     this.currentID = route._id
     this.routeForm.patchValue({ title: route.title,bus: route.bus, price: route.price, stops: route.stops, premiumPrice: route.premiumPrice, times:route.times,
-      discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips })
+      discountedPrice: route.discountedPrice, origin: route.origin, destination: route.destination, recurrentDays: route.recurrentDays, totalTrips: route.totalTrips, markForFullPrice: route.markForFullPrice })
   }
 
   submitRoute() {

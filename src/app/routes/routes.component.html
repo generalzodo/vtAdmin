@@ -277,6 +277,13 @@
             <small class="w-ful mb-4 inline-block" *ngIf="f.totalTrips.hasError('required') && f.totalTrips.touched"
                 id="address-help" class="p-error">Please enter total trips</small>
 
+            <div class="form-group">
+                <label  class="mr-3 w-full mb-1" for="markForFullPrice">Mark for Full Price</label>
+                 <input id="checkbox-all" formControlName="markForFullPrice"
+                                    type="checkbox"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+            </div>
+
             <button [loading]="loading" pButton pRipple label="Submit"
                 class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitRoute()"></button>
         </div>
