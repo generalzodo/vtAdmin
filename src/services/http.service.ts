@@ -10,7 +10,7 @@ const baseUrl = {
 
   server: 'https://required-malinde-zodostech-e7405a15.koyeb.app/api/',
 
-  refresh: 'token/refresh/',
+  refresh: 'token/refreshs/',
 
 };
 
