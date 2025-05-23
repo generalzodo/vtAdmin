@@ -9,7 +9,7 @@ const baseUrl = {
   jwt_token: 'TP_TOKEN',
   refresh_token: 'TP_REFRESH',
   // server: 'http://localhost:4000/',
-  server: 'https://plankton-app-3hk2y.ondigitalocean.app/',
+  server: 'https://required-malinde-zodostech-e7405a15.koyeb.app/api/',
 
   refresh: 'token/refresh/',
 
