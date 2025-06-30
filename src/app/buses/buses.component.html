@@ -96,7 +96,7 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{}"></p-confirmDialog>
 <p-dialog header="{{submitType}}  Bus" [(visible)]="displayBus" [modal]="true" showEffect="fade"
-    [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw'}">
+    [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
     <form [formGroup]="busForm">
         <div class="">
             <span class=" w-full mb-1">
@@ -138,7 +138,7 @@
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-3">Seat Arrangement (Drag to add)</span>
                 <div class="flex flex-wrap gap-2 mb-2">
-                    <ng-container *ngFor="let label of ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4','D1','D2','D3','D4']">
+                    <ng-container *ngFor="let label of ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20']">
                         <button type="button"
                             class="px-2 py-1 border rounded"
                             [ngClass]="{
@@ -177,25 +177,25 @@
                     <div *ngIf="seatLayout.length === 0" class="text-gray-400 italic">No seats added yet.</div>
                     <div *ngIf="seatLayout.length > 0" class="border border-gray-300 rounded-lg p-3 bg-white">
                         <ng-container *ngFor="let row of getRowsWithIndices(); let rowIdx = index">
-                            <div class="flex flex-wrap gap-2 mb-1">
+                            <div class="flex flex-wrap gap-2  my-3">
                                 <ng-container *ngFor="let seat of row">
                                     <ng-container [ngSwitch]="seat.value">
                                         <span *ngSwitchCase="'SPACE'"
-                                              class="inline-flex items-center px-2 py-1 bg-gray-300 rounded text-gray-400 italic"
+                                              class="inline-flex items-center justify-end px-2 py-1 w-12 bg-gray-300 rounded text-gray-400 italic"
                                               [ngClass]="{'ring-2 ring-green-400': lastAddedIndex === seat.index}">
-                                            (space)
+
                                             <button type="button" class="ml-1 text-red-600"
                                                     (click)="removeSeat(seat.index)">×</button>
                                         </span>
                                         <span *ngSwitchCase="'STEERING'"
-                                              class="inline-flex items-center px-2 py-1 bg-gray-200 rounded text-black font-bold"
+                                              class="inline-flex items-center px-2 py-1 w-12 bg-gray-200 rounded text-black font-bold"
                                               [ngClass]="{'ring-2 ring-green-400': lastAddedIndex === seat.index}">
                                             <span>🛞</span>
                                             <button type="button" class="ml-1 text-red-600"
                                                     (click)="removeSeat(seat.index)">×</button>
                                         </span>
                                         <span *ngSwitchDefault
-                                              class="inline-flex items-center px-2 py-1 rounded"
+                                              class="inline-flex items-center px-2 py-1 w-12 rounded"
                                               [ngClass]="{'bg-primary-200': lastAddedIndex !== seat.index, 'bg-green-400': lastAddedIndex === seat.index}">
                                             {{seat.value}}
                                             <button type="button" class="ml-1 text-red-600"
@@ -205,7 +205,6 @@
                                 </ng-container>
                             </div>
                         </ng-container>
-                        <small class="text-gray-500 block mt-1">Drag to rearrange seats. Click seat labels to add, "+ Space" to add a space, "+ New Row" to start a new row, click × to remove. Order = arrangement.</small>
                     </div>
                 </div>
                 <small class="text-gray-500 block mt-1">Click seat labels to add, "+ Space" to add a space, "+ New Row" to start a new row, click × to remove. Order = arrangement.</small>
