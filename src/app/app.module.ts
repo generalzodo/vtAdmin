@@ -39,6 +39,7 @@ import { AuthInterceptor } from './auth-interceptor.service';
 import { PricesComponent } from './prices/price.component';
 
 import { CheckboxModule } from 'primeng/checkbox';
+import { RowSplitPipe } from './buses/row-split.pipe';
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,7 +59,8 @@ import { CheckboxModule } from 'primeng/checkbox';
     SignInComponent,
     WithdrawalsComponent,
     AbookingsComponent,
-    PricesComponent
+    PricesComponent,
+    RowSplitPipe
   ],
   imports: [
     BrowserModule,

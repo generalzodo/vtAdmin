@@ -29,7 +29,7 @@
                     <span class="dark:text-white"> {{buses.length}}</span>
                 </h5>
 
-                <button state="button" (click)="showDialog()"
+                <button state="button" (click)="showDialogForAdd()"
                     class="flex items-center justify-center flex-shrink-0 px-3 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                     <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"
                         stroke-width="2" stroke="currentColor" aria-hidden="true">
@@ -38,7 +38,7 @@
                     </svg>
                     Export
                 </button>
-                <button state="button" (click)="showDialog(); submitType ='Add'"
+                <button state="button" (click)="showDialogForAdd()"
                     class="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20"
                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -81,7 +81,7 @@
                         <td class="' py-2">{{bus.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
 
-                            <button (click)="displayBus = true; populateBus(bus)"
+                            <button (click)="showDialogForEdit(bus)"
                                 class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-primary-900 bg-primary-700">Edit</button>
                             <button (click)="confirmDelete(bus._id)"
                                 class="px-4 py-1 text-white rounded-md text-sm mx-2 hover:bg-red-900 bg-red-700">Delete</button>
@@ -96,7 +96,7 @@
 <p-toast></p-toast>
 <p-confirmDialog [style]="{}"></p-confirmDialog>
 <p-dialog header="{{submitType}}  Bus" [(visible)]="displayBus" [modal]="true" showEffect="fade"
-    [style]="{width: '30vw'}" [breakpoints]="{'960px': '75vw'}">
+    [style]="{width: '50vw'}" [breakpoints]="{'960px': '75vw'}">
     <form [formGroup]="busForm">
         <div class="">
             <span class=" w-full mb-1">
@@ -135,6 +135,77 @@
             </span>
             <small class="w-ful inline-block " *ngIf="f.type.hasError('required') && f.type.touched" id="type-help"
                 class="p-error">Please select bus type</small>
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-3">Seat Arrangement (Drag to add)</span>
+                <div class="flex flex-wrap gap-2 mb-2">
+                    <ng-container *ngFor="let label of ['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4','D1','D2','D3','D4']">
+                        <button type="button"
+                            class="px-2 py-1 border rounded"
+                            [ngClass]="{
+                                'bg-gray-100 hover:bg-primary-100 text-black': !seatLayout.includes(label),
+                                'bg-green-200 text-green-700 cursor-not-allowed opacity-60': seatLayout.includes(label)
+                            }"
+                            (click)="addSeat(label)"
+                            [disabled]="seatLayout.includes(label)">
+                            {{label}}
+                        </button>
+                    </ng-container>
+                    <button type="button"
+                        class="px-2 py-1 border rounded flex items-center gap-1 bg-gray-100 hover:bg-primary-100 text-black"
+                        [ngClass]="{
+                            'bg-green-200 text-green-700 cursor-not-allowed opacity-60': seatLayout.includes('STEERING')
+                        }"
+                        (click)="addSeat('STEERING')"
+                        [disabled]="seatLayout.includes('STEERING')">
+                        <span>🛞</span> Steering
+                    </button>
+                    <button type="button" class="px-2 py-1 border rounded bg-yellow-100 hover:bg-yellow-200"
+                        (click)="addSpace()">
+                        + Space
+                    </button>
+                    <button type="button" class="px-2 py-1 border rounded bg-blue-100 hover:bg-blue-200"
+                        (click)="addRow()">
+                        + New Row
+                    </button>
+                </div>
+                <div>
+                    <div *ngIf="seatLayout.length === 0" class="text-gray-400 italic">No seats added yet.</div>
+                    <div *ngIf="seatLayout.length > 0" class="border border-gray-300 rounded-lg p-3 bg-white">
+                        <div cdkDropList [cdkDropListData]="seatLayout" (cdkDropListDropped)="dropSeat($event)" class="flex flex-wrap gap-2 mb-1">
+                            <ng-container *ngFor="let seat of seatLayout; let i = index">
+                                <ng-container [ngSwitch]="seat">
+                                    <span *ngSwitchCase="'SPACE'"
+                                          cdkDrag
+                                          class="inline-flex items-center px-2 py-1 bg-gray-300 rounded text-gray-400 italic"
+                                          [ngClass]="{'ring-2 ring-green-400': lastAddedIndex === i}">
+                                        (space)
+                                        <button type="button" class="ml-1 text-red-600"
+                                                (click)="removeSeat(i)">×</button>
+                                    </span>
+                                    <span *ngSwitchCase="'STEERING'"
+                                          cdkDrag
+                                          class="inline-flex items-center px-2 py-1 bg-gray-200 rounded text-black font-bold"
+                                          [ngClass]="{'ring-2 ring-green-400': lastAddedIndex === i}">
+                                        <span>🛞</span>
+                                        <button type="button" class="ml-1 text-red-600"
+                                                (click)="removeSeat(i)">×</button>
+                                    </span>
+                                    <span *ngSwitchDefault
+                                          cdkDrag
+                                          class="inline-flex items-center px-2 py-1 rounded"
+                                          [ngClass]="{'bg-primary-200': lastAddedIndex !== i, 'bg-green-400': lastAddedIndex === i}">
+                                        {{seat}}
+                                        <button type="button" class="ml-1 text-red-600"
+                                                (click)="removeSeat(i)">×</button>
+                                    </span>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                        <small class="text-gray-500 block mt-1">Drag to rearrange seats. Click seat labels to add, "+ Space" to add a space, "+ New Row" to start a new row, click × to remove. Order = arrangement.</small>
+                    </div>
+                </div>
+                <small class="text-gray-500 block mt-1">Click seat labels to add, "+ Space" to add a space, "+ New Row" to start a new row, click × to remove. Order = arrangement.</small>
+            </span>
             <button [loading]="loading" pButton pRipple label="Submit"
                 class="w-full mt-8 text-white p-3 rounded bg-primary-700" (click)="submitBus()"></button>
         </div>

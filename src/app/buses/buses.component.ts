@@ -1,9 +1,9 @@
-
 import { Validators, FormBuilder } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-buses',
@@ -27,6 +27,8 @@ export class BusesComponent implements OnInit {
   submitType: string = '';
   displayBus: boolean = false;
   currentID: any;
+  seatLayout: string[] = [];
+  lastAddedIndex: number | null = null;
 
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.busForm = this.fb.group({
@@ -34,7 +36,7 @@ export class BusesComponent implements OnInit {
       type: [undefined, Validators.required],
       seats: [undefined, Validators.required],
       photo: [],
-   
+      seatLayout: [[]]
     })
   }
   ngOnInit(): void {
@@ -42,8 +44,16 @@ export class BusesComponent implements OnInit {
   }
   get f() { return this.busForm.controls; }
 
-  showDialog() {
+  showDialogForAdd() {
+    this.submitType = 'Add';
+    this.displayBus = true;
+    this.seatLayout = [];
+    this.busForm.reset();
+    this.busForm.get('seatLayout').setValue([]);
+  }
 
+  showDialogForEdit(bus: any) {
+    this.populateBus(bus);
     this.displayBus = true;
   }
 
@@ -83,12 +93,18 @@ deleteBuss(id: any) {
 }
 populateBus(bus: any) {
   this.submitType = 'Edit';
-  this.currentID = bus._id
-  // this.busForm.setValue({ p, address: bus.address, state: bus.state })
+  this.currentID = bus._id;
+  this.busForm.patchValue({
+    title: bus.title,
+    type: bus.type,
+    seats: bus.seats,
+    photo: bus.photo,
+    seatLayout: bus.seatLayout || []
+  });
+  this.seatLayout = bus.seatLayout ? [...bus.seatLayout] : [];
 }
 
 submitBus() {
-
   this.submitted = true
   if (this.busForm.invalid) {
     this.busForm.markAllAsTouched();
@@ -96,9 +112,39 @@ submitBus() {
     return;
   }
   this.loading = true;
-  let data: any = { ...this.busForm.value }
+  let data: any = { ...this.busForm.value, seatLayout: this.seatLayout };
   if (this.submitType == 'Edit') this.updateBus(data)
   if (this.submitType == 'Add') this.createBus(data)
+}
+
+// Drag-and-drop handlers
+addSeat(label: string) {
+  if (!this.seatLayout.includes(label)) {
+    this.seatLayout.push(label);
+    this.busForm.get('seatLayout').setValue(this.seatLayout);
+    this.lastAddedIndex = this.seatLayout.length - 1;
+    setTimeout(() => this.lastAddedIndex = null, 1000);
+  }
+}
+addSpace() {
+  this.seatLayout.push('SPACE');
+  this.busForm.get('seatLayout').setValue(this.seatLayout);
+  this.lastAddedIndex = this.seatLayout.length - 1;
+  setTimeout(() => this.lastAddedIndex = null, 1000);
+}
+addRow() {
+  this.seatLayout.push('ROW');
+  this.busForm.get('seatLayout').setValue(this.seatLayout);
+  this.lastAddedIndex = this.seatLayout.length - 1;
+  setTimeout(() => this.lastAddedIndex = null, 1000);
+}
+removeSeat(index: number) {
+  this.seatLayout.splice(index, 1);
+  this.busForm.get('seatLayout').setValue(this.seatLayout);
+}
+dropSeat(event: CdkDragDrop<any[]>) {
+  moveItemInArray(this.seatLayout, event.previousIndex, event.currentIndex);
+  this.busForm.get('seatLayout').setValue(this.seatLayout);
 }
 
 createBus(data: any) {
@@ -147,5 +193,36 @@ updateBus(data: any) {
       console.log(err);
       console.log('====================================');
     });
+}
+
+getSeatLayoutIndex(rowIdx: number, seatIdx: number): number {
+  // Split the seatLayout into rows using 'ROW' as marker
+  let idx = 0, rowCount = 0;
+  for (let i = 0; i < this.seatLayout.length; i++) {
+    if (this.seatLayout[i] === 'ROW') {
+      rowCount++;
+      if (rowCount > rowIdx) break;
+      continue;
+    }
+    if (rowCount === rowIdx && seatIdx-- === 0) return i;
+    if (rowCount === rowIdx) idx = i;
+  }
+  // fallback
+  return idx;
+}
+
+getRowsWithIndices(): { value: string, index: number }[][] {
+  const rows: { value: string, index: number }[][] = [];
+  let current: { value: string, index: number }[] = [];
+  this.seatLayout.forEach((item, idx) => {
+    if (item === 'ROW') {
+      rows.push(current);
+      current = [];
+    } else {
+      current.push({ value: item, index: idx });
+    }
+  });
+  if (current.length) rows.push(current);
+  return rows;
 }
 }
