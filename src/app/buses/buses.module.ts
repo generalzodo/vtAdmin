@@ -8,10 +8,10 @@ import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+// import { DragDropModule } from '@angular/cdk/drag-drop';
 import { BusesComponent } from './buses.component';
 import { RowSplitPipe } from './row-split.pipe';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+// import { SortablejsModule } from 'ngx-sortablejs';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   ],
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -30,7 +29,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     InputTextModule,
     TableModule,
     ToastModule,
-    DragDropModule
+    // DragDropModule,
+
   ],
   providers: [],
   bootstrap: [BusesComponent]

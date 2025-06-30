@@ -81,7 +81,7 @@ import { RowSplitPipe } from './buses/row-split.pipe';
     OverlayPanelModule,
     ConfirmPopupModule,
     CheckboxModule,
-    DropdownModule],
+],
   providers: [
       {
         provide: HTTP_INTERCEPTORS,

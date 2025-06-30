@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-buses',
@@ -47,9 +46,9 @@ export class BusesComponent implements OnInit {
   showDialogForAdd() {
     this.submitType = 'Add';
     this.displayBus = true;
-    this.seatLayout = [];
+    this.seatLayout = ['STEERING'];
     this.busForm.reset();
-    this.busForm.get('seatLayout').setValue([]);
+    this.busForm.get('seatLayout').setValue(['STEERING']);
   }
 
   showDialogForEdit(bus: any) {
@@ -119,6 +118,15 @@ submitBus() {
 
 // Drag-and-drop handlers
 addSeat(label: string) {
+  if (label === 'STEERING') {
+    if (!this.seatLayout.includes('STEERING')) {
+      this.seatLayout.unshift('STEERING');
+      this.busForm.get('seatLayout').setValue(this.seatLayout);
+      this.lastAddedIndex = 0;
+      setTimeout(() => this.lastAddedIndex = null, 1000);
+    }
+    return;
+  }
   if (!this.seatLayout.includes(label)) {
     this.seatLayout.push(label);
     this.busForm.get('seatLayout').setValue(this.seatLayout);
@@ -133,17 +141,21 @@ addSpace() {
   setTimeout(() => this.lastAddedIndex = null, 1000);
 }
 addRow() {
+  // Only add 'ROW' if the last item isn't already a row marker
+  if (this.seatLayout.length === 0 || this.seatLayout[this.seatLayout.length - 1] === 'ROW') {
+    return;
+  }
   this.seatLayout.push('ROW');
   this.busForm.get('seatLayout').setValue(this.seatLayout);
   this.lastAddedIndex = this.seatLayout.length - 1;
   setTimeout(() => this.lastAddedIndex = null, 1000);
 }
 removeSeat(index: number) {
+  // Prevent removing steering if it's the only item
+  if (this.seatLayout[index] === 'STEERING' && this.seatLayout.length === 1) {
+    return;
+  }
   this.seatLayout.splice(index, 1);
-  this.busForm.get('seatLayout').setValue(this.seatLayout);
-}
-dropSeat(event: CdkDragDrop<any[]>) {
-  moveItemInArray(this.seatLayout, event.previousIndex, event.currentIndex);
   this.busForm.get('seatLayout').setValue(this.seatLayout);
 }
 
@@ -225,4 +237,31 @@ getRowsWithIndices(): { value: string, index: number }[][] {
   if (current.length) rows.push(current);
   return rows;
 }
+clearAllSeats() {
+  this.seatLayout = ['STEERING'];
+  this.busForm.get('seatLayout').setValue(['STEERING']);
+}
+sortablejsOptions = {
+  animation: 150,
+  onMove: (evt: any) => {
+    // Prevent dragging steering from index 0
+    if (evt.dragged && evt.dragged.innerText.trim() === '🛞' && evt.oldIndex === 0) {
+      return false;
+    }
+    // Prevent dropping before steering
+    if (evt.related && evt.related.innerText.trim() === '🛞' && evt.newIndex === 0) {
+      return false;
+    }
+    return true;
+  },
+  onEnd: (evt: any) => {
+    // Always force steering to index 0 after drag
+    const steeringIdx = this.seatLayout.indexOf('STEERING');
+    if (steeringIdx > 0) {
+      this.seatLayout.splice(steeringIdx, 1);
+      this.seatLayout.unshift('STEERING');
+      this.busForm.get('seatLayout').setValue(this.seatLayout);
+    }
+  }
+};
 }
