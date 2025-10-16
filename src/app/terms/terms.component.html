@@ -1,0 +1,92 @@
+<div class="p-6">
+  <div class="mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Terms & Conditions Management</h2>
+    <p class="text-gray-600">Manage the terms and conditions that users see during the booking process.</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="mb-6">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8">
+        <button 
+          (click)="setActiveTab('terms')"
+          [class]="activeTab === 'terms' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+          Booking Terms & Conditions
+        </button>
+        <button 
+          (click)="setActiveTab('ticket')"
+          [class]="activeTab === 'ticket' ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          class="whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm">
+          Ticket Terms & Conditions
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+    <span class="ml-2 text-gray-600">Loading settings...</span>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading" class="space-y-6">
+    <!-- Booking Terms & Conditions -->
+    <div *ngIf="activeTab === 'terms'" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Booking Terms & Conditions
+        </label>
+        <p class="text-sm text-gray-500 mb-4">
+          This content will be displayed to users when they agree to terms during booking.
+        </p>
+        <p-editor
+          [(ngModel)]="settings.termsAndConditions"
+          [style]="{ height: '320px' }" />
+
+      </div>
+    </div>
+
+    <!-- Ticket Terms & Conditions -->
+    <div *ngIf="activeTab === 'ticket'" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Ticket Terms & Conditions
+        </label>
+        <p class="text-sm text-gray-500 mb-4">
+          This content will be displayed on tickets and booking confirmations.
+        </p>
+        <p-editor
+          [(ngModel)]="settings.ticketTerms"
+          [style]="{ height: '320px' }" />
+
+      </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="mt-8 p-4 bg-gray-50 rounded-lg">
+      <h3 class="text-lg font-medium text-gray-800 mb-4">Preview</h3>
+      <div class="prose max-w-none">
+        <div [innerHTML]="getPreviewContent()" class="text-sm"></div>
+      </div>
+    </div>
+
+    <!-- Save Button -->
+    <div class="flex justify-end pt-6">
+      <button
+        (click)="saveSettings()"
+        [disabled]="saving"
+        class="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="!saving">Save Changes</span>
+        <span *ngIf="saving" class="flex items-center">
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Saving...
+        </span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -18,7 +18,7 @@ import { ContainerComponent } from './container/container.component';
 import { TicketsComponent } from './tickets/tickets.component';
 import { RoutesComponent } from './routes/routes.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { LocationsComponent } from './locations/locations.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -37,9 +37,12 @@ import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
 import { AuthInterceptor } from './auth-interceptor.service';
 import { PricesComponent } from './prices/price.component';
+import { TermsComponent } from './terms/terms.component';
 
 import { CheckboxModule } from 'primeng/checkbox';
 import { RowSplitPipe } from './buses/row-split.pipe';
+import { EditorModule } from 'primeng/editor';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,6 +63,7 @@ import { RowSplitPipe } from './buses/row-split.pipe';
     WithdrawalsComponent,
     AbookingsComponent,
     PricesComponent,
+    TermsComponent,
     RowSplitPipe
   ],
   imports: [
@@ -69,6 +73,7 @@ import { RowSplitPipe } from './buses/row-split.pipe';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     DialogModule,
     ButtonModule,
     TableModule,
@@ -81,6 +86,7 @@ import { RowSplitPipe } from './buses/row-split.pipe';
     OverlayPanelModule,
     ConfirmPopupModule,
     CheckboxModule,
+    EditorModule
 ],
   providers: [
       {

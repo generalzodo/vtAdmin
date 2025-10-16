@@ -1,0 +1,63 @@
+.prose {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-gray-900 mt-6 mb-3;
+  }
+  
+  h1 { @apply text-2xl; }
+  h2 { @apply text-xl; }
+  h3 { @apply text-lg; }
+  h4 { @apply text-base; }
+  
+  p {
+    @apply text-gray-700 mb-4 leading-relaxed;
+  }
+  
+  ul, ol {
+    @apply mb-4 pl-6;
+  }
+  
+  li {
+    @apply mb-2;
+  }
+  
+  strong {
+    @apply font-semibold text-gray-900;
+  }
+  
+  code {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono;
+  }
+  
+  pre {
+    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto;
+  }
+  
+  blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic text-gray-600;
+  }
+}
+
+// ngx-quill editor styling
+quill-editor {
+  display: block;
+  
+  ::ng-deep .ql-editor {
+    min-height: 300px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  ::ng-deep .ql-toolbar {
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: none;
+  }
+  
+  ::ng-deep .ql-container {
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-top: none;
+  }
+}
