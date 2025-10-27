@@ -14,6 +14,7 @@ import { AuthGuard } from './auth.guard';
 import { ContainerComponent } from './container/container.component';
 import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
+import { DuplicatesComponent } from './duplicates/duplicates.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/container/bookings', pathMatch: 'full' },
@@ -31,6 +32,9 @@ const routes: Routes = [
       },
       {
         path: 'altered', component: AbookingsComponent,
+      },
+      {
+        path: 'duplicates', component: DuplicatesComponent,
       },
 
       { path: 'users', component: UsersComponent },

@@ -14,6 +14,7 @@ export class ContainerComponent implements OnInit {
     { title: 'Withdrawals', url: 'withdrawals' },
     { title: 'Bookings', url: 'bookings' },
     { title: 'Altered Bookings', url: 'altered' },
+    { title: 'Duplicate Bookings', url: 'duplicates' },
     { title: 'Trips', url: 'trips' },
     { title: 'Buses', url: 'buses' },
     { title: 'Transport Officers', url: 'drivers' },

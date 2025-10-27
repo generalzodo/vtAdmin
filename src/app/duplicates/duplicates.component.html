@@ -1,0 +1,197 @@
+<div class="duplicates-container">
+  <div class="header-section">
+    <h2>Duplicate Booking Checker</h2>
+    <p class="subtitle">Identify and resolve seat conflicts across trip and return trip bookings</p>
+    
+    <div class="date-range-section">
+      <label>From Date:</label>
+      <input type="date" [(ngModel)]="fromDate" class="date-input" />
+      
+      <label>To Date:</label>
+      <input type="date" [(ngModel)]="toDate" class="date-input" />
+      
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="checkDuplicates()"
+        [disabled]="loading">
+        {{ loading ? 'Checking...' : 'Check Duplicates' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-section">
+    <p>Verifying payments with Paystack... This may take a moment.</p>
+  </div>
+
+  <div *ngIf="!loading && totalConflicts >= 0">
+    <div class="verification-summary" *ngIf="verificationSummary.totalChecked > 0">
+      <h3>Payment Verification Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <span class="summary-number">{{ verificationSummary.totalChecked }}</span>
+          <span class="summary-label">Bookings Checked</span>
+        </div>
+        <div class="summary-item success">
+          <span class="summary-number">{{ verificationSummary.foundSuccessful }}</span>
+          <span class="summary-label">Need Confirmation</span>
+        </div>
+        <div class="summary-item error">
+          <span class="summary-number">{{ verificationSummary.confirmedFailed }}</span>
+          <span class="summary-label">Confirmed Failed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="conflicts-summary">
+      <h3>Duplicate Conflicts Found: {{ totalConflicts }}</h3>
+      <p>{{ tripConflicts.length }} outbound trip conflicts, {{ returnTripConflicts.length }} return trip conflicts</p>
+    </div>
+
+    <div *ngIf="totalConflicts === 0 && !loading" class="no-conflicts">
+      <p>✓ No duplicate bookings found in the selected date range.</p>
+    </div>
+
+    <!-- Trip Conflicts -->
+    <div *ngIf="tripConflicts.length > 0" class="conflicts-section">
+      <h3>Outbound Trip Conflicts</h3>
+      <div *ngFor="let conflict of tripConflicts; let i = index" class="conflict-group">
+        <div class="conflict-header">
+          <span class="conflict-badge">{{ conflict.bookings.length }} DUPLICATE BOOKINGS</span>
+          <span class="conflict-details">
+            {{ conflict.tripInfo.route }} | {{ conflict.tripInfo.date }} @ {{ conflict.tripInfo.time }} | Seat: {{ conflict.seat }}
+          </span>
+        </div>
+        
+        <table class="conflict-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Passenger</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Booked On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of conflict.bookings">
+              <td>{{ booking.bookingId }}</td>
+              <td>{{ booking.passenger.firstName }} {{ booking.passenger.lastName }}</td>
+              <td>{{ booking.phone }}</td>
+              <td>{{ booking.email }}</td>
+              <td>₦{{ booking.amount | number }}</td>
+              <td>
+                <span [class]="getPaymentBadgeClass(booking)">
+                  {{ getPaymentBadgeText(booking) }}
+                </span>
+              </td>
+              <td>{{ booking.status }}</td>
+              <td>{{ formatDisplayDate(booking.createdAt) }}</td>
+              <td class="actions-cell">
+                <button 
+                  *ngIf="needsConfirmation(booking)"
+                  type="button"
+                  class="btn btn-sm btn-warning"
+                  (click)="confirmPayment(booking)"
+                  title="Confirm Payment">
+                  Confirm Payment
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-sm btn-danger"
+                  (click)="cancelBooking(booking)"
+                  title="Cancel Booking">
+                  Cancel
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-sm btn-info"
+                  (click)="markAsHandled(booking)"
+                  title="Mark as Handled">
+                  Handled
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Return Trip Conflicts -->
+    <div *ngIf="returnTripConflicts.length > 0" class="conflicts-section">
+      <h3>Return Trip Conflicts</h3>
+      <div *ngFor="let conflict of returnTripConflicts; let i = index" class="conflict-group">
+        <div class="conflict-header">
+          <span class="conflict-badge">{{ conflict.bookings.length }} DUPLICATE BOOKINGS</span>
+          <span class="conflict-details">
+            {{ conflict.tripInfo.route }} | {{ conflict.tripInfo.date }} @ {{ conflict.tripInfo.time }} | Seat: {{ conflict.seat }}
+          </span>
+        </div>
+        
+        <table class="conflict-table">
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Passenger</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Amount</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Booked On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of conflict.bookings">
+              <td>{{ booking.bookingId }}</td>
+              <td>{{ booking.passenger.firstName }} {{ booking.passenger.lastName }}</td>
+              <td>{{ booking.phone }}</td>
+              <td>{{ booking.email }}</td>
+              <td>₦{{ booking.amount | number }}</td>
+              <td>
+                <span [class]="getPaymentBadgeClass(booking)">
+                  {{ getPaymentBadgeText(booking) }}
+                </span>
+              </td>
+              <td>{{ booking.status }}</td>
+              <td>{{ formatDisplayDate(booking.createdAt) }}</td>
+              <td class="actions-cell">
+                <button 
+                  *ngIf="needsConfirmation(booking)"
+                  type="button"
+                  class="btn btn-sm btn-warning"
+                  (click)="confirmPayment(booking)"
+                  title="Confirm Payment">
+                  Confirm Payment
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-sm btn-danger"
+                  (click)="cancelBooking(booking)"
+                  title="Cancel Booking">
+                  Cancel
+                </button>
+                <button 
+                  type="button"
+                  class="btn btn-sm btn-info"
+                  (click)="markAsHandled(booking)"
+                  title="Mark as Handled">
+                  Handled
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+

@@ -35,6 +35,7 @@ import { SubRoutesComponent } from './subroutes/subroutes.component';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
+import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { AuthInterceptor } from './auth-interceptor.service';
 import { PricesComponent } from './prices/price.component';
 import { TermsComponent } from './terms/terms.component';
@@ -62,6 +63,7 @@ import { EditorModule } from 'primeng/editor';
     SignInComponent,
     WithdrawalsComponent,
     AbookingsComponent,
+    DuplicatesComponent,
     PricesComponent,
     TermsComponent,
     RowSplitPipe

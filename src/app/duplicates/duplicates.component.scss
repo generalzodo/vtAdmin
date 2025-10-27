@@ -1,0 +1,290 @@
+.duplicates-container {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .header-section {
+    margin-bottom: 2rem;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #2d3748;
+    }
+
+    .subtitle {
+      color: #718096;
+      margin-bottom: 1.5rem;
+    }
+
+    .date-range-section {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+
+      label {
+        font-weight: 500;
+        color: #4a5568;
+      }
+
+      .date-input {
+        padding: 0.5rem;
+        border: 1px solid #cbd5e0;
+        border-radius: 0.375rem;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        padding: 0.5rem 1.5rem;
+        background-color: #3182ce;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover:not(:disabled) {
+          background-color: #2c5aa0;
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+
+  .loading-section {
+    text-align: center;
+    padding: 3rem;
+    color: #718096;
+    font-size: 1.1rem;
+  }
+
+  .verification-summary {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #2d3748;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+
+      .summary-item {
+        text-align: center;
+
+        .summary-number {
+          display: block;
+          font-size: 2rem;
+          font-weight: 700;
+          color: #3182ce;
+          margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+          display: block;
+          color: #718096;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        &.success .summary-number {
+          color: #d69e2e;
+        }
+
+        &.error .summary-number {
+          color: #e53e3e;
+        }
+      }
+    }
+  }
+
+  .conflicts-summary {
+    background: #f0f9ff;
+    border-left: 4px solid #3182ce;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 0.25rem;
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #718096;
+      margin: 0;
+    }
+  }
+
+  .no-conflicts {
+    text-align: center;
+    padding: 3rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 0.5rem;
+    color: #166534;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .conflicts-section {
+    margin-bottom: 3rem;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: #2d3748;
+    }
+
+    .conflict-group {
+      margin-bottom: 2rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      overflow: hidden;
+
+      .conflict-header {
+        background: #f7fafc;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+
+        .conflict-badge {
+          background: #e53e3e;
+          color: white;
+          padding: 0.25rem 0.75rem;
+          border-radius: 0.25rem;
+          font-size: 0.875rem;
+          font-weight: 600;
+        }
+
+        .conflict-details {
+          color: #4a5568;
+          font-weight: 500;
+        }
+      }
+
+      .conflict-table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th {
+          background: #f7fafc;
+          padding: 0.75rem 1rem;
+          text-align: left;
+          font-weight: 600;
+          font-size: 0.875rem;
+          color: #4a5568;
+          border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid #e2e8f0;
+          color: #2d3748;
+
+          .badge-success {
+            display: inline-block;
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+
+          .badge-needs-confirmation {
+            display: inline-block;
+            background: #fbd38d;
+            color: #744210;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+
+          .badge-failed {
+            display: inline-block;
+            background: #fc8181;
+            color: #7f1d1d;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+
+          .badge-unknown {
+            display: inline-block;
+            background: #cbd5e0;
+            color: #1a202c;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+          }
+        }
+
+        .actions-cell {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+
+          .btn {
+            padding: 0.375rem 0.75rem;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+
+            &:hover {
+              opacity: 0.8;
+            }
+
+            &.btn-sm {
+              font-size: 0.75rem;
+              padding: 0.25rem 0.5rem;
+            }
+
+            &.btn-warning {
+              background: #f6ad55;
+              color: white;
+            }
+
+            &.btn-danger {
+              background: #fc8181;
+              color: white;
+            }
+
+            &.btn-info {
+              background: #63b3ed;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
