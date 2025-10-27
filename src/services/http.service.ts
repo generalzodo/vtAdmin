@@ -40,13 +40,7 @@ export class HttpService {
     return this.http.get(this.base_url + endpoint).pipe(retry(1), shareReplay());
   }
 
-  getMapData() {
-    return this.http.jsonp('https://maps.googleapis.com/maps/api/js?key=AIzaSyCE4z4wdxDikBjqjTsMPEK0p6Dd5faoqbg', 'callback')
-    .pipe(
-      map(() => true),
-      catchError(() => of(false)),
-    );
-  }
+ 
 
   getSingleNoAuthID(endpoint: any, id: any) {
     return this.http.get(this.base_url + endpoint + id).pipe(retry(1));
