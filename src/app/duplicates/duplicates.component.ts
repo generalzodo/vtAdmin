@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { HelperService } from 'src/services/helper.service';
 
 @Component({
   selector: 'app-duplicates',
@@ -10,92 +11,95 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 })
 export class DuplicatesComponent implements OnInit {
   loading: boolean = false;
-  fromDate: Date;
-  toDate: Date;
-  minDate: Date;
-  maxDate: Date;
+  selectedFilter: any = { title: 'Last 7 Days', value: 7 };
+  dateFilter = [
+    { title: 'Last 7 days', value: 7 },
+    { title: 'Last 30 days', value: 30 },
+    { title: 'Last 60 days', value: 60 },
+    { title: 'Last 3 months', value: 90 },
+    { title: 'Last 6 months', value: 180 },
+  ];
   
-  tripConflicts: any[] = [];
-  returnTripConflicts: any[] = [];
-  verificationSummary: any = {};
-  totalConflicts: number = 0;
+  autoCancelledBookings: any[] = [];
+  summary: any = {};
+  totalCancelled: number = 0;
 
   constructor(
     private httpService: HttpService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
-  ) {
-    this.minDate = new Date();
-    const today = new Date();
-    const nextWeek = new Date(today);
-    nextWeek.setDate(today.getDate() + 7);
-    
-    this.fromDate = today;
-    this.toDate = nextWeek;
-    this.maxDate = new Date('2030-12-31');
-  }
+    private messageService: MessageService,
+    private helper: HelperService
+  ) {}
 
   ngOnInit(): void {
-    this.checkDuplicates();
+    this.loadAutoCancelledBookings();
   }
 
-  checkDuplicates() {
+  loadAutoCancelledBookings() {
     this.loading = true;
-    const from = this.formatDate(this.fromDate);
-    const to = this.formatDate(this.toDate);
+    let filter = '';
+    if (this.selectedFilter.value) {
+      const dateRange = this.helper.getDateRange(this.selectedFilter.value);
+      filter = `?from=${dateRange.from}&to=${dateRange.to}`;
+    }
     
-    this.httpService.getAuthData(`booking/duplicates?from=${from}&to=${to}`)
+    this.httpService.getAuthData(`booking/auto-cancelled${filter}`)
       .subscribe(
         (data: any) => {
-          this.tripConflicts = data.tripConflicts || [];
-          this.returnTripConflicts = data.returnTripConflicts || [];
-          this.verificationSummary = data.verificationSummary || {};
-          this.totalConflicts = data.totalConflicts || 0;
-          
+          this.autoCancelledBookings = data.bookings || [];
+          this.summary = data.summary || {};
+          this.totalCancelled = data.summary?.total || 0;
           this.loading = false;
           
-          if (this.totalConflicts === 0) {
+          if (this.totalCancelled === 0) {
             this.messageService.add({
               severity: 'success',
-              summary: 'No Conflicts',
-              detail: 'No duplicate bookings found in the selected date range.'
+              summary: 'No Auto-Cancelled Bookings',
+              detail: 'No bookings were automatically cancelled in the selected date range.'
             });
           }
         },
         (error) => {
-          console.error('Error checking duplicates:', error);
+          console.error('Error loading auto-cancelled bookings:', error);
           this.loading = false;
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to check for duplicate bookings.'
+            detail: 'Failed to load auto-cancelled bookings.'
           });
         }
       );
   }
 
-  confirmPayment(booking: any) {
+  onFilterChange() {
+    this.loadAutoCancelledBookings();
+  }
+
+  restoreBooking(booking: any) {
     this.confirmationService.confirm({
-      message: `Confirm payment for booking ${booking.bookingId}? This will mark the payment as successful and send the ticket email.`,
-      header: 'Confirm Payment',
+      message: `Restore booking ${booking.bookingId} for ${booking.firstName} ${booking.lastName}? This will re-confirm the booking and send ticket email if payment was successful.`,
+      header: 'Restore Booking',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.httpService.updateData(`booking/confirmPayment/${booking._id}`, {})
+        const restoreData = {
+          restorePaymentStatus: booking.paystack_ref || booking.flutterwave_ref || booking.paystack_reference ? 'success' : 'pending'
+        };
+        
+        this.httpService.updateData(`booking/restore/${booking._id}`, restoreData)
           .subscribe(
             (data: any) => {
               this.messageService.add({
                 severity: 'success',
-                summary: 'Payment Confirmed',
-                detail: `Booking ${booking.bookingId} confirmed and ticket sent.`
+                summary: 'Booking Restored',
+                detail: `Booking ${booking.bookingId} has been restored and seat re-assigned.`
               });
-              // Refresh the list
-              this.checkDuplicates();
+              this.loadAutoCancelledBookings();
             },
             (error) => {
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Failed to confirm payment.'
+                detail: error.error?.error || 'Failed to restore booking.'
               });
             }
           );
@@ -103,104 +107,37 @@ export class DuplicatesComponent implements OnInit {
     });
   }
 
-  cancelBooking(booking: any) {
-    this.confirmationService.confirm({
-      message: `Cancel booking ${booking.bookingId} for ${booking.passenger.firstName} ${booking.passenger.lastName}? This will free the seat and refund according to cancellation policy.`,
-      header: 'Cancel Booking',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.httpService.getAuthData(`booking/cancel/${booking._id}`)
-          .subscribe(
-            (data: any) => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Booking Cancelled',
-                detail: `Booking ${booking.bookingId} has been cancelled and seat freed.`
-              });
-              // Refresh the list
-              this.checkDuplicates();
-            },
-            (error) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: error.error?.error || 'Failed to cancel booking.'
-              });
-            }
-          );
-      }
+  viewBookingDetails(booking: any) {
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Booking Details',
+      detail: `Cancellation Reason: ${booking.cancellationReason || 'No reason provided'}`
     });
   }
 
-  markAsHandled(booking: any) {
-    this.httpService.updateData(`booking/${booking._id}`, { handled: true })
-      .subscribe(
-        (data: any) => {
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Marked as Handled',
-            detail: 'Booking has been marked as handled.'
-          });
-          this.checkDuplicates();
-        },
-        (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to mark booking as handled.'
-          });
-        }
-      );
+  hasPaymentReference(booking: any): boolean {
+    return !!(booking.paystack_ref || booking.paystack_reference || booking.flutterwave_ref);
   }
 
-  getPaymentBadgeClass(booking: any): string {
-    if (booking.paymentStatus === 'success' || booking.paymentStatus === 'admin paid') {
-      return 'badge-success';
+  getRiskLevel(booking: any): string {
+    if (this.hasPaymentReference(booking)) {
+      return 'high'; // High risk - had payment reference but was cancelled
     }
-    if (booking.paystackVerification?.paystackStatus === 'success') {
-      return 'badge-needs-confirmation';
+    if (booking.verificationAttempts >= 2) {
+      return 'medium'; // Medium risk - multiple verification attempts
     }
-    if (booking.paystackVerification?.checked && booking.paystackVerification?.paystackStatus === 'not_found') {
-      return 'badge-failed';
-    }
-    return 'badge-unknown';
+    return 'low'; // Low risk - normal cancellation
   }
 
-  getPaymentBadgeText(booking: any): string {
-    if (booking.paymentStatus === 'success' || booking.paymentStatus === 'admin paid') {
-      return '✓ Paid';
-    }
-    if (booking.paystackVerification?.paystackStatus === 'success') {
-      return '⚠ Needs Confirmation';
-    }
-    if (booking.paystackVerification?.checked && booking.paystackVerification?.paystackStatus === 'not_found') {
-      return '✗ Payment Failed';
-    }
-    return '? Unknown';
-  }
-
-  needsConfirmation(booking: any): boolean {
-    return booking.paystackVerification?.paystackStatus === 'success' && 
-           booking.paymentStatus !== 'success' && 
-           booking.paymentStatus !== 'admin paid';
-  }
-
-  formatDate(date: Date): string {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${year}-${month}-${day}`;
-  }
-
-  formatDisplayDate(dateString: string): string {
+  formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'short', 
-      day: 'numeric' 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   }
 }
-

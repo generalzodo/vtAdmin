@@ -1,197 +1,98 @@
 <div class="duplicates-container">
   <div class="header-section">
-    <h2>Duplicate Booking Checker</h2>
-    <p class="subtitle">Identify and resolve seat conflicts across trip and return trip bookings</p>
+    <h2>Auto-Cancelled Bookings</h2>
+    <p class="subtitle">Review bookings that were automatically cancelled by the system and restore them if needed</p>
     
-    <div class="date-range-section">
-      <label>From Date:</label>
-      <input type="date" [(ngModel)]="fromDate" class="date-input" />
-      
-      <label>To Date:</label>
-      <input type="date" [(ngModel)]="toDate" class="date-input" />
-      
-      <button 
-        type="button" 
-        class="btn btn-primary" 
-        (click)="checkDuplicates()"
-        [disabled]="loading">
-        {{ loading ? 'Checking...' : 'Check Duplicates' }}
-      </button>
+    <div class="filter-section">
+      <label>Date Range:</label>
+      <select [(ngModel)]="selectedFilter" (ngModelChange)="onFilterChange()" class="date-select">
+        <option *ngFor="let filter of dateFilter" [ngValue]="filter">{{filter.title}}</option>
+      </select>
     </div>
   </div>
 
   <div *ngIf="loading" class="loading-section">
-    <p>Verifying payments with Paystack... This may take a moment.</p>
+    <p>Loading auto-cancelled bookings...</p>
   </div>
 
-  <div *ngIf="!loading && totalConflicts >= 0">
-    <div class="verification-summary" *ngIf="verificationSummary.totalChecked > 0">
-      <h3>Payment Verification Summary</h3>
+  <div *ngIf="!loading && totalCancelled >= 0">
+    <div class="verification-summary" *ngIf="summary.total > 0">
+      <h3>Auto-Cancellation Summary</h3>
       <div class="summary-grid">
         <div class="summary-item">
-          <span class="summary-number">{{ verificationSummary.totalChecked }}</span>
-          <span class="summary-label">Bookings Checked</span>
+          <span class="summary-number">{{ summary.total }}</span>
+          <span class="summary-label">Total Cancelled</span>
         </div>
-        <div class="summary-item success">
-          <span class="summary-number">{{ verificationSummary.foundSuccessful }}</span>
-          <span class="summary-label">Need Confirmation</span>
+        <div class="summary-item warning">
+          <span class="summary-number">{{ summary.withPaymentRefs }}</span>
+          <span class="summary-label">Had Payment References</span>
         </div>
-        <div class="summary-item error">
-          <span class="summary-number">{{ verificationSummary.confirmedFailed }}</span>
-          <span class="summary-label">Confirmed Failed</span>
+        <div class="summary-item">
+          <span class="summary-number">{{ summary.verificationAttempts?.avg?.toFixed(1) || 0 }}</span>
+          <span class="summary-label">Avg Verification Attempts</span>
         </div>
       </div>
     </div>
 
     <div class="conflicts-summary">
-      <h3>Duplicate Conflicts Found: {{ totalConflicts }}</h3>
-      <p>{{ tripConflicts.length }} outbound trip conflicts, {{ returnTripConflicts.length }} return trip conflicts</p>
+      <h3>Auto-Cancelled Bookings: {{ totalCancelled }}</h3>
     </div>
 
-    <div *ngIf="totalConflicts === 0 && !loading" class="no-conflicts">
-      <p>✓ No duplicate bookings found in the selected date range.</p>
+    <div *ngIf="totalCancelled === 0 && !loading" class="no-conflicts">
+      <p>✓ No bookings were automatically cancelled in the selected date range.</p>
     </div>
 
-    <!-- Trip Conflicts -->
-    <div *ngIf="tripConflicts.length > 0" class="conflicts-section">
-      <h3>Outbound Trip Conflicts</h3>
-      <div *ngFor="let conflict of tripConflicts; let i = index" class="conflict-group">
-        <div class="conflict-header">
-          <span class="conflict-badge">{{ conflict.bookings.length }} DUPLICATE BOOKINGS</span>
-          <span class="conflict-details">
-            {{ conflict.tripInfo.route }} | {{ conflict.tripInfo.date }} @ {{ conflict.tripInfo.time }} | Seat: {{ conflict.seat }}
-          </span>
-        </div>
-        
-        <table class="conflict-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Passenger</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>Amount</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th>Booked On</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let booking of conflict.bookings">
-              <td>{{ booking.bookingId }}</td>
-              <td>{{ booking.passenger.firstName }} {{ booking.passenger.lastName }}</td>
-              <td>{{ booking.phone }}</td>
-              <td>{{ booking.email }}</td>
-              <td>₦{{ booking.amount | number }}</td>
-              <td>
-                <span [class]="getPaymentBadgeClass(booking)">
-                  {{ getPaymentBadgeText(booking) }}
-                </span>
-              </td>
-              <td>{{ booking.status }}</td>
-              <td>{{ formatDisplayDate(booking.createdAt) }}</td>
-              <td class="actions-cell">
-                <button 
-                  *ngIf="needsConfirmation(booking)"
-                  type="button"
-                  class="btn btn-sm btn-warning"
-                  (click)="confirmPayment(booking)"
-                  title="Confirm Payment">
-                  Confirm Payment
-                </button>
-                <button 
-                  type="button"
-                  class="btn btn-sm btn-danger"
-                  (click)="cancelBooking(booking)"
-                  title="Cancel Booking">
-                  Cancel
-                </button>
-                <button 
-                  type="button"
-                  class="btn btn-sm btn-info"
-                  (click)="markAsHandled(booking)"
-                  title="Mark as Handled">
-                  Handled
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Return Trip Conflicts -->
-    <div *ngIf="returnTripConflicts.length > 0" class="conflicts-section">
-      <h3>Return Trip Conflicts</h3>
-      <div *ngFor="let conflict of returnTripConflicts; let i = index" class="conflict-group">
-        <div class="conflict-header">
-          <span class="conflict-badge">{{ conflict.bookings.length }} DUPLICATE BOOKINGS</span>
-          <span class="conflict-details">
-            {{ conflict.tripInfo.route }} | {{ conflict.tripInfo.date }} @ {{ conflict.tripInfo.time }} | Seat: {{ conflict.seat }}
-          </span>
-        </div>
-        
-        <table class="conflict-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Passenger</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>Amount</th>
-              <th>Payment</th>
-              <th>Status</th>
-              <th>Booked On</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let booking of conflict.bookings">
-              <td>{{ booking.bookingId }}</td>
-              <td>{{ booking.passenger.firstName }} {{ booking.passenger.lastName }}</td>
-              <td>{{ booking.phone }}</td>
-              <td>{{ booking.email }}</td>
-              <td>₦{{ booking.amount | number }}</td>
-              <td>
-                <span [class]="getPaymentBadgeClass(booking)">
-                  {{ getPaymentBadgeText(booking) }}
-                </span>
-              </td>
-              <td>{{ booking.status }}</td>
-              <td>{{ formatDisplayDate(booking.createdAt) }}</td>
-              <td class="actions-cell">
-                <button 
-                  *ngIf="needsConfirmation(booking)"
-                  type="button"
-                  class="btn btn-sm btn-warning"
-                  (click)="confirmPayment(booking)"
-                  title="Confirm Payment">
-                  Confirm Payment
-                </button>
-                <button 
-                  type="button"
-                  class="btn btn-sm btn-danger"
-                  (click)="cancelBooking(booking)"
-                  title="Cancel Booking">
-                  Cancel
-                </button>
-                <button 
-                  type="button"
-                  class="btn btn-sm btn-info"
-                  (click)="markAsHandled(booking)"
-                  title="Mark as Handled">
-                  Handled
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <!-- Auto-Cancelled Bookings List -->
+    <div *ngIf="autoCancelledBookings.length > 0" class="cancelled-bookings-section">
+      <table class="conflict-table">
+        <thead>
+          <tr>
+            <th>Booking ID</th>
+            <th>Passenger</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Route</th>
+            <th>Seat</th>
+            <th>Amount</th>
+            <th>Risk</th>
+            <th>Cancelled On</th>
+            <th>Reason</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let booking of autoCancelledBookings" [ngClass]="{'high-risk': getRiskLevel(booking) === 'high'}">
+            <td>{{ booking.bookingId }}</td>
+            <td>{{ booking.firstName }} {{ booking.lastName }}</td>
+            <td>{{ booking.phone }}</td>
+            <td>{{ booking.email }}</td>
+            <td>{{ booking.from }} - {{ booking.to }}</td>
+            <td>{{ booking.tripSeat }} <span *ngIf="booking.returnSeat"> | {{ booking.returnSeat }}</span></td>
+            <td>₦{{ booking.tripAmount + booking.returnAmount | number }}</td>
+            <td>
+              <span [class]="'risk-badge risk-' + getRiskLevel(booking)">
+                {{ getRiskLevel(booking) === 'high' ? '⚠️ High' : getRiskLevel(booking) === 'medium' ? '⚡ Medium' : '✓ Low' }}
+              </span>
+            </td>
+            <td>{{ formatDate(booking.createdAt) }}</td>
+            <td class="reason-cell" (click)="viewBookingDetails(booking)" title="{{ booking.cancellationReason }}">
+              {{ booking.cancellationReason?.substring(0, 40) || 'No reason' }}{{ booking.cancellationReason?.length > 40 ? '...' : '' }}
+            </td>
+            <td class="actions-cell">
+              <button 
+                type="button"
+                class="btn btn-sm btn-success"
+                (click)="restoreBooking(booking)"
+                title="Restore Booking">
+                Restore
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
-
