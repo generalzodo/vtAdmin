@@ -8,7 +8,7 @@ const baseUrl = {
   refresh_token: 'TP_REFRESH',
   // server: 'http://localhost:4000/api/',
 
-  server: 'https://required-malinde-zodostech-e7405a15.koyeb.app/api/',
+  server: 'https://vtserver-okhz.onrender.com/api/',
 
   refresh: 'token/refreshs/',
 
