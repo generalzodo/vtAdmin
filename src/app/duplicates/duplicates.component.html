@@ -4,22 +4,39 @@
     <p class="text-gray-600">Review cancelled and bookings requiring manual review within the date range</p>
   </div>
   
-  <div class="mb-4">
-    <label class="mr-3 font-medium">Date Range:</label>
-    <select [(ngModel)]="selectedFilter" (ngModelChange)="onFilterChange()" class="border rounded px-3 py-2">
-      <option *ngFor="let filter of dateFilter" [ngValue]="filter">{{filter.title}}</option>
-    </select>
+  <div class="mb-4 flex items-center justify-between">
+    <div>
+      <label class="mr-3 font-medium">Date Range:</label>
+      <select [(ngModel)]="selectedFilter" (ngModelChange)="onFilterChange()" class="border rounded px-3 py-2">
+        <option *ngFor="let filter of dateFilter" [ngValue]="filter">{{filter.title}}</option>
+      </select>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="flex border rounded-lg overflow-hidden">
+      <button 
+        (click)="activeTab = 'cancelled'" 
+        [class]="'px-6 py-2 font-medium transition-colors ' + (activeTab === 'cancelled' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50')">
+        Cancelled ({{autoCancelledBookings.length}})
+      </button>
+      <button 
+        (click)="activeTab = 'needsReview'" 
+        [class]="'px-6 py-2 font-medium transition-colors ' + (activeTab === 'needsReview' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50')">
+        Needs Review ({{needsReviewBookings.length}})
+      </button>
+    </div>
   </div>
 
   <div *ngIf="loading" class="text-center py-8">
-    <p>Loading cancelled bookings...</p>
+    <p>Loading bookings...</p>
   </div>
 
-  <div *ngIf="!loading && totalCancelled >= 0">
+  <!-- Cancelled Tab -->
+  <div *ngIf="!loading && activeTab === 'cancelled' && totalCancelled >= 0">
     <!-- Summary Cards -->
     <div *ngIf="summary.total > 0" class="grid grid-cols-3 gap-4 mb-6">
       <div class="bg-blue-50 p-4 rounded-lg">
-        <div class="text-3xl font-bold text-blue-600">{{ summary.total }}</div>
+        <div class="text-3xl font-bold text-blue-600">{{ autoCancelledBookings.length }}</div>
         <div class="text-sm text-gray-600">Total Cancelled</div>
       </div>
       <div class="bg-yellow-50 p-4 rounded-lg">
@@ -118,6 +135,117 @@
           <tr>
             <td colspan="11" class="text-center py-8 text-gray-500">
               ✓ No cancelled bookings found in the selected date range.
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Needs Review Tab -->
+  <div *ngIf="!loading && activeTab === 'needsReview' && totalCancelled >= 0">
+    <!-- Summary Card -->
+    <div class="bg-orange-50 p-6 rounded-lg mb-6">
+      <div class="flex items-center">
+        <i class="pi pi-exclamation-triangle text-orange-600 text-4xl mr-4"></i>
+        <div>
+          <div class="text-2xl font-bold text-orange-600 mb-1">{{ needsReviewBookings.length }} Bookings Need Review</div>
+          <p class="text-orange-700">These bookings have payment references but failed verification. They need manual review.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <p-table [value]="needsReviewBookings" #dt2
+        [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'email']"
+        [paginator]="true" [rows]="10"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{'min-width': '60rem'}">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="bookingId">Booking ID <p-sortIcon field="bookingId"></p-sortIcon></th>
+            <th pSortableColumn="firstName">Passenger <p-sortIcon field="firstName"></p-sortIcon></th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th pSortableColumn="from">Route <p-sortIcon field="from"></p-sortIcon></th>
+            <th>Seat</th>
+            <th pSortableColumn="tripAmount">Amount <p-sortIcon field="tripAmount"></p-sortIcon></th>
+            <th>Verification Attempts</th>
+            <th>Payment Reference</th>
+            <th>Reason</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-booking>
+          <tr class="border-b border-orange-300 bg-orange-50">
+            <td class="py-2 font-semibold">{{ booking.bookingId }}</td>
+            <td class="py-2">{{ booking.firstName }} {{ booking.lastName }}</td>
+            <td class="py-2">{{ booking.phone }}</td>
+            <td class="py-2">{{ booking.email }}</td>
+            <td class="py-2">{{ booking.from }} - {{ booking.to }}</td>
+            <td class="py-2">{{ booking.tripSeat }} <span *ngIf="booking.returnSeat"> | {{ booking.returnSeat }}</span></td>
+            <td class="py-2">₦{{ booking.tripAmount + booking.returnAmount | number }}</td>
+            <td class="py-2">
+              <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-800 font-semibold">
+                {{ booking.verificationAttempts || 0 }} attempts
+              </span>
+            </td>
+            <td class="py-2">
+              <div class="text-xs">
+                <div *ngIf="booking.paystack_ref" class="mb-1">
+                  <span class="text-gray-600">Paystack:</span> {{ booking.paystack_ref }}
+                </div>
+                <div *ngIf="booking.flutterwave_ref">
+                  <span class="text-gray-600">Flutterwave:</span> {{ booking.flutterwave_ref }}
+                </div>
+              </div>
+            </td>
+            <td class="py-2 text-xs text-gray-600 max-w-xs truncate" title="{{ booking.cancellationReason || 'No reason' }}">
+              {{ booking.cancellationReason || 'Verification failed' }}
+            </td>
+            <td class="py-2">
+              <button (click)="op2.toggle($event)" 
+                class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none"
+                type="button">
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                </svg>
+              </button>
+              <p-overlayPanel #op2 styleClass="p-0">
+                <div class="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                  <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
+                    <li>
+                      <a href="javascript:void(0)" (click)="restoreBooking(booking)" 
+                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Restore Booking
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0)" (click)="verifyPayment(booking)" 
+                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        Verify Payment
+                      </a>
+                    </li>
+                    <li>
+                      <a href="javascript:void(0)" (click)="viewBookingDetails(booking)" 
+                        class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                        View Details
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </p-overlayPanel>
+            </td>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="11" class="text-center py-8 text-gray-500">
+              ✓ No bookings need review in the selected date range.
             </td>
           </tr>
         </ng-template>

@@ -22,6 +22,8 @@ export class DuplicatesComponent implements OnInit {
   ];
   
   autoCancelledBookings: any[] = [];
+  needsReviewBookings: any[] = [];
+  activeTab: 'cancelled' | 'needsReview' = 'cancelled';
   summary: any = {};
   totalCancelled: number = 0;
   showPaymentModal: boolean = false;
@@ -54,7 +56,9 @@ export class DuplicatesComponent implements OnInit {
     this.httpService.getAuthData(`booking/auto-cancelled${filter}`)
       .subscribe(
         (data: any) => {
-          this.autoCancelledBookings = data.bookings || [];
+          // Separate cancelled and needs review bookings
+          this.autoCancelledBookings = (data.bookings || []).filter((b: any) => b.status !== 'Needs Review');
+          this.needsReviewBookings = (data.bookings || []).filter((b: any) => b.status === 'Needs Review');
           this.summary = data.summary || {};
           this.totalCancelled = data.summary?.total || 0;
           this.loading = false;
