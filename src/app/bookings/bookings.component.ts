@@ -42,6 +42,9 @@ export class BookingsComponent implements OnInit {
     {title: 'Last Year', value: 365},
     // {title: 'All Time', value: ''}
   ]
+  showPaymentModal: boolean = false;
+  selectedBooking: any = null;
+  verifyingPayment: boolean = false;
   constructor(private fb: FormBuilder, private httpService: HttpService, private helper: HelperService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.bookingForm = this.fb.group({
       firstName: [undefined, Validators.required],
@@ -299,6 +302,85 @@ export class BookingsComponent implements OnInit {
   markAsUsed(booking: any, status: String) {
     this.currentID = booking._id
     this.updateBooking({ status: status })
+  }
+
+  verifyPayment(booking: any) {
+    this.selectedBooking = booking;
+    this.verifyingPayment = true;
+    this.showPaymentModal = true;
+    
+    // Call payment verification API
+    const refs = [
+      booking.paystack_ref,
+      booking.paystack_reference,
+      booking.flutterwave_ref,
+      booking.bookingId
+    ].filter(ref => ref);
+    
+    // Try each reference
+    let verified = false;
+    const promises = refs.map(ref => {
+      return this.httpService.getAuthData(`payments/paystack/verify?reference=${ref}`)
+        .toPromise()
+        .then((data: any) => {
+          if (data.status === 'success' && !verified) {
+            verified = true;
+            this.selectedBooking.paymentVerified = true;
+            this.selectedBooking.verificationData = data;
+          }
+        })
+        .catch(() => {});
+    });
+    
+    Promise.all(promises).then(() => {
+      // Also try Flutterwave if Paystack didn't work
+      if (!verified && (booking.flutterwave_ref || booking.bookingId)) {
+        const flutterwaveRef = booking.flutterwave_ref || booking.bookingId;
+        this.httpService.getAuthData(`payments/flutterwave/verify?tx_ref=${flutterwaveRef}`)
+          .subscribe(
+            (data: any) => {
+              if (data.status === 'success' || data.data?.status === 'successful') {
+                this.selectedBooking.paymentVerified = true;
+                this.selectedBooking.verificationData = data;
+              }
+            },
+            () => {}
+          );
+      }
+      this.verifyingPayment = false;
+    });
+  }
+
+  confirmPaymentFromModal() {
+    if (!this.selectedBooking) return;
+    
+    this.confirmationService.confirm({
+      message: `Mark booking ${this.selectedBooking.bookingId} as paid and send ticket email?`,
+      header: 'Confirm Payment',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.httpService.updateData(`booking/confirmPayment/${this.selectedBooking._id}`, {})
+          .subscribe(
+            (data: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Payment Confirmed',
+                detail: `Booking ${this.selectedBooking.bookingId} confirmed and ticket sent.`
+              });
+              this.showPaymentModal = false;
+              this.selectedBooking = null;
+              this.pullBookings();
+            },
+            (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.error?.error || 'Failed to confirm payment.'
+              });
+            }
+          );
+      }
+    });
   }
 
   updateBooking(data: any) {

@@ -11,8 +11,9 @@ import { HelperService } from 'src/services/helper.service';
 })
 export class DuplicatesComponent implements OnInit {
   loading: boolean = false;
-  selectedFilter: any = { title: 'Last 7 Days', value: 7 };
+  selectedFilter: any = { title: 'Today', value: 'today' };
   dateFilter = [
+    { title: 'Today', value: 'today' },
     { title: 'Last 7 days', value: 7 },
     { title: 'Last 30 days', value: 30 },
     { title: 'Last 60 days', value: 60 },
@@ -23,6 +24,9 @@ export class DuplicatesComponent implements OnInit {
   autoCancelledBookings: any[] = [];
   summary: any = {};
   totalCancelled: number = 0;
+  showPaymentModal: boolean = false;
+  selectedBooking: any = null;
+  verifyingPayment: boolean = false;
 
   constructor(
     private httpService: HttpService,
@@ -38,7 +42,11 @@ export class DuplicatesComponent implements OnInit {
   loadAutoCancelledBookings() {
     this.loading = true;
     let filter = '';
-    if (this.selectedFilter.value) {
+    
+    if (this.selectedFilter.value === 'today') {
+      const today = new Date().toISOString().split('T')[0];
+      filter = `?from=${today}&to=${today}`;
+    } else if (this.selectedFilter.value) {
       const dateRange = this.helper.getDateRange(this.selectedFilter.value);
       filter = `?from=${dateRange.from}&to=${dateRange.to}`;
     }
@@ -54,20 +62,20 @@ export class DuplicatesComponent implements OnInit {
           if (this.totalCancelled === 0) {
             this.messageService.add({
               severity: 'success',
-              summary: 'No Auto-Cancelled Bookings',
-              detail: 'No bookings were automatically cancelled in the selected date range.'
+              summary: 'No Cancelled Bookings',
+              detail: 'No cancelled bookings found in the selected date range.'
             });
           }
         },
-        (error) => {
-          console.error('Error loading auto-cancelled bookings:', error);
-          this.loading = false;
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load auto-cancelled bookings.'
-          });
-        }
+            (error) => {
+              console.error('Error loading cancelled bookings:', error);
+              this.loading = false;
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to load cancelled bookings.'
+              });
+            }
       );
   }
 
@@ -138,6 +146,85 @@ export class DuplicatesComponent implements OnInit {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  verifyPayment(booking: any) {
+    this.selectedBooking = booking;
+    this.verifyingPayment = true;
+    this.showPaymentModal = true;
+    
+    // Call payment verification API
+    const refs = [
+      booking.paystack_ref,
+      booking.paystack_reference,
+      booking.flutterwave_ref,
+      booking.bookingId
+    ].filter(ref => ref);
+    
+    // Try each reference
+    let verified = false;
+    const promises = refs.map(ref => {
+      return this.httpService.getAuthData(`payments/paystack/verify?reference=${ref}`)
+        .toPromise()
+        .then((data: any) => {
+          if (data.status === 'success' && !verified) {
+            verified = true;
+            this.selectedBooking.paymentVerified = true;
+            this.selectedBooking.verificationData = data;
+          }
+        })
+        .catch(() => {});
+    });
+    
+    Promise.all(promises).then(() => {
+      // Also try Flutterwave if Paystack didn't work
+      if (!verified && (booking.flutterwave_ref || booking.bookingId)) {
+        const flutterwaveRef = booking.flutterwave_ref || booking.bookingId;
+        this.httpService.getAuthData(`payments/flutterwave/verify?tx_ref=${flutterwaveRef}`)
+          .subscribe(
+            (data: any) => {
+              if (data.status === 'success' || data.data?.status === 'successful') {
+                this.selectedBooking.paymentVerified = true;
+                this.selectedBooking.verificationData = data;
+              }
+            },
+            () => {}
+          );
+      }
+      this.verifyingPayment = false;
+    });
+  }
+
+  confirmPaymentFromModal() {
+    if (!this.selectedBooking) return;
+    
+    this.confirmationService.confirm({
+      message: `Mark booking ${this.selectedBooking.bookingId} as paid and send ticket email?`,
+      header: 'Confirm Payment',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.httpService.updateData(`booking/confirmPayment/${this.selectedBooking._id}`, {})
+          .subscribe(
+            (data: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Payment Confirmed',
+                detail: `Booking ${this.selectedBooking.bookingId} confirmed and ticket sent.`
+              });
+              this.showPaymentModal = false;
+              this.selectedBooking = null;
+              this.loadAutoCancelledBookings();
+            },
+            (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.error?.error || 'Failed to confirm payment.'
+              });
+            }
+          );
+      }
     });
   }
 }
