@@ -6,9 +6,9 @@ import { AuthService } from './auth.service';
 const baseUrl = {
   jwt_token: 'TP_TOKEN',
   refresh_token: 'TP_REFRESH',
-  // server: 'http://localhost:4000/api/',
+  server: 'http://localhost:4000/api/',
 
-  server: 'https://required-malinde-zodostech-e7405a15.koyeb.app/api/',
+  // server: 'https://required-malinde-zodostech-e7405a15.koyeb.app/api/',
 
   refresh: 'token/refreshs/',
 
