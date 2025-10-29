@@ -158,46 +158,59 @@ export class DuplicatesComponent implements OnInit {
     this.verifyingPayment = true;
     this.showPaymentModal = true;
     
-    // Call payment verification API
-    const refs = [
-      booking.paystack_ref,
-      booking.paystack_reference,
-      booking.flutterwave_ref,
-      booking.bookingId
-    ].filter(ref => ref);
+    // Determine payment mode from booking
+    const paymentMode = booking.mode || (booking.flutterwave_ref ? 'Flutterwave' : 'Paystack');
     
-    // Try each reference
-    let verified = false;
-    const promises = refs.map(ref => {
-      return this.httpService.getAuthData(`payments/paystack/verify?reference=${ref}`)
-        .toPromise()
-        .then((data: any) => {
-          if (data.status === 'success' && !verified) {
-            verified = true;
-            this.selectedBooking.paymentVerified = true;
-            this.selectedBooking.verificationData = data;
-          }
-        })
-        .catch(() => {});
-    });
-    
-    Promise.all(promises).then(() => {
-      // Also try Flutterwave if Paystack didn't work
-      if (!verified && (booking.flutterwave_ref || booking.bookingId)) {
-        const flutterwaveRef = booking.flutterwave_ref || booking.bookingId;
-        this.httpService.getAuthData(`payments/flutterwave/verify?tx_ref=${flutterwaveRef}`)
-          .subscribe(
-            (data: any) => {
-              if (data.status === 'success' || data.data?.status === 'successful') {
-                this.selectedBooking.paymentVerified = true;
-                this.selectedBooking.verificationData = data;
-              }
-            },
-            () => {}
-          );
-      }
-      this.verifyingPayment = false;
-    });
+    // Verify based on payment mode
+    if (paymentMode === 'Flutterwave') {
+      const refs = [
+        booking.flutterwave_ref,
+        booking.bookingId
+      ].filter(ref => ref);
+      
+      let verified = false;
+      const promises = refs.map(ref => {
+        return this.httpService.getAuthData(`payments/flutterwave/verify?tx_ref=${ref}`)
+          .toPromise()
+          .then((data: any) => {
+            if ((data.status === 'success' || data.data?.status === 'successful') && !verified) {
+              verified = true;
+              this.selectedBooking.paymentVerified = true;
+              this.selectedBooking.verificationData = data;
+            }
+          })
+          .catch(() => {});
+      });
+      
+      Promise.all(promises).then(() => {
+        this.verifyingPayment = false;
+      });
+    } else {
+      // Paystack verification
+      const refs = [
+        booking.paystack_ref,
+        booking.paystack_reference,
+        booking.bookingId
+      ].filter(ref => ref);
+      
+      let verified = false;
+      const promises = refs.map(ref => {
+        return this.httpService.getAuthData(`payments/paystack/verify?reference=${ref}`)
+          .toPromise()
+          .then((data: any) => {
+            if (data.status === 'success' && !verified) {
+              verified = true;
+              this.selectedBooking.paymentVerified = true;
+              this.selectedBooking.verificationData = data;
+            }
+          })
+          .catch(() => {});
+      });
+      
+      Promise.all(promises).then(() => {
+        this.verifyingPayment = false;
+      });
+    }
   }
 
   confirmPaymentFromModal() {
@@ -225,6 +238,34 @@ export class DuplicatesComponent implements OnInit {
                 severity: 'error',
                 summary: 'Error',
                 detail: error.error?.error || 'Failed to confirm payment.'
+              });
+            }
+          );
+      }
+    });
+  }
+
+  cancelNeedsReviewBooking(booking: any) {
+    this.confirmationService.confirm({
+      message: `Cancel booking ${booking.bookingId} and free the seat? This will permanently cancel the booking and make the seat available again.`,
+      header: 'Cancel Needs Review Booking',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.httpService.postData(`booking/cancelNeedsReview/${booking._id}`, {})
+          .subscribe(
+            (data: any) => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Booking Cancelled',
+                detail: `Booking ${booking.bookingId} has been cancelled and seat freed.`
+              });
+              this.loadAutoCancelledBookings();
+            },
+            (error) => {
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.error?.error || 'Failed to cancel booking.'
               });
             }
           );
