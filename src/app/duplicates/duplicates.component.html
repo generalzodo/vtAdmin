@@ -50,6 +50,10 @@
     </div>
 
     <div class="overflow-x-auto">
+      <div class="flex justify-end mb-3">
+        <input type="text" (input)="dt1.filterGlobal($event.target.value, 'contains')" placeholder="Search bookings..."
+          class="border rounded px-3 py-2 w-64" />
+      </div>
       <p-table [value]="autoCancelledBookings" #dt1
         [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'email']"
         [paginator]="true" [rows]="10"
@@ -156,6 +160,10 @@
     </div>
 
     <div class="overflow-x-auto">
+      <div class="flex justify-end mb-3">
+        <input type="text" (input)="dt2.filterGlobal($event.target.value, 'contains')" placeholder="Search bookings..."
+          class="border rounded px-3 py-2 w-64" />
+      </div>
       <p-table [value]="needsReviewBookings" #dt2
         [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'email']"
         [paginator]="true" [rows]="10"
