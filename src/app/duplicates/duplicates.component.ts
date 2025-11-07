@@ -97,7 +97,7 @@ export class DuplicatesComponent implements OnInit {
           restorePaymentStatus: booking.paystack_ref || booking.flutterwave_ref || booking.paystack_reference ? 'success' : 'pending'
         };
         
-        this.httpService.updateData(`booking/restore/${booking._id}`, restoreData)
+        this.httpService.postAuthData(`booking/restore/${booking._id}`, restoreData)
           .subscribe(
             (data: any) => {
               this.messageService.add({
