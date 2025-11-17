@@ -253,7 +253,7 @@ export class BookingsComponent implements OnInit {
 
     // Call backend endpoint to download ticket
     const bookingId = booking.bookingId;
-    const baseUrl = 'http://localhost:4000/api'; // Match the baseUrl from HttpService
+    const baseUrl = 'https://vtserver-okhz.onrender.com/api/'; // Match the baseUrl from HttpService
     const downloadUrl = `${baseUrl}/booking/download/${bookingId}`;
     
     // Get token from AuthService
