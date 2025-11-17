@@ -318,7 +318,7 @@ export class BookingsComponent implements OnInit {
         this.bookings = data.data.map((booking: any) => ({
           ...booking,
           searchableRescheduled: booking.isRescheduled ? 'rescheduled' : '',
-          searchableUserType: booking.user?.type || 'user',
+          searchableUserType: booking.user?.type ,
           searchableName: `${booking.firstName} ${booking.lastName}`.toLowerCase(),
           searchableRoute: `${booking.from}-${booking.to}`.toLowerCase()
         }));
