@@ -2,6 +2,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
+import { AuthService } from 'src/services/auth.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import * as html2pdf from 'html2pdf.js';
 import * as XLSX from 'xlsx';
@@ -31,7 +32,26 @@ export class AbookingsComponent implements OnInit {
   maxDate: Date;
   currentPage = 'one';
   results: any;
-  constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  
+  getUserTypeDisplay(type?: string): string {
+    if (!type || type === 'user') return 'User';
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  }
+
+  getUserTypeColor(type?: string): string {
+    switch (type) {
+      case 'agent':
+        return 'bg-blue-100 text-blue-800';
+      case 'partner':
+        return 'bg-purple-100 text-purple-800';
+      case 'admin':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-green-100 text-green-800';
+    }
+  }
+  
+  constructor(private fb: FormBuilder, private httpService: HttpService, private authService: AuthService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.bookingForm = this.fb.group({
       firstName: [undefined, Validators.required],
       lastName: [undefined, Validators.required],
@@ -187,6 +207,74 @@ export class AbookingsComponent implements OnInit {
     this.bookingInfoShow = true;
     this.bookingInfo = data
   }
+  
+  downloadTicket(booking: any) {
+    if (!booking || !booking.bookingId) {
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: 'Invalid booking data' 
+      });
+      return;
+    }
+
+    // Show loading message
+    this.messageService.add({ 
+      severity: 'info', 
+      summary: 'Downloading', 
+      detail: 'Preparing ticket download...' 
+    });
+
+    // Call backend endpoint to download ticket
+    const bookingId = booking.bookingId;
+    const baseUrl = 'http://localhost:4000/api'; // Match the baseUrl from HttpService
+    const downloadUrl = `${baseUrl}/booking/download/${bookingId}`;
+    
+    // Get token from AuthService
+    const token = this.authService.getJwtToken();
+    
+    // Add authorization header via fetch
+    fetch(downloadUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.json().then(err => {
+          throw new Error(err.message || 'Failed to download ticket');
+        });
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      // Create object URL and trigger download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ticket_${bookingId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      this.messageService.add({ 
+        severity: 'success', 
+        summary: 'Success', 
+        detail: 'Ticket downloaded successfully' 
+      });
+    })
+    .catch(error => {
+      console.error('Error downloading ticket:', error);
+      this.messageService.add({ 
+        severity: 'error', 
+        summary: 'Error', 
+        detail: error.message || 'Failed to download ticket. Please try again.' 
+      });
+    });
+  }
+  
   convertToPDF() {
     const element = document.getElementById('pdfContnent').innerHTML;
     const options = {
@@ -205,7 +293,14 @@ export class AbookingsComponent implements OnInit {
         'booking/altered'
       )
       .subscribe((data: any) => {
-        this.bookings = data.data
+        // Add searchable fields for better filtering
+        this.bookings = data.data.map((booking: any) => ({
+          ...booking,
+          searchableRescheduled: booking.isRescheduled ? 'rescheduled' : '',
+          searchableUserType: booking.user?.type || 'user',
+          searchableName: `${booking.firstName} ${booking.lastName}`.toLowerCase(),
+          searchableRoute: `${booking.from}-${booking.to}`.toLowerCase()
+        }));
       });
   }
   confirmDelete(id: any) {

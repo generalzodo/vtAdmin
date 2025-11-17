@@ -39,10 +39,17 @@ import { DuplicatesComponent } from './duplicates/duplicates.component';
 import { AuthInterceptor } from './auth-interceptor.service';
 import { PricesComponent } from './prices/price.component';
 import { TermsComponent } from './terms/terms.component';
+import { CommissionComponent } from './commission/commission.component';
+import { AgentReportsComponent } from './agent-reports/agent-reports.component';
+import { ReviewsComponent } from './reviews/reviews.component';
 
 import { CheckboxModule } from 'primeng/checkbox';
 import { RowSplitPipe } from './buses/row-split.pipe';
 import { EditorModule } from 'primeng/editor';
+import { TabViewModule } from 'primeng/tabview';
+import { TagModule } from 'primeng/tag';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 @NgModule({
   declarations: [
@@ -66,6 +73,9 @@ import { EditorModule } from 'primeng/editor';
     DuplicatesComponent,
     PricesComponent,
     TermsComponent,
+    CommissionComponent,
+    AgentReportsComponent,
+    ReviewsComponent,
     RowSplitPipe
   ],
   imports: [
@@ -88,7 +98,12 @@ import { EditorModule } from 'primeng/editor';
     OverlayPanelModule,
     ConfirmPopupModule,
     CheckboxModule,
-    EditorModule
+    EditorModule,
+    TabViewModule,
+    TagModule,
+    InputTextModule,
+    InputTextareaModule,
+    DropdownModule
 ],
   providers: [
       {

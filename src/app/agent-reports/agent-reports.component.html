@@ -1,0 +1,136 @@
+<div class="px-4 mx-auto lg:px-12">
+    <div class="relative overflow-hidden bg-white shadow-md border dark:bg-gray-800 sm:rounded-lg p-1">
+        <div class="flex flex-col px-4 py-3 lg:flex-row lg:items-center border-b border-gray-300 lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div class="flex items-center flex-1 space-x-4">
+                <h1 class="text-2xl font-bold">Agent Financial Reports</h1>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <div class="mb-6 border rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">Report Filters</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Agent *</label>
+                        <p-dropdown [options]="agents" 
+                            [(ngModel)]="selectedAgentId"
+                            placeholder="Select agent"
+                            [style]="{width: '100%'}"
+                            [showClear]="true"
+                            optionLabel="displayName"
+                            optionValue="_id">
+                            <ng-template let-agent pTemplate="item">
+                                <div>{{agent.firstName}} {{agent.lastName}} ({{agent.email}})</div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">From Date</label>
+                        <p-calendar [(ngModel)]="fromDate" 
+                            placeholder="From Date"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            [style]="{width: '100%'}"
+                            styleClass="w-full"></p-calendar>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">To Date</label>
+                        <p-calendar [(ngModel)]="toDate" 
+                            placeholder="To Date"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            [style]="{width: '100%'}"
+                            styleClass="w-full"></p-calendar>
+                    </div>
+                    <div class="flex items-end">
+                        <button pButton type="button" label="Generate Report" 
+                            icon="pi pi-search"
+                            [loading]="loading"
+                            [disabled]="!selectedAgentId"
+                            (click)="generateReport()"
+                            class="w-full"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="reportData" class="border rounded-lg p-4">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-xl font-bold">Financial Report</h3>
+                        <p class="text-sm text-muted-foreground">
+                            {{reportData.agent?.name}} ({{reportData.agent?.email}})
+                            <span *ngIf="reportData.dateRange.from && reportData.dateRange.to">
+                                • {{formatDate(reportData.dateRange.from)}} - {{formatDate(reportData.dateRange.to)}}
+                            </span>
+                        </p>
+                    </div>
+                    <button pButton type="button" label="Export CSV" 
+                        icon="pi pi-download"
+                        class="p-button-outlined"
+                        (click)="exportToExcel()"></button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="border rounded p-4">
+                        <p class="text-sm text-muted-foreground mb-1">Total Bookings</p>
+                        <p class="text-2xl font-bold">{{reportData.summary.totalBookings}}</p>
+                    </div>
+                    <div class="border rounded p-4">
+                        <p class="text-sm text-muted-foreground mb-1">Total Fare</p>
+                        <p class="text-2xl font-bold">₦{{reportData.summary.totalFare.toLocaleString()}}</p>
+                    </div>
+                    <div class="border rounded p-4">
+                        <p class="text-sm text-muted-foreground mb-1">Total Commission</p>
+                        <p class="text-2xl font-bold text-green-600">₦{{reportData.summary.totalCommission.toLocaleString()}}</p>
+                    </div>
+                    <div class="border rounded p-4">
+                        <p class="text-sm text-muted-foreground mb-1">Total Net</p>
+                        <p class="text-2xl font-bold">₦{{reportData.summary.totalNet.toLocaleString()}}</p>
+                    </div>
+                </div>
+
+                <div *ngIf="reportData.bookings.length === 0" class="text-center py-8 text-muted-foreground">
+                    <p>No bookings found for the selected criteria</p>
+                </div>
+
+                <div *ngIf="reportData.bookings.length > 0" class="overflow-x-auto">
+                    <p-table [value]="reportData.bookings" 
+                        [paginator]="true" 
+                        [rows]="10"
+                        [globalFilterFields]="['bookingId', 'passengerName', 'route']">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Date</th>
+                                <th>Route</th>
+                                <th>Bus Type</th>
+                                <th>Passenger Name</th>
+                                <th>Seat No</th>
+                                <th>Fare</th>
+                                <th>Commission</th>
+                                <th>Net</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-booking>
+                            <tr>
+                                <td>{{formatDate(booking.date)}}</td>
+                                <td>{{booking.route}}</td>
+                                <td>{{booking.busType}}</td>
+                                <td>{{booking.passengerName}}</td>
+                                <td>
+                                    {{booking.seatNo}}
+                                    <span *ngIf="booking.returnSeatNo"> / {{booking.returnSeatNo}}</span>
+                                </td>
+                                <td>₦{{booking.fare.toLocaleString()}}</td>
+                                <td class="text-green-600">₦{{booking.commission.toLocaleString()}}</td>
+                                <td>₦{{booking.net.toLocaleString()}}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast></p-toast>
+

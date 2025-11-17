@@ -80,8 +80,8 @@
                         <td class="py-2">{{withdrawal.userId.firstName}}, {{withdrawal.userId.lastName}}</td>
                         <td class="py-2">{{withdrawal.userId.phone}}</td>
                         <td class="py-2">{{withdrawal.amount}}</td>
-                        <td class="py-2">{{withdrawal.userId.bankName}}</td>
-                        <td class="py-2">{{withdrawal.userId.accountNumber}}</td>
+                        <td class="py-2">{{withdrawal.bankName || 'N/A'}}</td>
+                        <td class="py-2">{{withdrawal.accountNumber || 'N/A'}}</td>
                         <td class="py-2 capitalize">{{withdrawal.status}}</td>
                         <td class="py-2">{{withdrawal.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>

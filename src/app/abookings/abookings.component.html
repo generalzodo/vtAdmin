@@ -53,7 +53,7 @@
         </div>
         <div class="overflow-x-auto">
             <p-table [value]="bookings" #dt1
-                [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate' ]"
+                [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate', 'searchableUserType', 'searchableRescheduled', 'searchableName', 'searchableRoute']"
                 [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
@@ -63,6 +63,7 @@
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:10%">Name <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="user.type" style="width:7%">User Type <p-sortIcon field="user.type"></p-sortIcon></th>
                         <th pSortableColumn="phone" style="width:8%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
                         <th pSortableColumn="state" style="width:13%">Trip Route <p-sortIcon field="state"></p-sortIcon>
                         <th pSortableColumn="state" style="width:13%">Bus Type <p-sortIcon field="state"></p-sortIcon>
@@ -76,16 +77,26 @@
                                 field="state"></p-sortIcon></th>
                         <th pSortableColumn="status" style="width:5%">Status <p-sortIcon field="status"></p-sortIcon>
                         </th>
+                        <th style="width:8%">Rescheduled</th>
                         <th pSortableColumn="createdAt" style="width:5%">Booking Date <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
                         <th style="width:3%">Action</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-booking>
-                    <tr class="border-b border-gray-300">
+                    <tr class="border-b border-gray-300" 
+                        [ngClass]="{'border-l-4 border-l-blue-500': booking.isRescheduled}">
 
                         <td class="py-2">{{booking.bookingId}}</td>
                         <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
+                        <td class="py-2">
+                            <span *ngIf="booking.user?.type" 
+                                  class="px-2 py-1 text-xs font-semibold rounded-full"
+                                  [ngClass]="getUserTypeColor(booking.user.type)">
+                                {{getUserTypeDisplay(booking.user.type)}}
+                            </span>
+                            <span *ngIf="!booking.user?.type" class="text-gray-400 text-xs">N/A</span>
+                        </td>
                         <td class="py-2">{{booking.phone}}</td>
                         <td class="py-2">{{booking.from}}-{{booking.to}}({{booking.trip?.title }})</td>
                         <td class="py-2">{{booking.trip?.bus }}</td>
@@ -95,6 +106,13 @@
                             </span></td>
                         <td class="py-2">{{booking.mode}}: {{booking.paymentStatus}} {{booking.paystack_ref }}</td>
                         <td class="py-2 capitalize">{{booking.status}}</td>
+                        <td class="py-2">
+                            <span *ngIf="booking.isRescheduled" 
+                                  class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                Rescheduled
+                            </span>
+                            <span *ngIf="!booking.isRescheduled" class="text-gray-400 text-xs">-</span>
+                        </td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
                             <button (click)="op.toggle($event)"
@@ -125,6 +143,11 @@
                                             <a href="javascript:void(0)" (click)="markAsUsed(booking, 'pending')"
                                                 class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Marked
                                                 as unused</a>
+                                        </li>
+                                        <li *ngIf="booking.paymentStatus === 'success' || booking.paymentStatus === 'admin paid'">
+                                            <a href="javascript:void(0)" (click)="downloadTicket(booking)"
+                                                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Download
+                                                Ticket</a>
                                         </li>
                                         <li>
                                             <a href="#"
@@ -392,9 +415,9 @@
 </p-dialog>
 
 <p-dialog header="Booking Info" [(visible)]="bookingInfoShow" [modal]="true" [draggable]="false" [resizable]="false">
-    <div class="text-right">
+    <!-- <div class="text-right">
         <button class="bg-primary-700 text-white px-3 py-2 mb-10" (click)="convertToPDF()">Download PDF</button>
-    </div>
+    </div> -->
 
     <div class="lg:w-full w-[40vh]">
         <p>

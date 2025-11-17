@@ -251,7 +251,7 @@ export class DuplicatesComponent implements OnInit {
       header: 'Cancel Needs Review Booking',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
-        this.httpService.postData(`booking/cancelNeedsReview/${booking._id}`, {})
+        this.httpService.postAuthData(`booking/cancelNeedsReview/${booking._id}`, {})
           .subscribe(
             (data: any) => {
               this.messageService.add({

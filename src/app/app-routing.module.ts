@@ -15,6 +15,9 @@ import { ContainerComponent } from './container/container.component';
 import { WithdrawalsComponent } from './withdrawals/withdrawals.component';
 import { AbookingsComponent } from './abookings/abookings.component';
 import { DuplicatesComponent } from './duplicates/duplicates.component';
+import { AgentsComponent } from './agents/agents.component';
+import { AgentReportsComponent } from './agent-reports/agent-reports.component';
+import { ReviewsComponent } from './reviews/reviews.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/container/bookings', pathMatch: 'full' },
@@ -46,6 +49,9 @@ const routes: Routes = [
       { path: 'routes', component: RoutesComponent },
       { path: 'subroutes', component: SubRoutesComponent },
       { path: 'settings', component: SettingsComponent },
+      { path: 'agents', component: AgentsComponent },
+      { path: 'agent-reports', component: AgentReportsComponent },
+      { path: 'reviews', component: ReviewsComponent },
     ]
   }
 ]

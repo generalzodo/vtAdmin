@@ -92,34 +92,39 @@ export class WithdrawalsComponent implements OnInit {
   approvalWithdrawal(data: any) {
     this.confirmationService.confirm({
       message: 'Do you want to approve this transaction?',
-      header: 'Delete Confirmation',
+      header: 'Approve Confirmation',
       icon: 'pi pi-info-circle',
       accept: () => {
-     
-    this.httpService
-      .getAuthData(
-        'users/approveTransaction/' + data._id
-      )
-      .subscribe((data: any) => {
-        // this.listing = data.data
-        this.loading = false
-        this.displayWithdrawal = false
-        this.service.add({ key: 'tst', severity: 'success', summary: 'Successful', detail: 'Withdrawal approved successfully' });
-
-        this.pullWithdrawals()
-        this.currentID = ''
-      }, (err) => {
-        this.loading = false
-
-        console.log('====================================');
-        console.log(err);
-        console.log('====================================');
-      });
-    },
-    reject: () => {
-
-    }
-  });
+        this.loading = true;
+        this.httpService
+          .getAuthData(
+            'users/approveTransaction/' + data._id
+          )
+          .subscribe((response: any) => {
+            this.loading = false;
+            this.displayWithdrawal = false;
+            this.messageService.add({ 
+              severity: 'success', 
+              summary: 'Success', 
+              detail: response.message || 'Withdrawal approved successfully' 
+            });
+            this.pullWithdrawals();
+            this.currentID = '';
+          }, (err) => {
+            this.loading = false;
+            const errorMessage = err?.error?.error || err?.error?.message || 'Failed to approve withdrawal';
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: 'Error', 
+              detail: errorMessage 
+            });
+            console.error('Error approving withdrawal:', err);
+          });
+      },
+      reject: () => {
+        // User cancelled
+      }
+    });
   }
   rejectWithdrawal(data: any) {
     this.confirmationService.confirm({

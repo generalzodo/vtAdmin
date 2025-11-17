@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="overflow-x-auto">
-            <p-table #dt1 [globalFilterFields]="['title', 'route.title', 'status', 'tripDate']" [value]="trips"
+            <p-table #dt1 [globalFilterFields]="['title', 'route.title', 'status', 'tripDate', 'searchableType', 'searchableTime', 'walkInTimeSlot', 'time']" [value]="trips"
                 [paginator]="true" [rows]="10"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
@@ -79,6 +79,8 @@
                         <th pSortableColumn="firstName" style="width:10%">Trip Date <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:5%">Time <p-sortIcon
+                                field="firstName"></p-sortIcon></th>
+                        <th pSortableColumn="firstName" style="width:8%">Type <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
                         <th pSortableColumn="firstName" style="width:15%">Route <p-sortIcon
                                 field="firstName"></p-sortIcon></th>
@@ -108,11 +110,24 @@
                         </td>
                         <td class="' py-2">{{trip.title}}</td>
                         <td class="' py-2">{{trip.tripDate }}</td>
-                        <td class="' py-2">{{trip.time}}</td>
+                        <td class="' py-2">
+                            <span *ngIf="trip.isWalkIn">
+                                <span class="text-orange-600 font-semibold">Walk-In</span>
+                                <span *ngIf="trip.walkInTimeSlot" class="text-gray-500 text-xs"> ({{trip.walkInTimeSlot}})</span>
+                            </span>
+                            <span *ngIf="!trip.isWalkIn">{{trip.time || 'N/A'}}</span>
+                        </td>
+                        <td class="' py-2">
+                            <span *ngIf="trip.isWalkIn" class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs font-semibold">Walk-In</span>
+                            <span *ngIf="!trip.isWalkIn" class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">Scheduled</span>
+                        </td>
                         <td class="' py-2">{{trip.route?.title}}</td>
                         <td class="' py-2">{{trip.driver?.firstName}} {{trip.driver?.lastName}}</td>
                         <td class="' py-2">{{trip.busNo}}</td>
-                        <td class="' py-2">{{trip.route.bus.seats - trip.seats.length}}</td>
+                        <td class="' py-2">
+                            <span *ngIf="trip.isWalkIn">{{trip.availableSeats || 0}}</span>
+                            <span *ngIf="!trip.isWalkIn">{{trip.route?.bus?.seats - (trip.seats?.length || 0)}}</span>
+                        </td>
                         <td class="' py-2 capitalize">{{trip.status}}</td>
                         <td class="' py-2">{{trip.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
@@ -179,51 +194,84 @@
 <p-confirmDialog [style]="{}"></p-confirmDialog>
 <p-dialog header="Trip Manifest" [(visible)]="displayTripManifest" [modal]="true" showEffect="fade"
     [style]="{width: '90vw'}" [breakpoints]="{'960px': '90vw'}">
-    <p class="my-2 "><strong> Trip: </strong> {{currentTrip?.title}}</p>
-    <p class="my-2 "><strong> Trip Date: </strong> {{currentTrip?.tripDate}}</p>
-    <p class="my-2 "><strong> Trip Time: </strong> {{currentTrip?.time}}</p>
-    <p class="my-2 "><strong> Trip Origin: </strong> {{currentTrip?.route.origin}}</p>
-    <p class="my-2 "><strong> Trip Destination: </strong> {{currentTrip?.route.destination}}</p>
-    <p class="my-2 "><strong> Total No. of Passegers: </strong> {{currentTrip?.bookings.length}}</p>
+    <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+            <p class="my-2 "><strong> Trip: </strong> {{currentTrip?.title}}</p>
+            <p class="my-2 "><strong> Trip Date: </strong> {{currentTrip?.tripDate}}</p>
+            <p class="my-2 "><strong> Trip Time: </strong> {{currentTrip?.time || 'N/A'}}</p>
+            <p class="my-2 "><strong> Route: </strong> {{currentTrip?.route?.title}}</p>
+            <p class="my-2 "><strong> Total No. of Passengers: </strong> {{currentTrip?.bookings?.length || 0}}</p>
+        </div>
+        <div>
+            <div class="mb-2">
+                <label class="block text-sm font-medium mb-1">Transport Officer</label>
+                <p-dropdown 
+                    [options]="drivers" 
+                    optionValue="_id" 
+                    placeholder="Select Transport Officer" 
+                    [(ngModel)]="currentTrip.selectedDriverId"
+                    [ngModelOptions]="{standalone: true}"
+                    styleClass="border w-full p-2 rounded" 
+                    [style]="{width: '100%'}"
+                    [showClear]="true">
+                    <ng-template let-driver pTemplate="item">
+                        <div>{{driver.firstName}} {{driver.lastName}}</div>
+                    </ng-template>
+                    <ng-template let-driver pTemplate="selectedItem">
+                        <div *ngIf="driver">{{driver.firstName}} {{driver.lastName}}</div>
+                    </ng-template>
+                </p-dropdown>
+            </div>
+            <div class="mb-2">
+                <label class="block text-sm font-medium mb-1">Vehicle No</label>
+                <input pInputText type="text" [(ngModel)]="currentTrip.vehicleNo" 
+                    [ngModelOptions]="{standalone: true}"
+                    class="w-full p-2 border rounded" placeholder="Enter vehicle number">
+            </div>
+            <button pButton label="Update Manifest Info" (click)="updateTripManifest()" 
+                class="p-button-sm p-button-primary"></button>
+        </div>
+    </div>
 
-    <h3 class="mt-10 mb-4 text-lg font-semibold">Passegers</h3>
-    <p-table [value]="currentTrip?.bookings" #dt1
-        [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'status', 'trip.tripDate' ]"
+    <h3 class="mt-10 mb-4 text-lg font-semibold">Passengers ({{currentTrip?.bookings?.length || 0}})</h3>
+    <div *ngIf="!currentTrip?.bookings || currentTrip?.bookings?.length === 0" class="text-center py-8 text-gray-500">
+        <p>No passengers found for this trip.</p>
+    </div>
+    <p-table *ngIf="currentTrip?.bookings && currentTrip?.bookings?.length > 0" [value]="currentTrip?.bookings" #dt2
+        [globalFilterFields]="['bookingId', 'firstName', 'lastName', 'phone', 'to', 'emergencyPhone' ]"
         [paginator]="true" [rows]="10" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [showCurrentPageReport]="true" [tableStyle]="{'min-width': '60rem'}">
+        [showCurrentPageReport]="true" [tableStyle]="{'min-width': '80rem'}">
         <ng-template pTemplate="header">
             <tr>
-                <th pSortableColumn="firstName" style="width:10%">BookingId <p-sortIcon field="firstName"></p-sortIcon>
-                </th>
-                <th pSortableColumn="firstName" style="width:10%">Name <p-sortIcon field="firstName"></p-sortIcon></th>
-                <th pSortableColumn="phone" style="width:10%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
-                <th pSortableColumn="phone" style="width:10%">Email <p-sortIcon field="phone"></p-sortIcon></th>
-                <th pSortableColumn="phone" style="width:10%">DOB <p-sortIcon field="phone"></p-sortIcon></th>
-                <th pSortableColumn="phone" style="width:10%">Emergency Name <p-sortIcon field="phone"></p-sortIcon>
-                </th>
-                <th pSortableColumn="phone" style="width:10%">Emergency Phone <p-sortIcon field="phone"></p-sortIcon>
-                </th>
-                <th pSortableColumn="phone" style="width:10%">Emergency Email <p-sortIcon field="phone"></p-sortIcon>
-                </th>
-                <th pSortableColumn="state" style="width:10%">Seat No. <p-sortIcon field="state"></p-sortIcon></th>
-                <th pSortableColumn="status" style="width:10%">Status <p-sortIcon field="status"></p-sortIcon></th>
+                <th pSortableColumn="bookingId" style="width:8%">Booking ID <p-sortIcon field="bookingId"></p-sortIcon></th>
+                <th pSortableColumn="firstName" style="width:10%">Passenger Name <p-sortIcon field="firstName"></p-sortIcon></th>
+                <th pSortableColumn="phone" style="width:8%">Phone <p-sortIcon field="phone"></p-sortIcon></th>
+                <th pSortableColumn="to" style="width:8%">Destination <p-sortIcon field="to"></p-sortIcon></th>
+                <th pSortableColumn="tripSeat" style="width:6%">Seat No. <p-sortIcon field="tripSeat"></p-sortIcon></th>
+                <th pSortableColumn="emergencyPhone" style="width:8%">Emergency Contact <p-sortIcon field="emergencyPhone"></p-sortIcon></th>
+                <th style="width:8%">On-Boarded</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-booking>
             <tr class="border-b border-gray-300">
-
                 <td class="py-2">{{booking.bookingId}}</td>
-                <td class="py-2">{{booking.firstName}}, {{booking.lastName}}</td>
+                <td class="py-2">{{booking.firstName}} {{booking.middleName || ''}} {{booking.lastName}}</td>
                 <td class="py-2">{{booking.phone}}</td>
-                <td class="py-2">{{booking.email}}</td>
-                <td class="py-2">{{booking.dob | date: 'dd/MM/yyyy'}}</td>
-                <td class="py-2">{{booking.emergencyFirstName}}, {{booking.emergencyLastName}}</td>
-                <td class="py-2">{{booking.emergencyPhone}}</td>
-                <td class="py-2">{{booking.emergencyEmail}}</td>
-                <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat">| {{booking.returnSeat }} </span>
+                <td class="py-2">{{booking.to || 'N/A'}}</td>
+                <td class="py-2">
+                    {{booking.tripSeat || 'N/A'}} 
+                    <span *ngIf="booking.returnSeat"> / {{booking.returnSeat}}</span>
                 </td>
-
-                <td class="py-2 capitalize">{{booking.status}}</td>
+                <td class="py-2">
+                    {{booking.emergencyFirstName}} {{booking.emergencyLastName}}<br>
+                    <small class="text-gray-600">{{booking.emergencyPhone}}</small>
+                </td>
+                <td class="py-2">
+                    <input type="checkbox" 
+                        [checked]="booking.onBoarded" 
+                        (change)="updateBookingOnBoarded(booking, $event.target.checked)"
+                        class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
+                </td>
                 <!-- <td>
                     <button (click)="op.toggle($event)" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -265,13 +313,6 @@
     <form [formGroup]="tripForm">
         <div class="">
 
-            <!-- <span class=" w-full mb-1">
-                <span class="block w-full mb-3"> Title </span>
-
-                <input id="title" state="text" pInputText formControlName="title"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.title.errors }" class="border w-full p-3 rounded"
-                    placeholder="Title">
-            </span>
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> Route </span>
 
@@ -280,7 +321,15 @@
                     styleClass="border w-full p-2 rounded" [style]="{width: '100%'}" optionLabel="title"></p-dropdown>
             </span>
             <small class="w-ful inline-block " *ngIf="f.route.hasError('required') && f.route.touched" id="state-help"
-                class="p-error">Please select route </small> -->
+                class="p-error">Please select route </small>
+
+            <span class="w-full mb-1 block mt-8">
+                <span class="block w-full mb-3"> Title </span>
+
+                <input id="title" type="text" pInputText formControlName="title"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.title.errors }" class="border w-full p-3 rounded"
+                    placeholder="Trip title (auto-filled from route)">
+            </span>
 
             <span class="w-full mb-1 block mt-8">
                 <span class="block w-full mb-1"> TO </span>
@@ -302,17 +351,43 @@
             <!-- <small class="w-ful inline-block " *ngIf="f.tripDate.hasError('required') && f.tripDate.touched" id="tripDate-help"
                 class="p-error">Please select trip date</small> -->
 
-            <span class=" w-full block mb-1 mt-8">
-                <span class="block w-full mb-3"> Depature time </span>
-
-                <input id="title" state="text" pInputText formControlName="time"
-                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
-                    placeholder="Depature time">
+            <span class="w-full mb-1 block mt-8">
+                <div class="flex items-center">
+                    <input type="checkbox" id="isWalkIn" formControlName="isWalkIn" class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
+                    <label for="isWalkIn" class="ml-2 text-sm font-medium">Walk-In Bus (No time slot, no seat plan)</label>
+                </div>
             </span>
+
+            <span class=" w-full block mb-1 mt-8" *ngIf="!tripForm.get('isWalkIn')?.value">
+                <span class="block w-full mb-3"> Departure time </span>
+
+                <input id="time" state="text" pInputText formControlName="time"
+                    [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.time.errors }" class="border w-full p-3 rounded"
+                    placeholder="Departure time (e.g., 08:00)">
+            </span>
+
+            <span class=" w-full block mb-1 mt-8" *ngIf="tripForm.get('isWalkIn')?.value">
+                <span class="block w-full mb-3"> Walk-In Time Slot (Optional) </span>
+
+                <input id="walkInTimeSlot" state="text" pInputText formControlName="walkInTimeSlot"
+                    class="border w-full p-3 rounded"
+                    placeholder="Time slot for organization (e.g., Morning, Afternoon, Evening)">
+                <small class="text-gray-500">This is for display/organization purposes only. Walk-in buses have no fixed departure time.</small>
+            </span>
+
+            <span class=" w-full block mb-1 mt-8" *ngIf="tripForm.get('isWalkIn')?.value">
+                <span class="block w-full mb-3"> Capacity </span>
+
+                <input id="capacity" type="number" pInputText formControlName="capacity"
+                    class="border w-full p-3 rounded"
+                    placeholder="Bus capacity (optional, defaults to route bus capacity)">
+                <small class="text-gray-500">Leave empty to use the default capacity from the route's bus type.</small>
+            </span>
+
             <span class=" w-full block mb-1 mt-8">
                 <span class="block w-full mb-3"> Bus No. </span>
 
-                <input id="title" state="text" pInputText formControlName="busNo"
+                <input id="busNo" state="text" pInputText formControlName="busNo"
                     [ngClass]="{ 'ng-invalid ng-dirty': submitted && f.busNo.errors }" class="border w-full p-3 rounded"
                     placeholder="Bus Number">
             </span>

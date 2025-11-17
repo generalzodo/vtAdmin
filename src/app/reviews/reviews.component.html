@@ -1,0 +1,145 @@
+<div class="px-4 mx-auto lg:px-12">
+    <div class="relative overflow-hidden bg-white shadow-md border dark:bg-gray-800 sm:rounded-lg p-1">
+        <div class="flex flex-col px-4 py-3 lg:flex-row lg:items-center border-b border-gray-300 lg:justify-between lg:space-y-0 lg:space-x-4">
+            <div class="flex items-center flex-1 space-x-4">
+                <h1 class="text-2xl font-bold">Passenger Reviews</h1>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <div class="mb-6 border rounded-lg p-4">
+                <h3 class="text-lg font-semibold mb-4">Filters</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Status</label>
+                        <p-dropdown [options]="[
+                            {label: 'All Statuses', value: 'all'},
+                            {label: 'Pending', value: 'pending'},
+                            {label: 'Approved', value: 'approved'},
+                            {label: 'Rejected', value: 'rejected'}
+                        ]" 
+                            [(ngModel)]="statusFilter"
+                            optionLabel="label"
+                            optionValue="value"
+                            [style]="{width: '100%'}"
+                            (onChange)="pullReviews()"></p-dropdown>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">Rating</label>
+                        <p-dropdown [options]="[
+                            {label: 'All Ratings', value: 'all'},
+                            {label: '5 Stars', value: '5'},
+                            {label: '4 Stars', value: '4'},
+                            {label: '3 Stars', value: '3'},
+                            {label: '2 Stars', value: '2'},
+                            {label: '1 Star', value: '1'}
+                        ]" 
+                            [(ngModel)]="ratingFilter"
+                            optionLabel="label"
+                            optionValue="value"
+                            [style]="{width: '100%'}"
+                            (onChange)="pullReviews()"></p-dropdown>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">From Date</label>
+                        <p-calendar [(ngModel)]="fromDate" 
+                            placeholder="From Date"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            [style]="{width: '100%'}"
+                            styleClass="w-full"
+                            (onSelect)="pullReviews()"></p-calendar>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">To Date</label>
+                        <p-calendar [(ngModel)]="toDate" 
+                            placeholder="To Date"
+                            dateFormat="yy-mm-dd"
+                            [showIcon]="true"
+                            [style]="{width: '100%'}"
+                            styleClass="w-full"
+                            (onSelect)="pullReviews()"></p-calendar>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="loading" class="text-center py-8">
+                <p>Loading...</p>
+            </div>
+
+            <div *ngIf="!loading && reviews.length === 0" class="text-center py-8 text-muted-foreground">
+                <p>No reviews found</p>
+            </div>
+
+            <div *ngIf="!loading && reviews.length > 0" class="overflow-x-auto">
+                <p-table [value]="reviews" 
+                    [paginator]="true" 
+                    [rows]="10"
+                    [globalFilterFields]="['bookingId.bookingId', 'userId.firstName', 'userId.lastName', 'userId.email']">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Date</th>
+                            <th>Passenger</th>
+                            <th>Booking</th>
+                            <th>Route</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-review>
+                        <tr>
+                            <td>{{formatDate(review.createdAt)}}</td>
+                            <td>
+                                <div>
+                                    <p class="font-medium">{{review.userId.firstName}} {{review.userId.lastName}}</p>
+                                    <p class="text-sm text-muted-foreground">{{review.userId.email}}</p>
+                                    <p *ngIf="review.userId.phone" class="text-sm text-muted-foreground">{{review.userId.phone}}</p>
+                                </div>
+                            </td>
+                            <td>
+                                <p class="text-sm font-mono">{{review.bookingId.bookingId}}</p>
+                                <p class="text-xs text-muted-foreground">{{review.bookingId.tripDate}}</p>
+                            </td>
+                            <td>{{review.bookingId.from}} → {{review.bookingId.to}}</td>
+                            <td>
+                                <div class="flex items-center gap-1">
+                                    <span>{{renderStars(review.rating)}}</span>
+                                    <span class="text-sm text-muted-foreground">({{review.rating}})</span>
+                                </div>
+                            </td>
+                            <td class="max-w-xs">
+                                <p class="text-sm line-clamp-3">
+                                    <span class="text-muted-foreground italic">    {{review.comment || 'No comment'}}</span>
+                                </p>
+                            </td>
+                            <td>
+                                <p-tag [value]="review.status" [severity]="getStatusBadge(review.status)"></p-tag>
+                            </td>
+                            <td>
+                                <div *ngIf="review.status === 'pending'" class="flex gap-2">
+                                    <button pButton type="button" 
+                                        icon="pi pi-check" 
+                                        class="p-button-success p-button-sm"
+                                        [disabled]="processingId === review._id"
+                                        title="Approve"
+                                        (click)="updateReviewStatus(review._id, 'approved')"></button>
+                                    <button pButton type="button" 
+                                        icon="pi pi-times" 
+                                        class="p-button-danger p-button-sm"
+                                        [disabled]="processingId === review._id"
+                                        title="Reject"
+                                        (click)="updateReviewStatus(review._id, 'rejected')"></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-toast></p-toast>
+

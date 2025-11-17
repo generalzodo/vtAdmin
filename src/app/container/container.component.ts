@@ -11,6 +11,9 @@ export class ContainerComponent implements OnInit {
   menus: any = [
     { title: 'Dashboard', url: '' },
     { title: 'Users', url: 'users' },
+    { title: 'Agents', url: 'agents' },
+    { title: 'Agent Reports', url: 'agent-reports' },
+    { title: 'Reviews', url: 'reviews' },
     { title: 'Withdrawals', url: 'withdrawals' },
     { title: 'Bookings', url: 'bookings' },
     { title: 'Altered Bookings', url: 'altered' },
