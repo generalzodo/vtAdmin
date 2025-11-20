@@ -423,12 +423,104 @@ export class AbookingsComponent implements OnInit {
   }
 
   exportToExcel(jsonData: any[], fileName: string): void {
-    const flattenedData = jsonData.map(item => this.flattenObject(item));
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(flattenedData);
+    // Define column order as specified
+    const columnOrder = [
+      'id',
+      'Trip seats',
+      'First Name',
+      'Second name',
+      'Last name',
+      'Phone',
+      'Emergency Phone',
+      'From',
+      'To',
+      'Trip Amount',
+      'Payment Status',
+      'Trip Title',
+      'Trip Time',
+      'Trip Date',
+      'Status',
+      'Trip Type' // Added for outbound/return indication
+    ];
+
+    // Process bookings and split return trips into separate rows
+    const processedRows: any[] = [];
+    
+    for (const booking of jsonData) {
+      // Create outbound trip row
+      const outboundRow: any = {
+        'id': booking._id || booking.bookingId || '',
+        'Trip seats': booking.tripSeat || '',
+        'First Name': booking.firstName || '',
+        'Second name': booking.middleName || '',
+        'Last name': booking.lastName || '',
+        'Phone': booking.phone || '',
+        'Emergency Phone': booking.emergencyPhone || '',
+        'From': booking.from || '',
+        'To': booking.to || '',
+        'Trip Amount': booking.tripAmount || 0,
+        'Payment Status': booking.paymentStatus || '',
+        'Trip Title': booking.trip?.title || '',
+        'Trip Time': booking.trip?.time || '',
+        'Trip Date': booking.trip?.tripDate || '',
+        'Status': booking.status || '',
+        'Trip Type': 'Outbound'
+      };
+      processedRows.push(outboundRow);
+
+      // If booking has return trip, create return trip row
+      if (booking.returnTrip && booking.returnSeat) {
+        const returnRow: any = {
+          'id': booking._id || booking.bookingId || '',
+          'Trip seats': booking.returnSeat || '',
+          'First Name': booking.firstName || '',
+          'Second name': booking.middleName || '',
+          'Last name': booking.lastName || '',
+          'Phone': booking.phone || '',
+          'Emergency Phone': booking.emergencyPhone || '',
+          'From': booking.to || '', // Return trip: from becomes to
+          'To': booking.from || '', // Return trip: to becomes from
+          'Trip Amount': booking.returnAmount || 0,
+          'Payment Status': booking.paymentStatus || '',
+          'Trip Title': booking.returnTrip?.title || '',
+          'Trip Time': booking.returnTrip?.time || '',
+          'Trip Date': booking.returnTrip?.tripDate || '',
+          'Status': booking.status || '',
+          'Trip Type': 'Return'
+        };
+        processedRows.push(returnRow);
+      }
+    }
+
+    // Create worksheet with ordered columns
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(processedRows, { 
+      header: columnOrder 
+    });
+    
+    // Set column widths for better readability
+    const colWidths = [
+      { wch: 20 }, // id
+      { wch: 12 }, // Trip seats
+      { wch: 15 }, // First Name
+      { wch: 15 }, // Second name
+      { wch: 15 }, // Last name
+      { wch: 15 }, // Phone
+      { wch: 15 }, // Emergency Phone
+      { wch: 15 }, // From
+      { wch: 15 }, // To
+      { wch: 12 }, // Trip Amount
+      { wch: 15 }, // Payment Status
+      { wch: 20 }, // Trip Title
+      { wch: 12 }, // Trip Time
+      { wch: 12 }, // Trip Date
+      { wch: 15 }, // Status
+      { wch: 12 }  // Trip Type
+    ];
+    ws['!cols'] = colWidths;
+
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet 1');
     XLSX.writeFile(wb, `${fileName}.xlsx`);
-
   }
 }
 

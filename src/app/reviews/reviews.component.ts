@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/services/http.service';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-reviews',
@@ -98,6 +99,67 @@ export class ReviewsComponent implements OnInit {
 
   renderStars(rating: number) {
     return Array(rating).fill('⭐').join('') + Array(5 - rating).fill('☆').join('');
+  }
+
+  exportToExcel() {
+    if (!this.reviews || this.reviews.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'No reviews to export' });
+      return;
+    }
+
+    // Define column order
+    const columnOrder = [
+      'Date',
+      'Passenger Name',
+      'Passenger Email',
+      'Passenger Phone',
+      'Booking ID',
+      'Trip Date',
+      'Route',
+      'Rating',
+      'Comment',
+      'Status'
+    ];
+
+    // Process reviews for export
+    const processedRows = this.reviews.map((review: any) => ({
+      'Date': this.formatDate(review.createdAt),
+      'Passenger Name': `${review.userId?.firstName || ''} ${review.userId?.lastName || ''}`.trim(),
+      'Passenger Email': review.userId?.email || '',
+      'Passenger Phone': review.userId?.phone || '',
+      'Booking ID': review.bookingId?.bookingId || '',
+      'Trip Date': review.bookingId?.tripDate || '',
+      'Route': `${review.bookingId?.from || ''} → ${review.bookingId?.to || ''}`,
+      'Rating': review.rating || 0,
+      'Comment': review.comment || 'No comment',
+      'Status': review.status || ''
+    }));
+
+    // Create worksheet with ordered columns
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(processedRows, { 
+      header: columnOrder 
+    });
+    
+    // Set column widths for better readability
+    const colWidths = [
+      { wch: 20 }, // Date
+      { wch: 20 }, // Passenger Name
+      { wch: 25 }, // Passenger Email
+      { wch: 15 }, // Passenger Phone
+      { wch: 15 }, // Booking ID
+      { wch: 12 }, // Trip Date
+      { wch: 20 }, // Route
+      { wch: 8 },  // Rating
+      { wch: 40 }, // Comment
+      { wch: 12 }  // Status
+    ];
+    ws['!cols'] = colWidths;
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Reviews');
+    XLSX.writeFile(wb, `reviews_${new Date().toISOString().split('T')[0]}.xlsx`);
+    
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Reviews exported successfully' });
   }
 }
 
