@@ -78,6 +78,7 @@
                         <th pSortableColumn="status" style="width:5%">Status <p-sortIcon field="status"></p-sortIcon>
                         </th>
                         <th style="width:8%">Rescheduled</th>
+                        <th pSortableColumn="onBoarded" style="width:6%">Boarded <p-sortIcon field="onBoarded"></p-sortIcon></th>
                         <th pSortableColumn="createdAt" style="width:5%">Booking Date <p-sortIcon
                                 field="createdAt"></p-sortIcon></th>
                         <th style="width:3%">Action</th>
@@ -101,7 +102,9 @@
                         <td class="py-2">{{booking.from}}-{{booking.to}}({{booking.trip?.title }})</td>
                         <td class="py-2">{{booking.trip?.bus }}</td>
                         <td class="py-2">{{booking.trip?.tripDate }} {{booking.trip?.time }}</td>
-                        <td class="py-2">{{booking.tripAmount + booking.returnAmount }}</td>
+                        <td class="py-2">
+                            ₦{{booking.tripAmount + booking.returnAmount}}<span *ngIf="booking.discountedFare && booking.discountedFare > 0"> | {{booking.discountedFare}}</span>
+                        </td>
                         <td class="py-2">{{booking.tripSeat}} <span *ngIf="booking.returnSeat">| {{booking.returnSeat }}
                             </span></td>
                         <td class="py-2">{{booking.mode}}: {{booking.paymentStatus}} {{booking.paystack_ref }}</td>
@@ -112,6 +115,12 @@
                                 Rescheduled
                             </span>
                             <span *ngIf="!booking.isRescheduled" class="text-gray-400 text-xs">-</span>
+                        </td>
+                        <td class="py-2">
+                            <input type="checkbox" 
+                                [checked]="booking.onBoarded" 
+                                (change)="updateBookingOnBoarded(booking, $event.target.checked)"
+                                class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500">
                         </td>
                         <td class="py-2">{{booking.createdAt | date: 'dd/MM/yyyy'}}</td>
                         <td>
@@ -443,8 +452,13 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 mt-8">
 
             <h1 class="text-xl mb-5 mt-1">#{{bookingInfo?.uniqueBookingId}}</h1>
-            <h1 class="text-xl mb-5 mt-1 text-right">Total Amount Paid: <strong>₦{{bookingInfo?.tripAmount+
-                    bookingInfo?.returnAmount}} </strong></h1>
+            <h1 class="text-xl mb-5 mt-1 text-right">
+                Total Amount Paid: <strong>₦{{bookingInfo?.tripAmount + bookingInfo?.returnAmount}}</strong>
+                <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0" 
+                      class="text-green-600 text-base ml-2">
+                    (Discount: ₦{{bookingInfo?.discountedFare}})
+                </span>
+            </h1>
 
         </div>
         <h4 class="text-base font-semibold mt-10 mb-3">Traveller Information</h4>
@@ -517,7 +531,17 @@
             </div>
             <div class="border border-gray-100 m-2 p-2">
                 <small>Price </small>
-                <p class="font-semibold">₦{{bookingInfo?.tripAmount}}</p>
+                <p class="font-semibold">
+                    ₦{{bookingInfo?.tripAmount}}
+                    <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount == 0" 
+                          class="text-green-600 text-xs ml-1">
+                        (Discount: ₦{{bookingInfo?.discountedFare}})
+                    </span>
+                    <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount > 0" 
+                          class="text-green-600 text-xs ml-1">
+                        (Discount: ₦{{bookingInfo?.discountedFare / 2}})
+                    </span>
+                </p>
             </div>
         </div>
         <div *ngIf="bookingInfo?.returnTrip">
@@ -541,7 +565,13 @@
                 </div>
                 <div class="border border-gray-100 m-2 p-2">
                     <small>Price </small>
-                    <p class="font-semibold">₦{{bookingInfo?.returnAmount}}</p>
+                    <p class="font-semibold">
+                        ₦{{bookingInfo?.returnAmount}}
+                        <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount > 0" 
+                              class="text-green-600 text-xs ml-1">
+                            (Discount: ₦{{bookingInfo?.discountedFare / 2}})
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -680,7 +710,17 @@
                         <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
                             <p class="">Seat No: <strong>{{bookingInfo?.tripSeat}}</strong></p>
 
-                            <p class="">Amount Paid: <strong>₦{{bookingInfo?.tripAmount}}</strong></p>
+                            <p class="">
+                                Amount Paid: <strong>₦{{bookingInfo?.tripAmount}}</strong>
+                                <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount == 0" 
+                                      class="text-green-600 text-xs ml-1">
+                                    (Discount: ₦{{bookingInfo?.discountedFare}})
+                                </span>
+                                <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount > 0" 
+                                      class="text-green-600 text-xs ml-1">
+                                    (Discount: ₦{{bookingInfo?.discountedFare / 2}})
+                                </span>
+                            </p>
                         </div>
                     </td>
                 </tr>
@@ -703,7 +743,13 @@
                         <div class="mb-2 grid grid-cols-2 lg:grid-cols-2">
                             <p class="">Seat No: <strong>{{bookingInfo?.returnSeat}}</strong></p>
 
-                            <p class="">Amount Paid: <strong>₦{{bookingInfo?.returnAmount}}</strong></p>
+                            <p class="">
+                                Amount Paid: <strong>₦{{bookingInfo?.returnAmount}}</strong>
+                                <span *ngIf="bookingInfo?.discountedFare && bookingInfo?.discountedFare > 0 && bookingInfo?.returnAmount > 0" 
+                                      class="text-green-600 text-xs ml-1">
+                                    (Discount: ₦{{bookingInfo?.discountedFare / 2}})
+                                </span>
+                            </p>
                         </div>
                     </td>
                 </tr>

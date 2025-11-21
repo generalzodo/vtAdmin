@@ -377,6 +377,23 @@ export class AbookingsComponent implements OnInit {
     this.updateBooking({ status: status })
   }
 
+  updateBookingOnBoarded(booking: any, onBoarded: boolean) {
+    this.httpService
+      .updateData('booking/onboarded/' + booking._id, { onBoarded })
+      .subscribe((data: any) => {
+        if (data.success) {
+          booking.onBoarded = onBoarded;
+          this.messageService.add({ 
+            severity: 'success', 
+            summary: 'Success', 
+            detail: `Passenger ${onBoarded ? 'marked as on-boarded' : 'marked as not on-boarded'}` 
+          });
+        }
+      }, (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update on-boarded status' });
+      });
+  }
+
   updateBooking(data: any) {
 
     this.httpService
