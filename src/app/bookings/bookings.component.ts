@@ -540,70 +540,159 @@ export class BookingsComponent implements OnInit {
   }
 
   exportToExcel(jsonData: any[], fileName: string): void {
-    // Define column order as specified
+    // Define column order with all required fields
     const columnOrder = [
       'id',
+      'Trip Type',
       'Trip seats',
       'First Name',
       'Second name',
       'Last name',
+      'Email',
+      'Gender',
       'Phone',
+      'Emergency First Name',
+      'Emergency Last Name',
+      'Emergency Email',
       'Emergency Phone',
       'From',
       'To',
       'Trip Amount',
+      'Return Amount',
+      'Amount',
+      'Discount',
       'Payment Status',
       'Trip Title',
       'Trip Time',
       'Trip Date',
+      'Trip ID',
+      'Trip bus',
+      'Trip Status',
+      'Trip Created At',
       'Status',
-      'Trip Type' // Added for outbound/return indication
+      'Mode of Payment',
+      'Verification Attempts',
+      'Tickets Sent',
+      'is Rescheduled',
+      'Created At',
+      'Updated At',
+      'paystack Reference',
+      'uniqueBooking ID',
+      'User ID',
+      'User Type',
+      'Searchable User Type',
+      'Searchable Name',
+      'Searchable Route'
     ];
 
     // Process bookings and split return trips into separate rows
     const processedRows: any[] = [];
     
     for (const booking of jsonData) {
+      // Calculate total amount and discount
+      const totalAmount = (booking.tripAmount || 0) + (booking.returnAmount || 0);
+      const discountedFare = booking.discountedFare || 0;
+      
+      // For outbound trip, calculate discount portion
+      // If there's a return trip, discount is split in half
+      // If no return trip, full discount applies to the trip
+      const outboundDiscount = booking.returnTrip && booking.returnSeat 
+        ? (discountedFare / 2) 
+        : discountedFare;
+      
       // Create outbound trip row
       const outboundRow: any = {
         'id': booking._id || booking.bookingId || '',
+        'Trip Type': 'Outbound',
         'Trip seats': booking.tripSeat || '',
         'First Name': booking.firstName || '',
         'Second name': booking.middleName || '',
         'Last name': booking.lastName || '',
+        'Email': booking.email || '',
+        'Gender': booking.gender || '',
         'Phone': booking.phone || '',
+        'Emergency First Name': booking.emergencyFirstName || '',
+        'Emergency Last Name': booking.emergencyLastName || '',
+        'Emergency Email': booking.emergencyEmail || '',
         'Emergency Phone': booking.emergencyPhone || '',
         'From': booking.from || '',
         'To': booking.to || '',
         'Trip Amount': booking.tripAmount || 0,
+        'Return Amount': booking.returnAmount || 0,
+        'Amount': booking.amount || totalAmount,
+        'Discount': outboundDiscount,
         'Payment Status': booking.paymentStatus || '',
         'Trip Title': booking.trip?.title || '',
         'Trip Time': booking.trip?.time || '',
         'Trip Date': booking.trip?.tripDate || '',
+        'Trip ID': booking.trip?._id || '',
+        'Trip bus': booking.trip?.bus || '',
+        'Trip Status': booking.trip?.status || '',
+        'Trip Created At': booking.trip?.createdAt ? new Date(booking.trip.createdAt).toLocaleString() : '',
         'Status': booking.status || '',
-        'Trip Type': 'Outbound'
+        'Mode of Payment': booking.mode || '',
+        'Verification Attempts': booking.verificationAttempts || 0,
+        'Tickets Sent': booking.ticketSent ? 'Yes' : 'No',
+        'is Rescheduled': booking.isRescheduled ? 'Yes' : 'No',
+        'Created At': booking.createdAt ? new Date(booking.createdAt).toLocaleString() : '',
+        'Updated At': booking.updatedAt ? new Date(booking.updatedAt).toLocaleString() : '',
+        'paystack Reference': booking.paystack_ref || booking.paystack_reference || '',
+        'uniqueBooking ID': booking.uniqueBookingId || '',
+        'User ID': booking.user?._id || booking.user || '',
+        'User Type': booking.user?.type || '',
+        'Searchable User Type': booking.user?.type ? booking.user.type.charAt(0).toUpperCase() + booking.user.type.slice(1) : '',
+        'Searchable Name': `${booking.firstName || ''} ${booking.middleName || ''} ${booking.lastName || ''}`.trim(),
+        'Searchable Route': `${booking.from || ''} - ${booking.to || ''}`.trim()
       };
       processedRows.push(outboundRow);
 
       // If booking has return trip, create return trip row
       if (booking.returnTrip && booking.returnSeat) {
+        // For return trip, discount is the other half
+        const returnDiscount = discountedFare / 2;
+        
         const returnRow: any = {
           'id': booking._id || booking.bookingId || '',
+          'Trip Type': 'Return',
           'Trip seats': booking.returnSeat || '',
           'First Name': booking.firstName || '',
           'Second name': booking.middleName || '',
           'Last name': booking.lastName || '',
+          'Email': booking.email || '',
+          'Gender': booking.gender || '',
           'Phone': booking.phone || '',
+          'Emergency First Name': booking.emergencyFirstName || '',
+          'Emergency Last Name': booking.emergencyLastName || '',
+          'Emergency Email': booking.emergencyEmail || '',
           'Emergency Phone': booking.emergencyPhone || '',
           'From': booking.to || '', // Return trip: from becomes to
           'To': booking.from || '', // Return trip: to becomes from
           'Trip Amount': booking.returnAmount || 0,
+          'Return Amount': booking.returnAmount || 0,
+          'Amount': booking.amount || totalAmount,
+          'Discount': returnDiscount,
           'Payment Status': booking.paymentStatus || '',
           'Trip Title': booking.returnTrip?.title || '',
           'Trip Time': booking.returnTrip?.time || '',
           'Trip Date': booking.returnTrip?.tripDate || '',
+          'Trip ID': booking.returnTrip?._id || '',
+          'Trip bus': booking.returnTrip?.bus || '',
+          'Trip Status': booking.returnTrip?.status || '',
+          'Trip Created At': booking.returnTrip?.createdAt ? new Date(booking.returnTrip.createdAt).toLocaleString() : '',
           'Status': booking.status || '',
-          'Trip Type': 'Return'
+          'Mode of Payment': booking.mode || '',
+          'Verification Attempts': booking.verificationAttempts || 0,
+          'Tickets Sent': booking.ticketSent ? 'Yes' : 'No',
+          'is Rescheduled': booking.isRescheduled ? 'Yes' : 'No',
+          'Created At': booking.createdAt ? new Date(booking.createdAt).toLocaleString() : '',
+          'Updated At': booking.updatedAt ? new Date(booking.updatedAt).toLocaleString() : '',
+          'paystack Reference': booking.paystack_ref || booking.paystack_reference || '',
+          'uniqueBooking ID': booking.uniqueBookingId || '',
+          'User ID': booking.user?._id || booking.user || '',
+          'User Type': booking.user?.type || '',
+          'Searchable User Type': booking.user?.type ? booking.user.type.charAt(0).toUpperCase() + booking.user.type.slice(1) : '',
+          'Searchable Name': `${booking.firstName || ''} ${booking.middleName || ''} ${booking.lastName || ''}`.trim(),
+          'Searchable Route': `${booking.to || ''} - ${booking.from || ''}`.trim() // Reversed for return trip
         };
         processedRows.push(returnRow);
       }
@@ -617,21 +706,46 @@ export class BookingsComponent implements OnInit {
     // Set column widths for better readability
     const colWidths = [
       { wch: 20 }, // id
+      { wch: 12 }, // Trip Type
       { wch: 12 }, // Trip seats
       { wch: 15 }, // First Name
       { wch: 15 }, // Second name
       { wch: 15 }, // Last name
+      { wch: 20 }, // Email
+      { wch: 10 }, // Gender
       { wch: 15 }, // Phone
+      { wch: 18 }, // Emergency First Name
+      { wch: 18 }, // Emergency Last Name
+      { wch: 20 }, // Emergency Email
       { wch: 15 }, // Emergency Phone
       { wch: 15 }, // From
       { wch: 15 }, // To
       { wch: 12 }, // Trip Amount
+      { wch: 12 }, // Return Amount
+      { wch: 12 }, // Amount
+      { wch: 12 }, // Discount
       { wch: 15 }, // Payment Status
       { wch: 20 }, // Trip Title
       { wch: 12 }, // Trip Time
       { wch: 12 }, // Trip Date
+      { wch: 20 }, // Trip ID
+      { wch: 15 }, // Trip bus
+      { wch: 12 }, // Trip Status
+      { wch: 20 }, // Trip Created At
       { wch: 15 }, // Status
-      { wch: 12 }  // Trip Type
+      { wch: 15 }, // Mode of Payment
+      { wch: 18 }, // Verification Attempts
+      { wch: 12 }, // Tickets Sent
+      { wch: 12 }, // is Rescheduled
+      { wch: 20 }, // Created At
+      { wch: 20 }, // Updated At
+      { wch: 20 }, // paystack Reference
+      { wch: 20 }, // uniqueBooking ID
+      { wch: 20 }, // User ID
+      { wch: 12 }, // User Type
+      { wch: 18 }, // Searchable User Type
+      { wch: 25 }, // Searchable Name
+      { wch: 25 }  // Searchable Route
     ];
     ws['!cols'] = colWidths;
 
