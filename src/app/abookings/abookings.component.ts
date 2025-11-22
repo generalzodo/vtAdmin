@@ -441,35 +441,37 @@ export class AbookingsComponent implements OnInit {
 
   exportToExcel(jsonData: any[], fileName: string): void {
     // Define column order as specified
+    // Define column order - first 15 fields as specified, then the rest
     const columnOrder = [
       'id',
-      'Trip Type',
       'Trip seats',
       'First Name',
       'Second name',
       'Last name',
-      'Email',
-      'Gender',
       'Phone',
-      'Emergency First Name',
-      'Emergency Last Name',
-      'Emergency Email',
       'Emergency Phone',
       'From',
       'To',
       'Trip Amount',
-      'Return Amount',
-      'Amount',
-      'Discount',
       'Payment Status',
       'Trip Title',
       'Trip Time',
       'Trip Date',
+      'Status',
+      // Additional fields after the first 15
+      'Trip Type',
+      'Email',
+      'Gender',
+      'Emergency First Name',
+      'Emergency Last Name',
+      'Emergency Email',
+      'Return Amount',
+      'Amount',
+      'Discount',
       'Trip ID',
       'Trip bus',
       'Trip Status',
       'Trip Created At',
-      'Status',
       'Mode of Payment',
       'Verification Attempts',
       'Tickets Sent',
@@ -603,36 +605,37 @@ export class AbookingsComponent implements OnInit {
       header: columnOrder 
     });
     
-    // Set column widths for better readability
+    // Set column widths for better readability (matching the column order)
     const colWidths = [
       { wch: 20 }, // id
-      { wch: 12 }, // Trip Type
       { wch: 12 }, // Trip seats
       { wch: 15 }, // First Name
       { wch: 15 }, // Second name
       { wch: 15 }, // Last name
-      { wch: 20 }, // Email
-      { wch: 10 }, // Gender
       { wch: 15 }, // Phone
-      { wch: 18 }, // Emergency First Name
-      { wch: 18 }, // Emergency Last Name
-      { wch: 20 }, // Emergency Email
       { wch: 15 }, // Emergency Phone
       { wch: 15 }, // From
       { wch: 15 }, // To
       { wch: 12 }, // Trip Amount
-      { wch: 12 }, // Return Amount
-      { wch: 12 }, // Amount
-      { wch: 12 }, // Discount
       { wch: 15 }, // Payment Status
       { wch: 20 }, // Trip Title
       { wch: 12 }, // Trip Time
       { wch: 12 }, // Trip Date
+      { wch: 15 }, // Status
+      // Additional fields
+      { wch: 12 }, // Trip Type
+      { wch: 20 }, // Email
+      { wch: 10 }, // Gender
+      { wch: 18 }, // Emergency First Name
+      { wch: 18 }, // Emergency Last Name
+      { wch: 20 }, // Emergency Email
+      { wch: 12 }, // Return Amount
+      { wch: 12 }, // Amount
+      { wch: 12 }, // Discount
       { wch: 20 }, // Trip ID
       { wch: 15 }, // Trip bus
       { wch: 12 }, // Trip Status
       { wch: 20 }, // Trip Created At
-      { wch: 15 }, // Status
       { wch: 15 }, // Mode of Payment
       { wch: 18 }, // Verification Attempts
       { wch: 12 }, // Tickets Sent
