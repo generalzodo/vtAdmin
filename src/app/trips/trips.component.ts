@@ -4,6 +4,8 @@ import states from '../locations/states.json';
 import { HttpService } from 'src/services/http.service';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import * as XLSX from 'xlsx';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-trips',
@@ -34,6 +36,7 @@ export class TripsComponent implements OnInit {
   };
   displayTripManifest:any;
   lastRouteTitle: string = '';
+  onboardingAll: boolean = false;
   constructor(private fb: FormBuilder, private httpService: HttpService, private service: MessageService, private confirmationService: ConfirmationService, private messageService: MessageService) {
     this.tripForm = this.fb.group({
       title: [undefined],
@@ -208,6 +211,104 @@ export class TripsComponent implements OnInit {
       }, (err) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to update on-boarded status' });
       });
+  }
+
+  onboardAllPassengers() {
+    if (!this.currentTrip?.bookings || this.currentTrip.bookings.length === 0) {
+      this.messageService.add({ 
+        severity: 'warn', 
+        summary: 'No Passengers', 
+        detail: 'No passengers found for this trip' 
+      });
+      return;
+    }
+
+    // Filter out passengers that are already onboarded
+    const passengersToOnboard = this.currentTrip.bookings.filter((booking: any) => !booking.onBoarded);
+    
+    if (passengersToOnboard.length === 0) {
+      this.messageService.add({ 
+        severity: 'info', 
+        summary: 'Already Onboarded', 
+        detail: 'All passengers are already onboarded' 
+      });
+      return;
+    }
+
+    // Confirm action
+    this.confirmationService.confirm({
+      message: `Are you sure you want to onboard all ${passengersToOnboard.length} passenger(s)?`,
+      header: 'Onboard All Passengers',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.onboardingAll = true;
+        let successCount = 0;
+        let errorCount = 0;
+
+        // Process all passengers using forkJoin with error handling
+        const updateObservables = passengersToOnboard.map((booking: any, index: number) => {
+          return this.httpService.updateData('booking/onboarded/' + booking._id, { onBoarded: true })
+            .pipe(
+              catchError((err) => {
+                // Return a failed result object instead of throwing
+                return of({ success: false, error: err });
+              })
+            );
+        });
+
+        // Wait for all updates to complete
+        forkJoin(updateObservables).subscribe({
+          next: (results: any[]) => {
+            results.forEach((data: any, index: number) => {
+              if (data && data.success) {
+                passengersToOnboard[index].onBoarded = true;
+                successCount++;
+              } else {
+                errorCount++;
+              }
+            });
+
+            this.onboardingAll = false;
+            
+            if (errorCount === 0) {
+              this.messageService.add({ 
+                severity: 'success', 
+                summary: 'Success', 
+                detail: `Successfully onboarded all ${successCount} passenger(s)` 
+              });
+            } else if (successCount > 0) {
+              this.messageService.add({ 
+                severity: 'warn', 
+                summary: 'Partial Success', 
+                detail: `Onboarded ${successCount} passenger(s), ${errorCount} failed` 
+              });
+            } else {
+              this.messageService.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: 'Failed to onboard passengers. Please try again.' 
+              });
+            }
+
+            // Refresh manifest to ensure UI is up to date
+            if (this.currentTrip?._id) {
+              this.pullTripsManifest(this.currentTrip);
+            }
+          },
+          error: (err) => {
+            this.onboardingAll = false;
+            this.messageService.add({ 
+              severity: 'error', 
+              summary: 'Error', 
+              detail: 'Failed to onboard passengers. Please try again.' 
+            });
+          }
+        });
+      },
+      reject: () => {
+        // User cancelled
+      }
+    });
   }
   
   pullRoutes() {

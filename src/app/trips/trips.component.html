@@ -233,7 +233,17 @@
         </div>
     </div>
 
-    <h3 class="mt-10 mb-4 text-lg font-semibold">Passengers ({{currentTrip?.bookings?.length || 0}})</h3>
+    <div class="flex justify-between items-center mt-10 mb-4">
+        <h3 class="text-lg font-semibold">Passengers ({{currentTrip?.bookings?.length || 0}})</h3>
+        <button *ngIf="currentTrip?.bookings && currentTrip?.bookings?.length > 0" 
+            pButton 
+            label="Onboard All Passengers" 
+            (click)="onboardAllPassengers()" 
+            [disabled]="onboardingAll"
+            [loading]="onboardingAll"
+            class="p-button-sm p-button-success">
+        </button>
+    </div>
     <div *ngIf="!currentTrip?.bookings || currentTrip?.bookings?.length === 0" class="text-center py-8 text-gray-500">
         <p>No passengers found for this trip.</p>
     </div>
