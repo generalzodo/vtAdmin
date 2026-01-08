@@ -166,4 +166,44 @@ export class AgentsComponent implements OnInit {
       day: 'numeric'
     });
   }
+
+  hasIdCardFile(agent: any): boolean {
+    if (!agent?.idCardFile) return false;
+    const fileData = agent.idCardFile;
+    if (typeof fileData === 'string') {
+      return fileData.trim().length > 0;
+    }
+    return !!fileData;
+  }
+
+  isImageFile(fileData: string): boolean {
+    if (!fileData) return false;
+    return fileData.startsWith('data:image/') || 
+           fileData.startsWith('http') && /\.(jpg|jpeg|png|gif|webp)$/i.test(fileData);
+  }
+
+  isPdfFile(fileData: string): boolean {
+    if (!fileData) return false;
+    return fileData.startsWith('data:application/pdf') || 
+           fileData.startsWith('http') && /\.pdf$/i.test(fileData);
+  }
+
+  downloadIdCard(agent: any) {
+    if (!agent?.idCardFile) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No ID card file available' });
+      return;
+    }
+
+    try {
+      const link = document.createElement('a');
+      link.href = agent.idCardFile;
+      link.download = `${agent.firstName}_${agent.lastName}_ID_Card.${this.isPdfFile(agent.idCardFile) ? 'pdf' : 'jpg'}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'ID card download started' });
+    } catch (err) {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to download ID card' });
+    }
+  }
 }

@@ -48,11 +48,21 @@
                                     <p class="text-sm text-muted-foreground">Registered</p>
                                     <p class="font-medium">{{formatDate(agent.createdAt)}}</p>
                                 </div>
+                                <div>
+                                    <p class="text-sm text-muted-foreground">ID Card File</p>
+                                    <p class="font-medium">
+                                        <span *ngIf="hasIdCardFile(agent)" class="text-green-600">✓ Uploaded</span>
+                                        <span *ngIf="!hasIdCardFile(agent)" class="text-red-600">✗ Not uploaded</span>
+                                    </p>
+                                </div>
                             </div>
                             <div class="flex gap-2">
-                                <button *ngIf="agent.idCardFile" pButton type="button" label="View ID Card" 
+                                <button *ngIf="hasIdCardFile(agent)" pButton type="button" label="View ID Card" 
                                     icon="pi pi-eye" class="p-button-outlined p-button-sm"
                                     (click)="showIdCardDialog(agent)"></button>
+                                <button *ngIf="!hasIdCardFile(agent)" pButton type="button" label="No ID Card Available" 
+                                    icon="pi pi-exclamation-triangle" class="p-button-outlined p-button-secondary p-button-sm"
+                                    disabled></button>
                                 <button pButton type="button" label="Approve" 
                                     icon="pi pi-check" class="p-button-success p-button-sm"
                                     [disabled]="processingId === agent._id"
@@ -150,17 +160,29 @@
 </p-dialog>
 
 <!-- ID Card Preview Dialog -->
-<p-dialog header="ID Card Preview" [(visible)]="displayIdCardDialog" [modal]="true" [style]="{width: '600px'}">
+<p-dialog header="ID Card Preview" [(visible)]="displayIdCardDialog" [modal]="true" [style]="{width: '700px'}" [maximizable]="true">
     <div class="p-4">
-        <p class="mb-4"><strong>{{selectedAgent?.firstName}} {{selectedAgent?.lastName}}</strong></p>
-        <div *ngIf="selectedAgent?.idCardFile">
-            <img *ngIf="selectedAgent.idCardFile.startsWith('data:image')" 
+        <div class="mb-4">
+            <p class="font-semibold text-lg">{{selectedAgent?.firstName}} {{selectedAgent?.lastName}}</p>
+            <p class="text-sm text-muted-foreground">ID Card Type: {{formatIdCardType(selectedAgent?.idCardType)}}</p>
+        </div>
+        <div *ngIf="selectedAgent?.idCardFile" class="border rounded-lg p-2 bg-gray-50">
+            <img *ngIf="isImageFile(selectedAgent.idCardFile)" 
                 [src]="selectedAgent.idCardFile" 
                 alt="ID Card" 
-                class="w-full h-auto border rounded" />
-            <iframe *ngIf="selectedAgent.idCardFile.startsWith('data:application/pdf')" 
+                class="w-full h-auto border rounded max-h-[600px] object-contain" />
+            <iframe *ngIf="isPdfFile(selectedAgent.idCardFile)" 
                 [src]="selectedAgent.idCardFile" 
-                class="w-full h-96 border rounded"></iframe>
+                class="w-full h-[600px] border rounded"></iframe>
+            <div *ngIf="!isImageFile(selectedAgent.idCardFile) && !isPdfFile(selectedAgent.idCardFile)" class="p-4 text-center">
+                <p class="text-muted-foreground mb-2">Unable to preview this file type</p>
+                <button pButton type="button" label="Download File" 
+                    icon="pi pi-download" class="p-button-outlined"
+                    (click)="downloadIdCard(selectedAgent)"></button>
+            </div>
+        </div>
+        <div *ngIf="!selectedAgent?.idCardFile" class="text-center p-8 text-muted-foreground">
+            <p>No ID card file available for this agent.</p>
         </div>
     </div>
 </p-dialog>
